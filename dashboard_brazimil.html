@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brazimil — Dashboard v3</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 24px; color: #222; }
+
+    .topbar { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }
+    .topbar h1 { font-size: 20px; font-weight: 700; color: #1F3864; }
+    .topbar .sub { font-size: 12px; color: #999; }
+
+    .abas { display: flex; gap: 4px; margin-bottom: 18px; border-bottom: 2px solid #e0e0e0; }
+    .aba { padding: 9px 22px; font-size: 13px; font-weight: 600; border: none; background: none; cursor: pointer; color: #888; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .15s; }
+    .aba.ativa { color: #1F3864; border-bottom-color: #1F3864; }
+    .pagina { display: none; }
+    .pagina.ativa { display: block; }
+
+    .filtros { display: flex; gap: 14px; align-items: center; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 11px 16px; margin-bottom: 16px; flex-wrap: wrap; }
+    .filtros label { font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: .04em; }
+    select { padding: 6px 11px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; background: #fff; cursor: pointer; }
+    input[type=number] { padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; width: 100px; }
+    input[type=range] { cursor: pointer; }
+    input[type=text] { padding: 7px 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; width: 100%; margin-bottom: 10px; }
+
+    .ordem-bar { display: flex; gap: 6px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+    .ordem-bar span { font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase; }
+    .ord-btn { padding: 5px 13px; font-size: 12px; border-radius: 20px; border: 1px solid #ccc; background: #fff; cursor: pointer; color: #555; transition: all .15s; }
+    .ord-btn.ativo { background: #1F3864; color: #fff; border-color: #1F3864; }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+    .kpi-card { background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; padding: 13px 15px; }
+    .kpi-label { font-size: 11px; color: #666; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-value { font-size: 25px; font-weight: 700; color: #1F3864; }
+    .kpi-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+    .card { background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; padding: 16px; margin-bottom: 14px; }
+    .card-titulo { font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; }
+
+    .grid2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+    .nav-cats { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .cat-btn { padding: 5px 14px; font-size: 12px; border-radius: 20px; border: 1px solid #ccc; background: #fff; cursor: pointer; color: #555; transition: all .15s; }
+    .cat-btn.ativo { background: #1F3864; color: #fff; border-color: #1F3864; font-weight: 600; }
+
+    .breadcrumb { display: flex; gap: 4px; align-items: center; font-size: 12px; color: #999; margin-bottom: 8px; min-height: 16px; }
+    .bc-link { color: #2E75B6; cursor: pointer; }
+    .bc-link:hover { text-decoration: underline; }
+    .bc-sep { color: #ccc; }
+
+    .bars { display: flex; flex-direction: column; gap: 6px; }
+    .bar-row { display: flex; align-items: center; gap: 7px; }
+    .bar-row.clicavel { cursor: pointer; }
+    .bar-row.clicavel:hover .bar-nome { color: #2E75B6; }
+    .bar-nome { font-size: 11px; color: #555; width: 155px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { flex: 1; height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 5px; transition: width .35s; }
+    .bar-val { font-size: 11px; font-weight: 700; width: 42px; text-align: right; flex-shrink: 0; }
+
+    .leg { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: #555; margin-bottom: 8px; }
+    .leg-item { display: flex; align-items: center; gap: 4px; }
+    .leg-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+    .pill { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 12px; }
+    .p-g { background: #EAF3DE; color: #27500A; }
+    .p-a { background: #FAEEDA; color: #633806; }
+    .p-r { background: #FCEBEB; color: #791F1F; }
+
+    .tabela-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    th { text-align: left; padding: 7px 9px; background: #f7f7f7; border-bottom: 2px solid #e0e0e0; font-size: 10px; font-weight: 700; color: #555; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
+    th:hover { background: #eeeeee; }
+    td { padding: 7px 9px; border-bottom: 1px solid #f5f5f5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    tr:hover td { background: #fafafa; }
+    .alerta { color: #E24B4A; font-weight: 700; }
+
+    /* Simulador */
+    .sim-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 14px; }
+    .sim-item { padding: 9px 13px; border-radius: 6px; border: 1px solid #e0e0e0; background: #fafafa; cursor: pointer; transition: all .15s; margin-bottom: 5px; }
+    .sim-item:hover { border-color: #2E75B6; background: #f0f6ff; }
+    .sim-item.sel { border-color: #1F3864; background: #e8f0fb; }
+    .sim-item-nome { font-size: 12px; color: #333; font-weight: 600; }
+    .sim-item-cat { font-size: 10px; color: #999; margin-top: 2px; }
+    .res-box { background: #f7f7f7; border-radius: 8px; padding: 14px; margin-top: 10px; }
+    .res-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee; font-size: 13px; }
+    .res-row:last-child { border-bottom: none; font-weight: 700; font-size: 14px; padding-top: 8px; }
+    .res-label { color: #555; }
+    .res-val { font-weight: 600; }
+    .decomp-wrap { margin: 10px 0; }
+    .decomp-barra { display: flex; height: 14px; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
+    .decomp-leg { display: flex; gap: 14px; font-size: 11px; color: #666; flex-wrap: wrap; }
+    .decomp-leg span { display: flex; align-items: center; gap: 4px; }
+    .dsq { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+    .alerta-sim { padding: 9px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; text-align: center; margin-top: 10px; }
+    .alerta-ok { background: #EAF3DE; color: #27500A; }
+    .alerta-warn { background: #FAEEDA; color: #633806; }
+    .alerta-danger { background: #FCEBEB; color: #791F1F; }
+
+    /* Comparador */
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+    .comp-card { background: #fff; border-radius: 8px; padding: 16px; border: 2px solid #e0e0e0; }
+    .comp-card.a { border-color: #2E75B6; }
+    .comp-card.b { border-color: #639922; }
+    .comp-titulo { font-size: 14px; font-weight: 700; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+    .comp-titulo.a { color: #2E75B6; }
+    .comp-titulo.b { color: #639922; }
+    .comp-filtros { display: flex; flex-direction: column; gap: 8px; }
+    .comp-linha-filtro { display: flex; gap: 10px; align-items: center; }
+    .comp-filtro-label { font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase; width: 75px; flex-shrink: 0; }
+    .comp-linha { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid #f5f5f5; }
+    .comp-linha:last-child { border-bottom: none; font-weight: 700; }
+    .diff-card { background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; padding: 16px; }
+    .diff-titulo { font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; margin-bottom: 12px; }
+    .diff-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 12px; }
+    .diff-nome { width: 190px; flex-shrink: 0; color: #444; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .diff-col { flex: 1; height: 14px; border-radius: 3px; overflow: hidden; background: #f0f0f0; }
+    .diff-bar { height: 100%; border-radius: 3px; transition: width .3s; }
+    .diff-vals { display: flex; gap: 10px; font-size: 11px; font-weight: 700; flex-shrink: 0; width: 110px; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>Brazimil &mdash; Dashboard de Precificação v3</h1>
+    <div class="sub">Gerado em 19/04/2026 09:52 &middot; 65 produtos &middot; Simulador + Decomposição + Comparador</div>
+  </div>
+</div>
+
+<div class="abas">
+  <button class="aba ativa" onclick="irPara(this,'pg-painel')">Painel Geral</button>
+  <button class="aba" onclick="irPara(this,'pg-simulador')">Simulador de Preço</button>
+  <button class="aba" onclick="irPara(this,'pg-comparador')">Comparador de Cenários</button>
+</div>
+
+<!-- PAINEL GERAL -->
+<div class="pagina ativa" id="pg-painel">
+  <div class="filtros">
+    <label>Região:</label>
+    <select id="p-regiao" onchange="atualizarPainel()">
+      <option value="0.07">Manaus CIF (7%)</option>
+      <option value="0.1065">Interior AM (10,65%)</option>
+      <option value="0.1565">Interestadual (15,65%)</option>
+      <option value="0.2365">Paraíba (23,65%)</option>
+    </select>
+    <label>Comissão:</label>
+    <select id="p-comissao" onchange="atualizarPainel()">
+      <option value="0.03">3%</option>
+      <option value="0.05" selected>5%</option>
+      <option value="0.08">8%</option>
+    </select>
+    <label>Frete R$/ton:</label>
+    <select id="p-frete" onchange="atualizarPainel()">
+      <option value="100">R$ 100</option>
+      <option value="120">R$ 120</option>
+      <option value="150">R$ 150</option>
+    </select>
+  </div>
+
+  <div class="ordem-bar">
+    <span>Ordenar:</span>
+    <button class="ord-btn" id="ord-maior" onclick="setOrdem('maior')">Maior MC %</button>
+    <button class="ord-btn" id="ord-menor" onclick="setOrdem('menor')">Menor MC %</button>
+    <button class="ord-btn ativo" id="ord-nome" onclick="setOrdem('nome')">Alfabético</button>
+    <button class="ord-btn" id="ord-preco" onclick="setOrdem('preco')">Maior preço</button>
+    <button class="ord-btn" id="ord-prej" onclick="setOrdem('prej')">Prejuízo primeiro</button>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">MC Média geral</div><div class="kpi-value" id="p-mc"></div><div class="kpi-sub" id="p-mc-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">Saudáveis &ge;35%</div><div class="kpi-value" id="p-ok" style="color:#639922"></div><div class="kpi-sub" id="p-ok-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">Atenção 20&ndash;35%</div><div class="kpi-value" id="p-at" style="color:#EF9F27"></div><div class="kpi-sub" id="p-at-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">Com prejuízo</div><div class="kpi-value" id="p-pr" style="color:#E24B4A"></div><div class="kpi-sub" id="p-pr-sub"></div></div>
+  </div>
+
+  <div class="nav-cats" id="p-nav-cats"></div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-titulo">MC por grupo &mdash; clique para detalhar</div>
+      <div class="breadcrumb" id="p-breadcrumb"></div>
+      <div class="bars" id="p-bars"></div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Distribuição de status</div>
+      <div class="leg">
+        <span class="leg-item"><span class="leg-sq" style="background:#639922"></span>Saudável &ge;35%</span>
+        <span class="leg-item"><span class="leg-sq" style="background:#EF9F27"></span>Atenção 20&ndash;35%</span>
+        <span class="leg-item"><span class="leg-sq" style="background:#E24B4A"></span>Prejuízo</span>
+      </div>
+      <div style="position:relative;height:190px"><canvas id="p-donut" role="img" aria-label="Distribuição de status"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-titulo" id="p-tab-titulo">Todos os produtos</div>
+    <div class="tabela-wrap">
+      <table>
+        <colgroup>
+          <col style="width:25%"><col style="width:13%"><col style="width:9%">
+          <col style="width:10%"><col style="width:9%"><col style="width:8%">
+          <col style="width:11%"><col style="width:15%">
+        </colgroup>
+        <thead><tr>
+          <th onclick="sortTab('nome')">Produto</th>
+          <th onclick="sortTab('sub')">Subcategoria</th>
+          <th onclick="sortTab('preco')">Preço</th>
+          <th onclick="sortTab('cv')">Custo Var.</th>
+          <th onclick="sortTab('mc')">MC R$</th>
+          <th onclick="sortTab('mcPct')">MC %</th>
+          <th>Status</th>
+          <th onclick="sortTab('pmin')">Preço mín. MC 25%</th>
+        </tr></thead>
+        <tbody id="p-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SIMULADOR -->
+<div class="pagina" id="pg-simulador">
+  <div class="filtros">
+    <label>Região:</label>
+    <select id="s-regiao" onchange="atualizarSim()">
+      <option value="0.07">Manaus CIF (7%)</option>
+      <option value="0.1065">Interior AM (10,65%)</option>
+      <option value="0.1565">Interestadual (15,65%)</option>
+      <option value="0.2365">Paraíba (23,65%)</option>
+    </select>
+    <label>Comissão:</label>
+    <select id="s-comissao" onchange="atualizarSim()">
+      <option value="0.03">3%</option>
+      <option value="0.05" selected>5%</option>
+      <option value="0.08">8%</option>
+    </select>
+    <label>Frete R$/ton:</label>
+    <select id="s-frete" onchange="atualizarSim()">
+      <option value="100">R$ 100</option>
+      <option value="120">R$ 120</option>
+      <option value="150">R$ 150</option>
+    </select>
+    <label>MC alvo:</label>
+    <select id="s-mc-alvo" onchange="atualizarSim()">
+      <option value="0.20">20%</option>
+      <option value="0.25" selected>25%</option>
+      <option value="0.30">30%</option>
+      <option value="0.35">35%</option>
+    </select>
+  </div>
+
+  <div class="sim-grid">
+    <div class="card">
+      <div class="card-titulo">Selecione um produto</div>
+      <input type="text" id="s-busca" placeholder="Buscar produto..." oninput="filtrarSim()">
+      <div id="s-lista" style="max-height:500px;overflow-y:auto"></div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-titulo" id="s-prod-nome">Selecione um produto à esquerda</div>
+        <div style="margin-bottom:14px">
+          <label style="font-size:12px;font-weight:700;color:#444;display:block;margin-bottom:6px">Preço de venda (R$)</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="range" id="s-slider" min="0" max="500" step="0.5" value="0" oninput="syncP('slider')" style="flex:1">
+            <input type="number" id="s-num" min="0" max="9999" step="0.5" value="0" oninput="syncP('num')">
+          </div>
+        </div>
+        <div class="card-titulo">Composição do custo variável</div>
+        <div class="decomp-wrap">
+          <div class="decomp-barra" id="s-barra"></div>
+          <div class="decomp-leg">
+            <span><span class="dsq" style="background:#1F3864"></span>Custo fábrica</span>
+            <span><span class="dsq" style="background:#EF9F27"></span>Frete</span>
+            <span><span class="dsq" style="background:#E24B4A"></span>Impostos + comissão</span>
+            <span><span class="dsq" style="background:#EAF3DE;border:1px solid #ccc"></span>MC</span>
+          </div>
+        </div>
+        <div class="res-box">
+          <div class="res-row"><span class="res-label">Preço de venda</span><span class="res-val" id="s-r-preco">—</span></div>
+          <div class="res-row"><span class="res-label">(-) Impostos</span><span class="res-val" id="s-r-imp">—</span></div>
+          <div class="res-row"><span class="res-label">(-) Comissão</span><span class="res-val" id="s-r-com">—</span></div>
+          <div class="res-row"><span class="res-label">= Preço líquido (PLV)</span><span class="res-val" id="s-r-plv">—</span></div>
+          <div class="res-row"><span class="res-label">(-) Custo de fábrica</span><span class="res-val" id="s-r-fab">—</span></div>
+          <div class="res-row"><span class="res-label">(-) Frete</span><span class="res-val" id="s-r-frete">—</span></div>
+          <div class="res-row"><span class="res-label">= Margem de contribuição (R$)</span><span class="res-val" id="s-r-mc">—</span></div>
+          <div class="res-row"><span class="res-label">MC (%)</span><span class="res-val" id="s-r-mcpct">—</span></div>
+          <div class="res-row"><span class="res-label">Preço mínimo (MC alvo)</span><span class="res-val" id="s-r-pmin">—</span></div>
+        </div>
+        <div class="alerta-sim" id="s-alerta"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARADOR -->
+<div class="pagina" id="pg-comparador">
+  <div class="comp-grid">
+    <div class="comp-card a">
+      <div class="comp-titulo a">Cenário A</div>
+      <div class="comp-filtros">
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Região:</span>
+          <select id="ca-reg" onchange="atualizarComp()">
+            <option value="0.07">Manaus CIF (7%)</option>
+            <option value="0.1065">Interior AM (10,65%)</option>
+            <option value="0.1565">Interestadual (15,65%)</option>
+            <option value="0.2365">Paraíba (23,65%)</option>
+          </select>
+        </div>
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Comissão:</span>
+          <select id="ca-com" onchange="atualizarComp()">
+            <option value="0.03">3%</option><option value="0.05" selected>5%</option><option value="0.08">8%</option>
+          </select>
+        </div>
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Frete:</span>
+          <select id="ca-fr" onchange="atualizarComp()">
+            <option value="100" selected>R$ 100</option><option value="120">R$ 120</option><option value="150">R$ 150</option>
+          </select>
+        </div>
+      </div>
+      <div id="ca-kpis" style="margin-top:14px"></div>
+    </div>
+    <div class="comp-card b">
+      <div class="comp-titulo b">Cenário B</div>
+      <div class="comp-filtros">
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Região:</span>
+          <select id="cb-reg" onchange="atualizarComp()">
+            <option value="0.07">Manaus CIF (7%)</option>
+            <option value="0.1065">Interior AM (10,65%)</option>
+            <option value="0.1565" selected>Interestadual (15,65%)</option>
+            <option value="0.2365">Paraíba (23,65%)</option>
+          </select>
+        </div>
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Comissão:</span>
+          <select id="cb-com" onchange="atualizarComp()">
+            <option value="0.03">3%</option><option value="0.05">5%</option><option value="0.08" selected>8%</option>
+          </select>
+        </div>
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Frete:</span>
+          <select id="cb-fr" onchange="atualizarComp()">
+            <option value="100">R$ 100</option><option value="120">R$ 120</option><option value="150" selected>R$ 150</option>
+          </select>
+        </div>
+      </div>
+      <div id="cb-kpis" style="margin-top:14px"></div>
+    </div>
+  </div>
+  <div class="diff-card">
+    <div class="diff-titulo">Top 20 produtos com maior diferença de MC — Cenário A (azul) vs B (verde)</div>
+    <div id="comp-diff"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+
+const produtos = [{"nome": "Econômica 3,0L Refil Branco Neve", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 9.5, "custo": 4.5, "peso": 3.85}, {"nome": "Econômica 3,0L Refil Cor", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 9.5, "custo": 3.98, "peso": 3.35}, {"nome": "Econômica 3,0L Galão Branco Neve", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 17.99, "custo": 7.97, "peso": 4}, {"nome": "Econômica 3,0L Galão Cor", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 17.99, "custo": 7.45, "peso": 3.5}, {"nome": "Econômica 15L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 58.0, "custo": 32.78, "peso": 18.7}, {"nome": "Econômica 15L Balde Cor", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 69.9, "custo": 29.42, "peso": 17}, {"nome": "Externa 3,0L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Externa", "preco": 26.0, "custo": 11.25, "peso": 4.2}, {"nome": "Externa 3,0L Balde Cor", "cat": "Tinta Base Água", "sub": "Externa", "preco": 24.2, "custo": 9.39, "peso": 3.9}, {"nome": "Externa 15L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Externa", "preco": 94.0, "custo": 53.75, "peso": 19}, {"nome": "Externa 15L Balde Cor", "cat": "Tinta Base Água", "sub": "Externa", "preco": 90.11, "custo": 41.94, "peso": 17}, {"nome": "Semi Brilho 3,0L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Semi Brilho", "preco": 43.0, "custo": 11.61, "peso": 3.6}, {"nome": "Semi Brilho 3,0L Balde Cor", "cat": "Tinta Base Água", "sub": "Semi Brilho", "preco": 35.0, "custo": 15.13, "peso": 3.5}, {"nome": "Semi Brilho 15L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Semi Brilho", "preco": 170.0, "custo": 54.06, "peso": 15.1}, {"nome": "Semi Brilho 15L Balde Cor", "cat": "Tinta Base Água", "sub": "Semi Brilho", "preco": 170.0, "custo": 74.32, "peso": 15.1}, {"nome": "Tinta Piso 3,0L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Piso", "preco": 30.0, "custo": 18.73, "peso": 3.7}, {"nome": "Tinta Piso 3,0L Balde Cor", "cat": "Tinta Base Água", "sub": "Piso", "preco": 28.5, "custo": 17.48, "peso": 3.6}, {"nome": "Tinta Piso 15L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Piso", "preco": 130.0, "custo": 102.7, "peso": 16}, {"nome": "Tinta Piso 15L Balde Cor", "cat": "Tinta Base Água", "sub": "Piso", "preco": 108.0, "custo": 96.69, "peso": 15.8}, {"nome": "Selador Acril 3,0L Balde Pigmentado", "cat": "Tinta Base Água", "sub": "Selador Acril", "preco": 17.99, "custo": 6.74, "peso": 4.05}, {"nome": "Selador Acril 15L Balde Pigmentado", "cat": "Tinta Base Água", "sub": "Selador Acril", "preco": 51.0, "custo": 24.77, "peso": 18}, {"nome": "Tinta P Gesso 3,0L", "cat": "Tinta Base Água", "sub": "Gesso", "preco": 20.0, "custo": 7.43, "peso": 4.1}, {"nome": "Tinta P Gesso 15L", "cat": "Tinta Base Água", "sub": "Gesso", "preco": 73.0, "custo": 31.95, "peso": 20.03}, {"nome": "Liquibrilho 3,0L Balde Incolor", "cat": "Tinta Base Água", "sub": "Liquibrilho", "preco": 32.0, "custo": 14.15, "peso": 3.185}, {"nome": "Liquibrilho 15L Balde Incolor", "cat": "Tinta Base Água", "sub": "Liquibrilho", "preco": 135.0, "custo": 65.63, "peso": 13.5}, {"nome": "Esmalte Sintético 0,75L Lata Alumínio", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 27.2, "custo": 16.03, "peso": 0.85}, {"nome": "Esmalte Sintético 0,75L Lata Branco", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 16.11, "custo": 10.06, "peso": 1.05}, {"nome": "Esmalte Sintético 0,75L Lata Preto", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 16.87, "custo": 8.21, "peso": 19}, {"nome": "Esmalte Sintético 0,75L Lata Cor", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 16.87, "custo": 8.68, "peso": 0.85}, {"nome": "Esmalte Sintético 3,0L Lata Alumínio", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 99.0, "custo": 58.3, "peso": 3.1}, {"nome": "Esmalte Sintético 3,0L Lata Branco", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 52.26, "custo": 34.91, "peso": 3.35}, {"nome": "Esmalte Sintético 3,0L Lata Preto", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 39.9, "custo": 27.51, "peso": 3.35}, {"nome": "Esmalte Sintético 3,0L Lata Cor", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 46.9, "custo": 29.38, "peso": 3.35}, {"nome": "Esmalte Sintético 3,0L Lata Fosco", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 54.5, "custo": 31.62, "peso": 3.6}, {"nome": "Esmalte Base Água 0,75L", "cat": "Tinta Base Solvente", "sub": "Esmalte Base Água", "preco": 20.0, "custo": 11.0, "peso": 0.85}, {"nome": "Esmalte Base Água 3,0L", "cat": "Tinta Base Solvente", "sub": "Esmalte Base Água", "preco": 80.0, "custo": 38.2, "peso": 3.5}, {"nome": "Verniz 0,75L Lata Incolor", "cat": "Tinta Base Solvente", "sub": "Verniz", "preco": 20.5, "custo": 11.35, "peso": 0.85}, {"nome": "Verniz 0,75L Lata Pigmentado", "cat": "Tinta Base Solvente", "sub": "Verniz", "preco": 20.5, "custo": 9.76, "peso": 0.85}, {"nome": "Verniz 3,0L Lata Incolor", "cat": "Tinta Base Solvente", "sub": "Verniz", "preco": 63.0, "custo": 39.59, "peso": 3.1}, {"nome": "Verniz 3,0L Lata Pigmentado", "cat": "Tinta Base Solvente", "sub": "Verniz", "preco": 63.0, "custo": 35.49, "peso": 3.1}, {"nome": "Zarcão 0,75L Lata Branco", "cat": "Tinta Base Solvente", "sub": "Zarcão", "preco": 15.9, "custo": 6.59, "peso": 1.02}, {"nome": "Zarcão 0,75L Lata Cinza", "cat": "Tinta Base Solvente", "sub": "Zarcão", "preco": 14.9, "custo": 6.59, "peso": 1.02}, {"nome": "Zarcão 0,75L Lata Cor", "cat": "Tinta Base Solvente", "sub": "Zarcão", "preco": 14.0, "custo": 6.59, "peso": 1.02}, {"nome": "Zarcão 3,0L Lata Cinza", "cat": "Tinta Base Solvente", "sub": "Zarcão", "preco": 45.55, "custo": 20.58, "peso": 3.5}, {"nome": "Zarcão  18L Lata Cor", "cat": "Tinta Base Solvente", "sub": "Zarcão", "preco": 200.0, "custo": 89.54, "peso": 20.5}, {"nome": "Selador P/ Mad. 0,75L Lata Incolor", "cat": "Tinta Base Solvente", "sub": "Selador Mad.", "preco": 19.0, "custo": 11.12, "peso": 0.85}, {"nome": "Selador P/ Mad. 3,0L Lata Incolor", "cat": "Tinta Base Solvente", "sub": "Selador Mad.", "preco": 68.0, "custo": 38.67, "peso": 3.1}, {"nome": "Corrida Pote 1Kg", "cat": "Massas e Texturas", "sub": "Corrida", "preco": 5.5, "custo": 1.15, "peso": 1.04}, {"nome": "Corrida Galão 5Kg", "cat": "Massas e Texturas", "sub": "Corrida", "preco": 14.9, "custo": 6.51, "peso": 5.185}, {"nome": "Corrida Saco Valv 10 Kg", "cat": "Massas e Texturas", "sub": "Corrida", "preco": 11.0, "custo": 5.82, "peso": 10.05}, {"nome": "Corrida Balde 20Kg", "cat": "Massas e Texturas", "sub": "Corrida", "preco": 36.5, "custo": 21.43, "peso": 20.64}, {"nome": "Acrilica Pote 1Kg", "cat": "Massas e Texturas", "sub": "Acrílica", "preco": 6.0, "custo": 2.56, "peso": 1.04}, {"nome": "Acrilica Galão 5Kg", "cat": "Massas e Texturas", "sub": "Acrílica", "preco": 19.16, "custo": 10.45, "peso": 5.185}, {"nome": "Acrilica Saco Valv 10,0Kg", "cat": "Massas e Texturas", "sub": "Acrílica", "preco": 27.0, "custo": 12.88, "peso": 10.05}, {"nome": "Acrilica Balde 20Kg", "cat": "Massas e Texturas", "sub": "Acrílica", "preco": 62.26, "custo": 36.02, "peso": 20.7}, {"nome": "Vedamil / Manta Líquida Balde 3,6Kg", "cat": "Complementos", "sub": "Vedamil", "preco": 32.5, "custo": 16.86, "peso": 3.6}, {"nome": "Vedamil / Manta Líquida Balde 12Kg", "cat": "Complementos", "sub": "Vedamil", "preco": 133.0, "custo": 56.56, "peso": 12.85}, {"nome": "Vedamil / Manta Líquida Balde 15Kg", "cat": "Complementos", "sub": "Vedamil", "preco": 100.0, "custo": 68.3, "peso": 15.85}, {"nome": "Vedamil / Manta Líquida Balde 18Kg", "cat": "Complementos", "sub": "Vedamil", "preco": 150.0, "custo": 79.74, "peso": 18.85}, {"nome": "Borracha Liquida 3,6 Kg", "cat": "Complementos", "sub": "Borracha Líquida", "preco": 86.67, "custo": 37.7, "peso": 4}, {"nome": "Borracha Liquida 14,0 Kg", "cat": "Complementos", "sub": "Borracha Líquida", "preco": 285.0, "custo": 134.14, "peso": 17}, {"nome": "Cimento Queimado Galão", "cat": "Complementos", "sub": "Cimento Queimado", "preco": 40.0, "custo": 10.09, "peso": 3.185}, {"nome": "Cola Branca 0,5Kg", "cat": "Complementos", "sub": "Cola e Solvente", "preco": 7.0, "custo": 3.37, "peso": 0.51}, {"nome": "Cola Branca 1,0Kg", "cat": "Complementos", "sub": "Cola e Solvente", "preco": 11.5, "custo": 5.95, "peso": 1.01}, {"nome": "Aguarras 0,900", "cat": "Complementos", "sub": "Cola e Solvente", "preco": 15.0, "custo": 8.7, "peso": 0.81}, {"nome": "Aguarras 0,450", "cat": "Complementos", "sub": "Cola e Solvente", "preco": 7.8, "custo": 4.77, "peso": 0.46}];
+const cats = [...new Set(produtos.map(p => p.cat))];
+
+let catAtiva = "todas", subAtiva = null, ordem = "nome";
+let sortCol = "mcPct", sortDir = -1;
+let donutChart = null, simProd = null;
+
+// ── Navegação de abas ────────────────────────────────────────────
+function irPara(btn, pg) {
+  document.querySelectorAll(".aba").forEach(a => a.classList.remove("ativa"));
+  document.querySelectorAll(".pagina").forEach(p => p.classList.remove("ativa"));
+  btn.classList.add("ativa");
+  document.getElementById(pg).classList.add("ativa");
+  if (pg === "pg-simulador")  { renderListaSim(produtos); }
+  if (pg === "pg-comparador") { atualizarComp(); }
+}
+
+// ── Cálculo de MC ────────────────────────────────────────────────
+function calcMC(p, imp, com, fr, precoOpt) {
+  const preco = (precoOpt !== undefined) ? precoOpt : p.preco;
+  const frete = (p.peso / 1000) * fr;
+  const fab   = p.custo;
+  const cv    = fab + frete;
+  const plv   = preco * (1 - imp - com);
+  const mc    = plv - cv;
+  const mcPct = (plv > 0) ? (mc / plv) * 100 : 0;
+  const pmin  = cv / ((1 - imp - com) * (1 - 0.25));
+  return { frete, fab, cv, plv, mc, mcPct, pmin,
+           impR: preco * imp, comR: preco * com, preco };
+}
+
+function cor(p)  { return p >= 35 ? "#639922" : p >= 20 ? "#EF9F27" : "#E24B4A"; }
+function pill(p) {
+  var c = p >= 35 ? "p-g" : p >= 20 ? "p-a" : "p-r";
+  var t = p >= 35 ? "Saudável" : p >= 20 ? "Atenção" : "Prejuízo";
+  return '<span class="pill ' + c + '">' + t + '</span>';
+}
+function fmt(n)  { return "R$ " + Math.abs(n).toFixed(2).replace(".", ","); }
+function fmtP(n) { return n.toFixed(1) + "%"; }
+
+// ── Controles do Painel ─────────────────────────────────────────
+function setCat(c)  { catAtiva = c; subAtiva = null; atualizarPainel(); }
+function setSub(s)  { subAtiva = s; atualizarPainel(); }
+function setOrdem(o) {
+  ordem = o;
+  document.querySelectorAll(".ord-btn").forEach(b => b.classList.remove("ativo"));
+  document.getElementById("ord-" + o).classList.add("ativo");
+  atualizarPainel();
+}
+function sortTab(col) {
+  sortDir = (sortCol === col) ? sortDir * -1 : (col === "nome" || col === "sub" ? 1 : -1);
+  sortCol = col;
+  atualizarPainel();
+}
+function aplicarOrdem(arr) {
+  return [...arr].sort(function(a, b) {
+    if (ordem === "maior") return b.mcPct - a.mcPct;
+    if (ordem === "menor") return a.mcPct - b.mcPct;
+    if (ordem === "preco") return b.preco - a.preco;
+    if (ordem === "prej")  return a.mcPct - b.mcPct;
+    return a.nome.localeCompare(b.nome, "pt-BR");
+  });
+}
+
+// ── Painel Geral ────────────────────────────────────────────────
+function atualizarPainel() {
+  var imp = parseFloat(document.getElementById("p-regiao").value);
+  var com = parseFloat(document.getElementById("p-comissao").value);
+  var fr  = parseFloat(document.getElementById("p-frete").value);
+
+  var todos = produtos.map(function(p) {
+    var r = calcMC(p, imp, com, fr);
+    return Object.assign({}, p, r);
+  });
+
+  var media = todos.reduce(function(s, r) { return s + r.mcPct; }, 0) / todos.length;
+  var ok  = todos.filter(function(r) { return r.mcPct >= 35; }).length;
+  var at  = todos.filter(function(r) { return r.mcPct >= 20 && r.mcPct < 35; }).length;
+  var pr  = todos.filter(function(r) { return r.mc < 0; }).length;
+
+  var elMC = document.getElementById("p-mc");
+  elMC.textContent = fmtP(media);
+  elMC.style.color = cor(media);
+  document.getElementById("p-mc-sub").textContent = "todos os " + todos.length + " SKUs";
+  document.getElementById("p-ok").textContent     = ok;
+  document.getElementById("p-ok-sub").textContent = ((ok / todos.length) * 100).toFixed(0) + "% do portfólio";
+  document.getElementById("p-at").textContent     = at;
+  document.getElementById("p-at-sub").textContent = ((at / todos.length) * 100).toFixed(0) + "% do portfólio";
+  document.getElementById("p-pr").textContent     = pr;
+  document.getElementById("p-pr-sub").textContent = pr > 0 ? "requer ação imediata" : "nenhum SKU";
+
+  // Nav categorias
+  var navHTML = '<button class="cat-btn ' + (catAtiva === "todas" ? "ativo" : "") + '" onclick="setCat(\'todas\')">Todas</button>';
+  cats.forEach(function(c) {
+    navHTML += '<button class="cat-btn ' + (catAtiva === c ? "ativo" : "") + '" onclick="setCat(\'' + c + '\')">' + c + '</button>';
+  });
+  document.getElementById("p-nav-cats").innerHTML = navHTML;
+
+  // Barras
+  var bcEl = document.getElementById("p-breadcrumb");
+  var grupos = [];
+
+  if (catAtiva === "todas") {
+    cats.forEach(function(cat) {
+      var its = todos.filter(function(r) { return r.cat === cat; });
+      var avg = its.reduce(function(s, r) { return s + r.mcPct; }, 0) / its.length;
+      grupos.push({ key: cat, label: cat, avg: avg, count: its.length, nivel: "cat" });
+    });
+    bcEl.innerHTML = "";
+  } else if (!subAtiva) {
+    var subs = [...new Set(todos.filter(function(r) { return r.cat === catAtiva; }).map(function(r) { return r.sub; }))];
+    subs.forEach(function(sub) {
+      var its = todos.filter(function(r) { return r.cat === catAtiva && r.sub === sub; });
+      var avg = its.reduce(function(s, r) { return s + r.mcPct; }, 0) / its.length;
+      grupos.push({ key: sub, label: sub, avg: avg, count: its.length, nivel: "sub" });
+    });
+    bcEl.innerHTML = '<span class="bc-link" onclick="setCat(\'todas\')">Todas</span><span class="bc-sep">›</span><span>' + catAtiva + '</span>';
+  } else {
+    todos.filter(function(r) { return r.cat === catAtiva && r.sub === subAtiva; }).forEach(function(r) {
+      grupos.push({ key: r.nome, label: r.nome, avg: r.mcPct, count: 1, nivel: "prod" });
+    });
+    bcEl.innerHTML = '<span class="bc-link" onclick="setCat(\'todas\')">Todas</span><span class="bc-sep">›</span>' +
+      '<span class="bc-link" onclick="setCat(\'' + catAtiva + '\')">' + catAtiva + '</span>' +
+      '<span class="bc-sep">›</span><span>' + subAtiva + '</span>';
+  }
+
+  // Aplica ordem nas barras
+  grupos = grupos.map(function(g) { return Object.assign({}, g, { mcPct: g.avg, nome: g.label }); });
+  grupos = aplicarOrdem(grupos);
+
+  var maxV = Math.max.apply(null, grupos.map(function(g) { return Math.abs(g.avg); }));
+  maxV = Math.max(maxV, 1);
+
+  var barsHTML = "";
+  grupos.forEach(function(g) {
+    var pct = Math.max(2, (Math.abs(g.avg) / maxV) * 100);
+    var clk = "";
+    if (g.nivel === "cat") {
+      clk = 'onclick="setCat(\'' + g.key + '\')" class="bar-row clicavel"';
+    } else if (g.nivel === "sub") {
+      clk = 'onclick="setSub(\'' + g.key + '\')" class="bar-row clicavel"';
+    } else {
+      clk = 'class="bar-row"';
+    }
+    var suffix = g.count > 1 ? " (" + g.count + ")" : ":";
+    barsHTML += '<div ' + clk + '>' +
+      '<div class="bar-nome" title="' + g.label + '">' + g.label + suffix + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct.toFixed(0) + '%;background:' + cor(g.avg) + '"></div></div>' +
+      '<div class="bar-val" style="color:' + cor(g.avg) + '">' + g.avg.toFixed(1) + '%</div>' +
+      '</div>';
+  });
+  document.getElementById("p-bars").innerHTML = barsHTML;
+
+  // Donut
+  if (donutChart) donutChart.destroy();
+  donutChart = new Chart(document.getElementById("p-donut"), {
+    type: "doughnut",
+    data: {
+      labels: ["Saudável", "Atenção", "Prejuízo"],
+      datasets: [{ data: [ok, at, pr], backgroundColor: ["#639922", "#EF9F27", "#E24B4A"], borderWidth: 0, hoverOffset: 4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: "65%",
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return " " + c.label + ": " + c.raw + " SKUs"; } } } }
+    }
+  });
+
+  // Tabela
+  var filtrados = todos;
+  if (catAtiva !== "todas") filtrados = filtrados.filter(function(r) { return r.cat === catAtiva; });
+  if (subAtiva)             filtrados = filtrados.filter(function(r) { return r.sub === subAtiva; });
+
+  filtrados = [...filtrados].sort(function(a, b) {
+    var va = typeof a[sortCol] === "string" ? a[sortCol] : +a[sortCol];
+    var vb = typeof b[sortCol] === "string" ? b[sortCol] : +b[sortCol];
+    return (typeof va === "string" ? va.localeCompare(vb, "pt-BR") : va - vb) * sortDir;
+  });
+  if (sortCol === "mcPct") filtrados = aplicarOrdem(filtrados);
+
+  var titulo = "Todos os produtos (" + filtrados.length + ")";
+  if (catAtiva !== "todas") titulo = catAtiva + (subAtiva ? " › " + subAtiva : "") + " (" + filtrados.length + " produtos)";
+  document.getElementById("p-tab-titulo").textContent = titulo;
+
+  var tbodyHTML = "";
+  filtrados.forEach(function(r) {
+    var al = r.preco < r.pmin ? ' class="alerta"' : "";
+    tbodyHTML += "<tr>" +
+      '<td title="' + r.nome + '">' + r.nome + "</td>" +
+      '<td style="color:#888">' + r.sub + "</td>" +
+      "<td>" + fmt(r.preco) + "</td>" +
+      "<td>" + fmt(r.cv) + "</td>" +
+      '<td style="color:' + cor(r.mcPct) + ';font-weight:700">' + fmt(r.mc) + "</td>" +
+      '<td style="color:' + cor(r.mcPct) + ';font-weight:700">' + fmtP(r.mcPct) + "</td>" +
+      "<td>" + pill(r.mcPct) + "</td>" +
+      "<td" + al + ">" + fmt(r.pmin) + "</td>" +
+      "</tr>";
+  });
+  document.getElementById("p-tbody").innerHTML = tbodyHTML;
+}
+
+// ── Simulador ────────────────────────────────────────────────────
+function renderListaSim(lista) {
+  var html = "";
+  lista.forEach(function(p) {
+    var idx = produtos.indexOf(p);
+    var sel = (simProd && simProd.nome === p.nome) ? " sel" : "";
+    html += '<div class="sim-item' + sel + '" onclick="selecionarProd(' + idx + ')">' +
+      '<div class="sim-item-nome">' + p.nome + '</div>' +
+      '<div class="sim-item-cat">' + p.cat + ' › ' + p.sub + '</div>' +
+      '</div>';
+  });
+  document.getElementById("s-lista").innerHTML = html;
+}
+
+function filtrarSim() {
+  var q = document.getElementById("s-busca").value.toLowerCase();
+  renderListaSim(produtos.filter(function(p) {
+    return p.nome.toLowerCase().includes(q) || p.sub.toLowerCase().includes(q);
+  }));
+}
+
+function selecionarProd(idx) {
+  simProd = produtos[idx];
+  document.getElementById("s-prod-nome").textContent = simProd.nome;
+  var sl = document.getElementById("s-slider");
+  sl.max   = Math.max(simProd.preco * 3, 500).toFixed(0);
+  sl.value = simProd.preco;
+  document.getElementById("s-num").value = simProd.preco;
+  renderListaSim(produtos);
+  atualizarSim();
+}
+
+function syncP(orig) {
+  if (orig === "slider") document.getElementById("s-num").value   = document.getElementById("s-slider").value;
+  else                   document.getElementById("s-slider").value = document.getElementById("s-num").value;
+  atualizarSim();
+}
+
+function atualizarSim() {
+  if (!simProd) return;
+  var imp    = parseFloat(document.getElementById("s-regiao").value);
+  var com    = parseFloat(document.getElementById("s-comissao").value);
+  var fr     = parseFloat(document.getElementById("s-frete").value);
+  var mcAlvo = parseFloat(document.getElementById("s-mc-alvo").value);
+  var preco  = parseFloat(document.getElementById("s-num").value) || 0;
+  var r      = calcMC(simProd, imp, com, fr, preco);
+
+  document.getElementById("s-r-preco").textContent  = fmt(preco);
+  document.getElementById("s-r-imp").textContent    = "- " + fmt(r.impR);
+  document.getElementById("s-r-com").textContent    = "- " + fmt(r.comR);
+  document.getElementById("s-r-plv").textContent    = fmt(r.plv);
+  document.getElementById("s-r-fab").textContent    = "- " + fmt(r.fab);
+  document.getElementById("s-r-frete").textContent  = "- " + fmt(r.frete);
+  document.getElementById("s-r-mc").textContent     = fmt(r.mc);
+  document.getElementById("s-r-mcpct").textContent  = fmtP(r.mcPct);
+  var pmin = r.cv / ((1 - imp - com) * (1 - mcAlvo));
+  document.getElementById("s-r-pmin").textContent   = fmt(pmin);
+
+  // Barra de decomposição
+  var tot  = Math.max(preco, r.cv + r.impR + r.comR, 0.01);
+  var pFab = (r.fab / tot * 100).toFixed(1);
+  var pFr  = (r.frete / tot * 100).toFixed(1);
+  var pImp = ((r.impR + r.comR) / tot * 100).toFixed(1);
+  var pMC  = Math.max(0, r.mc / tot * 100).toFixed(1);
+  document.getElementById("s-barra").innerHTML =
+    '<div style="width:' + pFab + '%;background:#1F3864"></div>' +
+    '<div style="width:' + pFr  + '%;background:#EF9F27"></div>' +
+    '<div style="width:' + pImp + '%;background:#E24B4A"></div>' +
+    '<div style="width:' + pMC  + '%;background:#EAF3DE"></div>';
+
+  // Alerta
+  var el = document.getElementById("s-alerta");
+  if (preco <= 0) {
+    el.textContent = ""; el.className = "alerta-sim";
+  } else if (r.mcPct >= 35) {
+    el.textContent = "Saudável — MC " + fmtP(r.mcPct) + " acima de 35%";
+    el.className = "alerta-sim alerta-ok";
+  } else if (r.mcPct >= mcAlvo * 100) {
+    el.textContent = "Atenção — MC " + fmtP(r.mcPct) + ", acima do alvo mas abaixo de 35%";
+    el.className = "alerta-sim alerta-warn";
+  } else {
+    el.textContent = "Preço insuficiente — MC " + fmtP(r.mcPct) + ". Mínimo: " + fmt(pmin);
+    el.className = "alerta-sim alerta-danger";
+  }
+}
+
+// ── Comparador ──────────────────────────────────────────────────
+function atualizarComp() {
+  var impA = parseFloat(document.getElementById("ca-reg").value);
+  var comA = parseFloat(document.getElementById("ca-com").value);
+  var frA  = parseFloat(document.getElementById("ca-fr").value);
+  var impB = parseFloat(document.getElementById("cb-reg").value);
+  var comB = parseFloat(document.getElementById("cb-com").value);
+  var frB  = parseFloat(document.getElementById("cb-fr").value);
+
+  var resA = produtos.map(function(p) { return Object.assign({}, p, calcMC(p, impA, comA, frA)); });
+  var resB = produtos.map(function(p) { return Object.assign({}, p, calcMC(p, impB, comB, frB)); });
+
+  function kpiHtml(res) {
+    var med = res.reduce(function(s, r) { return s + r.mcPct; }, 0) / res.length;
+    var ok  = res.filter(function(r) { return r.mcPct >= 35; }).length;
+    var at  = res.filter(function(r) { return r.mcPct >= 20 && r.mcPct < 35; }).length;
+    var pr  = res.filter(function(r) { return r.mc < 0; }).length;
+    return '<div class="comp-linha"><span>MC Média</span><span style="color:' + cor(med) + ';font-weight:700">' + fmtP(med) + '</span></div>' +
+      '<div class="comp-linha"><span>Saudáveis ≥35%</span><span style="color:#639922;font-weight:700">' + ok + ' SKUs</span></div>' +
+      '<div class="comp-linha"><span>Atenção 20–35%</span><span style="color:#EF9F27;font-weight:700">' + at + ' SKUs</span></div>' +
+      '<div class="comp-linha"><span>Com prejuízo</span><span style="color:#E24B4A;font-weight:700">' + pr + ' SKUs</span></div>';
+  }
+
+  document.getElementById("ca-kpis").innerHTML = kpiHtml(resA);
+  document.getElementById("cb-kpis").innerHTML = kpiHtml(resB);
+
+  var diffs = resA.map(function(a, i) {
+    return { nome: a.nome, mcA: a.mcPct, mcB: resB[i].mcPct, diff: Math.abs(a.mcPct - resB[i].mcPct) };
+  }).sort(function(a, b) { return b.diff - a.diff; }).slice(0, 20);
+
+  var maxMC = Math.max.apply(null, diffs.map(function(d) { return Math.max(d.mcA, d.mcB); }));
+  maxMC = Math.max(maxMC, 1);
+
+  var diffHTML = "";
+  diffs.forEach(function(d) {
+    var wA = (Math.max(0, d.mcA) / maxMC * 100).toFixed(1);
+    var wB = (Math.max(0, d.mcB) / maxMC * 100).toFixed(1);
+    diffHTML += '<div class="diff-row">' +
+      '<div class="diff-nome" title="' + d.nome + '">' + d.nome + '</div>' +
+      '<div class="diff-col"><div class="diff-bar" style="width:' + wA + '%;background:#2E75B6"></div></div>' +
+      '<div class="diff-col"><div class="diff-bar" style="width:' + wB + '%;background:#639922"></div></div>' +
+      '<div class="diff-vals">' +
+        '<span style="color:#2E75B6">' + fmtP(d.mcA) + '</span>' +
+        '<span style="color:#639922">' + fmtP(d.mcB) + '</span>' +
+      '</div></div>';
+  });
+  document.getElementById("comp-diff").innerHTML = diffHTML;
+}
+
+// ── Init ────────────────────────────────────────────────────────
+atualizarPainel();
+renderListaSim(produtos);
+
+</script>
+</body>
+</html>
