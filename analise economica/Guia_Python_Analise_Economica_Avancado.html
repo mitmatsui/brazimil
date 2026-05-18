@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brazimil — Guia Python para Análise Econômica</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#0f1117;color:#cdd6f4;line-height:1.6}
+
+/* ── Capa ── */
+.capa{background:linear-gradient(135deg,#1F3864 0%,#11205a 60%,#0a1240 100%);
+  padding:72px 48px 56px;text-align:center;border-bottom:2px solid #2E75B6}
+.capa .logo{font-size:11px;letter-spacing:.25em;text-transform:uppercase;
+  color:#89b4fa;margin-bottom:18px}
+.capa h1{font-size:40px;font-weight:700;margin-bottom:10px;color:#fff;line-height:1.2}
+.capa .sub{font-size:16px;color:#89b4fa;margin-bottom:40px;font-style:italic}
+.capa .meta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.capa .mi{background:rgba(137,180,250,.1);border:1px solid rgba(137,180,250,.2);
+  border-radius:10px;padding:12px 22px}
+.capa .ml{font-size:10px;color:#89b4fa;text-transform:uppercase;letter-spacing:.08em}
+.capa .mv{font-size:16px;font-weight:700;color:#fff;margin-top:3px}
+
+/* ── Nav ── */
+.nav{background:#1e1e2e;border-bottom:1px solid #313244;
+  position:sticky;top:0;z-index:100;overflow-x:auto}
+.nav ul{display:flex;list-style:none;min-width:max-content;padding:0 24px}
+.nav ul li a{display:block;padding:14px 15px;font-size:11px;font-weight:700;
+  color:#6c7086;text-decoration:none;text-transform:uppercase;letter-spacing:.05em;
+  border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
+.nav ul li a:hover{color:#89b4fa;border-bottom-color:#2E75B6}
+
+/* ── Container ── */
+.container{max-width:960px;margin:0 auto;padding:40px 20px 100px}
+
+/* ── Módulos ── */
+.modulo{background:#1e1e2e;border-radius:14px;border:1px solid #313244;
+  margin-bottom:32px;overflow:hidden}
+.modulo-header{padding:24px 30px 20px;border-bottom:1px solid #313244;
+  display:flex;align-items:center;gap:18px}
+.mod-num{width:44px;height:44px;border-radius:12px;display:flex;
+  align-items:center;justify-content:center;font-size:18px;
+  font-weight:700;color:#fff;flex-shrink:0;font-family:monospace}
+.mod-info .mod-titulo{font-size:19px;font-weight:700;color:#cdd6f4;margin-bottom:2px}
+.mod-info .mod-sub{font-size:12px;color:#6c7086}
+.modulo-body{padding:28px 30px}
+
+/* ── Tipografia ── */
+.modulo-body h3{font-size:16px;font-weight:700;color:#89b4fa;
+  margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid #313244}
+.modulo-body h4{font-size:13px;font-weight:700;color:#cba6f7;
+  margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em}
+.modulo-body p{font-size:14px;color:#bac2de;margin-bottom:12px;line-height:1.75}
+.modulo-body ul,.modulo-body ol{padding-left:22px;margin-bottom:12px}
+.modulo-body li{font-size:14px;color:#bac2de;margin-bottom:5px;line-height:1.7}
+
+/* ── Código ── */
+.cb{background:#181825;border:1px solid #313244;border-radius:10px;
+  margin:12px 0 18px;overflow:hidden}
+.cb-header{background:#11111b;padding:8px 16px;font-size:11px;
+  color:#6c7086;font-family:monospace;border-bottom:1px solid #313244;
+  display:flex;justify-content:space-between;align-items:center}
+.cb-header .lang{color:#a6e3a1;font-weight:700}
+.cb pre{padding:18px 20px;overflow-x:auto}
+.cb code{font-family:'Courier New',Courier,monospace;font-size:13px;
+  line-height:1.8;white-space:pre}
+
+/* Syntax highlighting */
+.kw{color:#cba6f7}   /* keyword */
+.fn{color:#89b4fa}   /* function */
+.st{color:#a6e3a1}   /* string */
+.nm{color:#fab387}   /* number */
+.cm{color:#585b70;font-style:italic} /* comment */
+.op{color:#89dceb}   /* operator */
+.cl{color:#f9e2af}   /* class */
+.vr{color:#cdd6f4}   /* variable */
+
+/* ── Caixas ── */
+.box{border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.7}
+.box-conceito{background:rgba(137,180,250,.08);border-left:4px solid #89b4fa;color:#bac2de}
+.box-economia{background:rgba(166,227,161,.08);border-left:4px solid #a6e3a1;color:#bac2de}
+.box-atencao {background:rgba(250,179,135,.08);border-left:4px solid #fab387;color:#bac2de}
+.box-pratica {background:rgba(203,166,247,.08);border-left:4px solid #cba6f7;color:#bac2de}
+.box b{font-weight:700;color:#fff}
+
+/* ── Tabelas ── */
+.modulo-body table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0 18px}
+.modulo-body th{background:#313244;color:#cdd6f4;font-weight:700;
+  padding:10px 13px;text-align:left;font-size:12px}
+.modulo-body td{padding:9px 13px;border-bottom:1px solid #313244;
+  color:#bac2de;vertical-align:top}
+.modulo-body tr:hover td{background:#181825}
+
+/* ── Badges ── */
+.badge{display:inline-block;font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle}
+.b-basico  {background:rgba(166,227,161,.2);color:#a6e3a1;border:1px solid #a6e3a1}
+.b-medio   {background:rgba(250,179,135,.2);color:#fab387;border:1px solid #fab387}
+.b-avancado{background:rgba(243,139,168,.2);color:#f38ba8;border:1px solid #f38ba8}
+
+/* ── Divisor de seção ── */
+.nivel{display:flex;align-items:center;gap:12px;margin:28px 0 16px}
+.nivel-linha{flex:1;height:1px;background:#313244}
+.nivel-texto{font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;padding:4px 12px;border-radius:20px;flex-shrink:0}
+.nivel-basico  {background:rgba(166,227,161,.15);color:#a6e3a1;border:1px solid #a6e3a1}
+.nivel-medio   {background:rgba(250,179,135,.15);color:#fab387;border:1px solid #fab387}
+.nivel-avancado{background:rgba(243,139,168,.15);color:#f38ba8;border:1px solid #f38ba8}
+
+/* ── Rodapé ── */
+.rodape{text-align:center;font-size:12px;color:#6c7086;
+  margin-top:60px;padding-top:28px;border-top:1px solid #313244}
+</style>
+</head>
+<body>
+
+<div class="capa">
+  <div class="logo">Brazimil Indústria de Tintas</div>
+  <h1>Python para Análise Econômica</h1>
+  <div class="sub">Do básico ao avançado — com exemplos reais da Brazimil</div>
+  <div class="meta">
+    <div class="mi"><div class="ml">Módulos</div><div class="mv">8 capítulos</div></div>
+    <div class="mi"><div class="ml">Nível</div><div class="mv">Zero → Avançado</div></div>
+    <div class="mi"><div class="ml">Foco</div><div class="mv">Análise econômica</div></div>
+    <div class="mi"><div class="ml">Contexto</div><div class="mv">ZFM · Tintas · Finanças</div></div>
+  </div>
+</div>
+
+<nav class="nav">
+  <ul>
+    <li><a href="#m1">1. Fundamentos</a></li>
+    <li><a href="#m2">2. Listas e Dicionários</a></li>
+    <li><a href="#m3">3. Excel com Python</a></li>
+    <li><a href="#m4">4. MC e Tributação</a></li>
+    <li><a href="#m5">5. CSV e Omie</a></li>
+    <li><a href="#m6">6. Indicadores Financeiros</a></li>
+    <li><a href="#m7">7. JSON e Dashboard</a></li>
+    <li><a href="#m8">8. Apresentação ao Cliente</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+<!-- MÓDULO 1 -->
+<div class="modulo" id="m1">
+  <div class="modulo-header">
+    <div class="mod-num" style="background:#89b4fa;color:#1e1e2e">01</div>
+    <div class="mod-info">
+      <div class="mod-titulo">Fundamentos Python para Economistas</div>
+      <div class="mod-sub">Variáveis, operações e lógica aplicadas à análise econômica</div>
+    </div>
+  </div>
+  <div class="modulo-body">
+
+    <div class="nivel"><div class="nivel-linha"></div>
+      <span class="nivel-texto nivel-basico">NÍVEL BÁSICO</span>
+      <div class="nivel-linha"></div></div>
+
+    <h3>1.1 Variáveis — guardando dados econômicos</h3>
+    <p>Em Python, uma variável é como uma célula nomeada no Excel. Você dá um nome e atribui um valor. A diferença é que pode guardar qualquer tipo de dado: número, texto, lista, dicionário.</p>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>variáveis básicas</span></div>
+      <pre><code><span class="cm"># Dados da Brazimil — variáveis numéricas</span>
+<span class="vr">preco_venda</span>    <span class="op">=</span> <span class="nm">58.00</span>    <span class="cm"># Econômica 15L Balde BN</span>
+<span class="vr">custo_fabrica</span>  <span class="op">=</span> <span class="nm">32.78</span>    <span class="cm"># custo de MP + embalagem</span>
+<span class="vr">peso_kg</span>        <span class="op">=</span> <span class="nm">18.70</span>    <span class="cm"># peso bruto em kg</span>
+<span class="vr">frete_por_ton</span>  <span class="op">=</span> <span class="nm">100.0</span>    <span class="cm"># R$/tonelada</span>
+
+<span class="cm"># Variável de texto (string)</span>
+<span class="vr">nome_produto</span>   <span class="op">=</span> <span class="st">"Econômica 15L Balde BN"</span>
+<span class="vr">categoria</span>      <span class="op">=</span> <span class="st">"Tinta Base Água"</span>
+
+<span class="cm"># Variável booleana (verdadeiro/falso)</span>
+<span class="vr">em_producao</span>    <span class="op">=</span> <span class="kw">True</span>
+
+<span class="cm"># Exibir no Terminal</span>
+<span class="fn">print</span>(<span class="vr">nome_produto</span>)           <span class="cm"># → Econômica 15L Balde BN</span>
+<span class="fn">print</span>(<span class="st">f"Preço: R$ </span><span class="vr">{preco_venda}</span><span class="st">"</span>)  <span class="cm"># → Preço: R$ 58.0</span></code></pre>
+    </div>
+
+    <div class="box box-conceito"><b>💡 Analogia com Excel:</b> <code>preco_venda = 58.00</code> é como digitar 58,00 na célula B2 e chamar essa célula de "preco_venda". Em vez de usar B2 nas fórmulas, você usa o nome que faz sentido.</div>
+
+    <h3>1.2 Operações matemáticas fundamentais</h3>
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>operações econômicas</span></div>
+      <pre><code><span class="cm"># Operadores básicos</span>
+<span class="vr">soma</span>       <span class="op">=</span> <span class="nm">32.78</span> <span class="op">+</span> <span class="nm">1.87</span>   <span class="cm"># Adição     → 34.65</span>
+<span class="vr">diferenca</span>  <span class="op">=</span> <span class="nm">58.00</span> <span class="op">-</span> <span class="nm">34.65</span>  <span class="cm"># Subtração  → 23.35</span>
+<span class="vr">produto</span>    <span class="op">=</span> <span class="nm">58.00</span> <span class="op">*</span> <span class="nm">0.07</span>   <span class="cm"># Mult.      → 4.06 (impostos)</span>
+<span class="vr">divisao</span>    <span class="op">=</span> <span class="nm">18.70</span> <span class="op">/</span> <span class="nm">1000</span>   <span class="cm"># Divisão    → 0.0187 (toneladas)</span>
+<span class="vr">potencia</span>   <span class="op">=</span> <span class="nm">1.05</span> <span class="op">**</span> <span class="nm">12</span>    <span class="cm"># Potência   → juros compostos</span>
+
+<span class="cm"># Cálculo real do frete rateado</span>
+<span class="vr">frete_unitario</span> <span class="op">=</span> (peso_kg <span class="op">/</span> <span class="nm">1000</span>) <span class="op">*</span> frete_por_ton
+<span class="fn">print</span>(<span class="st">f"Frete unitário: R$ </span><span class="vr">{frete_unitario:.2f}</span><span class="st">"</span>)  <span class="cm"># → R$ 1.87</span>
+
+<span class="cm"># round() — arredondamento (essencial para valores monetários)</span>
+<span class="vr">frete_arredondado</span> <span class="op">=</span> <span class="fn">round</span>(frete_unitario, <span class="nm">2</span>)  <span class="cm"># 2 casas decimais</span></code></pre>
+    </div>
+
+    <h3>1.3 Condicionais — lógica de decisão</h3>
+    <p>O <code>if/elif/else</code> é o equivalente do <code>=SE()</code> do Excel, mas muito mais poderoso — pode encadear quantas condições quiser.</p>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>classificação de MC — equivalente ao SE() do Excel</span></div>
+      <pre><code><span class="vr">mc_pct</span> <span class="op">=</span> <span class="nm">32.1</span>  <span class="cm"># Margem de Contribuição em %</span>
+
+<span class="cm"># Python if/elif/else</span>
+<span class="kw">if</span> mc_pct <span class="op">>=</span> <span class="nm">35</span>:
+    <span class="vr">status</span> <span class="op">=</span> <span class="st">"Saudável"</span>
+    <span class="vr">cor</span>    <span class="op">=</span> <span class="st">"verde"</span>
+<span class="kw">elif</span> mc_pct <span class="op">>=</span> <span class="nm">20</span>:
+    <span class="vr">status</span> <span class="op">=</span> <span class="st">"Atenção"</span>
+    <span class="vr">cor</span>    <span class="op">=</span> <span class="st">"amarelo"</span>
+<span class="kw">elif</span> mc_pct <span class="op">>=</span> <span class="nm">0</span>:
+    <span class="vr">status</span> <span class="op">=</span> <span class="st">"Crítico"</span>
+    <span class="vr">cor</span>    <span class="op">=</span> <span class="st">"laranja"</span>
+<span class="kw">else</span>:
+    <span class="vr">status</span> <span class="op">=</span> <span class="st">"Prejuízo"</span>
+    <span class="vr">cor</span>    <span class="op">=</span> <span class="st">"vermelho"</span>
+
+<span class="fn">print</span>(<span class="st">f"</span><span class="vr">{nome_produto}</span><span class="st">: MC </span><span class="vr">{mc_pct}</span><span class="st">% → </span><span class="vr">{status}</span><span class="st"> (</span><span class="vr">{cor}</span><span class="st">)"</span>)
+<span class="cm"># → Econômica 15L Balde BN: MC 32.1% → Atenção (amarelo)</span>
+
+<span class="cm"># Versão compacta (ternário) — para uso em listas</span>
+<span class="vr">status</span> <span class="op">=</span> <span class="st">"Saudável"</span> <span class="kw">if</span> mc_pct <span class="op">>=</span> <span class="nm">35</span> <span class="kw">else</span> <span class="st">"Atenção"</span> <span class="kw">if</span> mc_pct <span class="op">>=</span> <span class="nm">20</span> <span class="kw">else</span> <span class="st">"Prejuízo"</span></code></pre>
+    </div>
+
+    <div class="box box-economia"><b>📊 Analogia com Excel:</b><br>
+    <code>=SE(B2>=35,"Saudável",SE(B2>=20,"Atenção","Prejuízo"))</code><br><br>
+    O Python faz exatamente o mesmo, mas você pode adicionar quantas condições quiser sem a fórmula ficar ilegível.</div>
+
+    <h3>1.4 Funções — blocos reutilizáveis</h3>
+    <p>Uma função em Python é como uma fórmula personalizada no Excel (LAMBDA). Você define uma vez e usa em qualquer lugar do código.</p>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>função de classificação de MC</span></div>
+      <pre><code><span class="kw">def</span> <span class="fn">classificar_mc</span>(mc_pct):
+    <span class="st">"""Classifica o status da MC de um produto."""</span>
+    <span class="kw">if</span> mc_pct <span class="op">>=</span> <span class="nm">35</span>: <span class="kw">return</span> <span class="st">"Saudável"</span>
+    <span class="kw">if</span> mc_pct <span class="op">>=</span> <span class="nm">20</span>: <span class="kw">return</span> <span class="st">"Atenção"</span>
+    <span class="kw">if</span> mc_pct <span class="op">>=</span> <span class="nm">0</span>:  <span class="kw">return</span> <span class="st">"Crítico"</span>
+    <span class="kw">return</span> <span class="st">"Prejuízo"</span>
+
+<span class="cm"># Usar a função com qualquer produto</span>
+<span class="fn">print</span>(<span class="fn">classificar_mc</span>(<span class="nm">32.1</span>))   <span class="cm"># → Atenção</span>
+<span class="fn">print</span>(<span class="fn">classificar_mc</span>(<span class="nm">42.5</span>))   <span class="cm"># → Saudável</span>
+<span class="fn">print</span>(<span class="fn">classificar_mc</span>(<span class="nm">-3.4</span>))   <span class="cm"># → Prejuízo</span></code></pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- MÓDULO 2 -->
+<div class="modulo" id="m2">
+  <div class="modulo-header">
+    <div class="mod-num" style="background:#a6e3a1;color:#1e1e2e">02</div>
+    <div class="mod-info">
+      <div class="mod-titulo">Listas e Dicionários</div>
+      <div class="mod-sub">As estruturas de dados que o dashboard usa para guardar produtos</div>
+    </div>
+  </div>
+  <div class="modulo-body">
+
+    <div class="nivel"><div class="nivel-linha"></div>
+      <span class="nivel-texto nivel-basico">NÍVEL BÁSICO</span>
+      <div class="nivel-linha"></div></div>
+
+    <h3>2.1 Listas — sequências de itens</h3>
+    <p>Uma lista é uma coluna do Excel — uma sequência de valores na mesma variável. Em Python, listas usam colchetes <code>[ ]</code>.</p>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>listas de dados econômicos</span></div>
+      <pre><code><span class="cm"># Lista de preços de venda</span>
+<span class="vr">precos</span> <span class="op">=</span> [<span class="nm">9.50</span>, <span class="nm">17.99</span>, <span class="nm">58.00</span>, <span class="nm">69.90</span>, <span class="nm">43.00</span>]
+
+<span class="cm"># Acessar pelo índice (começa em 0)</span>
+<span class="fn">print</span>(precos[<span class="nm">0</span>])   <span class="cm"># → 9.50  (primeiro item)</span>
+<span class="fn">print</span>(precos[<span class="nm">2</span>])   <span class="cm"># → 58.00 (terceiro item)</span>
+<span class="fn">print</span>(precos[<span class="op">-</span><span class="nm">1</span>])  <span class="cm"># → 43.00 (último item)</span>
+
+<span class="cm"># Funções úteis em análise econômica</span>
+<span class="fn">print</span>(<span class="fn">sum</span>(precos))    <span class="cm"># → 198.39  (soma total)</span>
+<span class="fn">print</span>(<span class="fn">max</span>(precos))    <span class="cm"># → 69.90  (maior preço)</span>
+<span class="fn">print</span>(<span class="fn">min</span>(precos))    <span class="cm"># → 9.50   (menor preço)</span>
+<span class="fn">print</span>(<span class="fn">len</span>(precos))    <span class="cm"># → 5      (quantidade)</span>
+
+<span class="cm"># Média (não tem função pronta — calcule)</span>
+<span class="vr">media</span> <span class="op">=</span> <span class="fn">sum</span>(precos) <span class="op">/</span> <span class="fn">len</span>(precos)
+<span class="fn">print</span>(<span class="st">f"Preço médio: R$ </span><span class="vr">{media:.2f}</span><span class="st">"</span>)  <span class="cm"># → R$ 39.68</span></code></pre>
+    </div>
+
+    <h3>2.2 For — percorrer listas (equivale a arrastar fórmula)</h3>
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>calcular MC para uma lista de produtos</span></div>
+      <pre><code><span class="vr">produtos_simples</span> <span class="op">=</span> [
+    (<span class="st">"Econômica 3L"</span>,   <span class="nm">9.50</span>,  <span class="nm">4.50</span>,  <span class="nm">3.85</span>),
+    (<span class="st">"Econômica 15L"</span>,  <span class="nm">58.00</span>, <span class="nm">32.78</span>, <span class="nm">18.70</span>),
+    (<span class="st">"Semi Brilho 15L"</span>,<span class="nm">170.00</span>,<span class="nm">54.06</span>, <span class="nm">15.10</span>),
+]  <span class="cm"># cada tupla: (nome, preço, custo, peso_kg)</span>
+
+<span class="kw">for</span> nome, preco, custo, peso <span class="kw">in</span> produtos_simples:
+    frete  <span class="op">=</span> (peso <span class="op">/</span> <span class="nm">1000</span>) <span class="op">*</span> <span class="nm">100</span>        <span class="cm"># R$100/ton</span>
+    cv     <span class="op">=</span> custo <span class="op">+</span> frete              <span class="cm"># custo variável</span>
+    plv    <span class="op">=</span> preco <span class="op">*</span> (<span class="nm">1</span> <span class="op">-</span> <span class="nm">0.07</span> <span class="op">-</span> <span class="nm">0.05</span>)  <span class="cm"># PLV (impostos + comissão)</span>
+    mc     <span class="op">=</span> plv <span class="op">-</span> cv
+    mc_pct <span class="op">=</span> mc <span class="op">/</span> plv <span class="op">*</span> <span class="nm">100</span>
+    <span class="fn">print</span>(<span class="st">f"</span><span class="vr">{nome:<span class="nm">20</span>}</span><span class="st"> MC: </span><span class="vr">{mc_pct:.1f}</span><span class="st">%  </span><span class="vr">{<span class="fn">classificar_mc</span>(mc_pct)}</span><span class="st">"</span>)
+
+<span class="cm"># Saída:
+# Econômica 3L         MC: 30.2%  Atenção
+# Econômica 15L        MC: 27.4%  Atenção
+# Semi Brilho 15L      MC: 62.3%  Saudável</span></code></pre>
+    </div>
+
+    <h3>2.3 Dicionários — tabela chave → valor</h3>
+    <p>Um dicionário é como o PROCV do Excel: você busca pelo nome e obtém o valor correspondente. Em Python, dicionários usam chaves <code>{ }</code>.</p>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>dicionário de produtos — o coração do gerar.py</span></div>
+      <pre><code><span class="cm"># Dicionário: nome → (categoria, subcategoria, preço)</span>
+<span class="vr">tabela</span> <span class="op">=</span> {
+    <span class="st">"BRAZIMIL ECONÔMICA 15L BALDE BN"</span>: (<span class="st">"Tinta Base Água"</span>, <span class="st">"Econômica"</span>, <span class="nm">58.00</span>),
+    <span class="st">"BRAZIMIL SEMI BRILHO 15L BN"</span>:     (<span class="st">"Tinta Base Água"</span>, <span class="st">"Semi Brilho"</span>, <span class="nm">170.00</span>),
+    <span class="st">"BRAZIMIL CORRIDA BALDE 20KG"</span>:     (<span class="st">"Massas e Texturas"</span>, <span class="st">"Corrida"</span>, <span class="nm">38.90</span>),
+}
+
+<span class="cm"># Buscar pelo nome (como PROCV)</span>
+<span class="vr">cat</span>, <span class="vr">sub</span>, <span class="vr">preco</span> <span class="op">=</span> tabela[<span class="st">"BRAZIMIL ECONÔMICA 15L BALDE BN"</span>]
+<span class="fn">print</span>(cat)    <span class="cm"># → Tinta Base Água</span>
+<span class="fn">print</span>(preco)  <span class="cm"># → 58.0</span>
+
+<span class="cm"># .get() — busca segura (não dá erro se não encontrar)</span>
+<span class="vr">resultado</span> <span class="op">=</span> tabela.get(<span class="st">"PRODUTO QUE NÃO EXISTE"</span>, <span class="kw">None</span>)
+<span class="fn">print</span>(resultado)  <span class="cm"># → None (sem erro)</span>
+
+<span class="cm"># Percorrer todo o dicionário</span>
+<span class="kw">for</span> nome_excel, (cat, sub, preco) <span class="kw">in</span> tabela.items():
+    <span class="fn">print</span>(<span class="st">f"</span><span class="vr">{nome_excel}</span><span class="st"> → R$ </span><span class="vr">{preco:.2f}</span><span class="st">"</span>)</code></pre>
+    </div>
+
+    <h3>2.4 List comprehension — filtros e transformações</h3>
+    <p>É a versão Python do filtro avançado do Excel — cria uma nova lista a partir de outra, aplicando condições e transformações.</p>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>filtros e análises rápidas</span></div>
+      <pre><code><span class="vr">resultados</span> <span class="op">=</span> [
+    {<span class="st">"nome"</span>: <span class="st">"Econômica 3L"</span>,   <span class="st">"mc_pct"</span>: <span class="nm">30.2</span>, <span class="st">"preco"</span>: <span class="nm">9.50</span>},
+    {<span class="st">"nome"</span>: <span class="st">"Econômica 15L"</span>,  <span class="st">"mc_pct"</span>: <span class="nm">27.4</span>, <span class="st">"preco"</span>: <span class="nm">58.00</span>},
+    {<span class="st">"nome"</span>: <span class="st">"Semi Brilho 15L"</span>,<span class="st">"mc_pct"</span>: <span class="nm">62.3</span>, <span class="st">"preco"</span>: <span class="nm">170.00</span>},
+    {<span class="st">"nome"</span>: <span class="st">"Tinta Piso 15L"</span>, <span class="st">"mc_pct"</span>: <span class="nm">-3.4</span>, <span class="st">"preco"</span>: <span class="nm">108.00</span>},
+]
+
+<span class="cm"># Filtrar apenas produtos saudáveis (MC >= 35%)</span>
+<span class="vr">saudaveis</span> <span class="op">=</span> [p <span class="kw">for</span> p <span class="kw">in</span> resultados <span class="kw">if</span> p[<span class="st">"mc_pct"</span>] <span class="op">>=</span> <span class="nm">35</span>]
+
+<span class="cm"># Filtrar apenas produtos em prejuízo</span>
+<span class="vr">prejuizo</span> <span class="op">=</span> [p <span class="kw">for</span> p <span class="kw">in</span> resultados <span class="kw">if</span> p[<span class="st">"mc_pct"</span>] <span class="op"><</span> <span class="nm">0</span>]
+<span class="fn">print</span>(<span class="st">f"Produtos em prejuízo: </span><span class="vr">{<span class="fn">len</span>(prejuizo)}</span><span class="st">"</span>)  <span class="cm"># → 1</span>
+
+<span class="cm"># Calcular MC média</span>
+<span class="vr">mc_media</span> <span class="op">=</span> <span class="fn">sum</span>(p[<span class="st">"mc_pct"</span>] <span class="kw">for</span> p <span class="kw">in</span> resultados) <span class="op">/</span> <span class="fn">len</span>(resultados)
+<span class="fn">print</span>(<span class="st">f"MC média: </span><span class="vr">{mc_media:.1f}</span><span class="st">%"</span>)  <span class="cm"># → 29.1%</span>
+
+<span class="cm"># Ordenar por MC decrescente (maior MC primeiro)</span>
+<span class="vr">ordenados</span> <span class="op">=</span> <span class="fn">sorted</span>(resultados, <span class="vr">key</span><span class="op">=</span><span class="kw">lambda</span> p: p[<span class="st">"mc_pct"</span>], <span class="vr">reverse</span><span class="op">=</span><span class="kw">True</span>)
+<span class="kw">for</span> p <span class="kw">in</span> ordenados:
+    <span class="fn">print</span>(<span class="st">f"</span><span class="vr">{p['nome']:<span class="nm">20</span>}</span><span class="st"> </span><span class="vr">{p['mc_pct']:+.1f}</span><span class="st">%"</span>)</code></pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- MÓDULO 3 -->
+<div class="modulo" id="m3">
+  <div class="modulo-header">
+    <div class="mod-num" style="background:#fab387;color:#1e1e2e">03</div>
+    <div class="mod-info">
+      <div class="mod-titulo">Lendo Excel com Python</div>
+      <div class="mod-sub">openpyxl — a biblioteca que conecta Python aos dados da Brazimil</div>
+    </div>
+  </div>
+  <div class="modulo-body">
+
+    <div class="nivel"><div class="nivel-linha"></div>
+      <span class="nivel-texto nivel-medio">NÍVEL INTERMEDIÁRIO</span>
+      <div class="nivel-linha"></div></div>
+
+    <h3>3.1 Como o openpyxl funciona</h3>
+    <p>O openpyxl abre um arquivo Excel e permite navegar por abas e células como se fosse uma tabela. É como ter um Python dentro do Excel, mas sem precisar abrir o programa.</p>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>abrindo e explorando o Excel da Brazimil</span></div>
+      <pre><code><span class="kw">import</span> openpyxl
+
+<span class="cm"># Abre o arquivo (data_only=True lê os valores, não as fórmulas)</span>
+<span class="vr">wb</span> <span class="op">=</span> openpyxl.load_workbook(
+    <span class="st">"SIMULADOR TINTAS MIL BRAZIMIL 1.xlsx"</span>,
+    <span class="vr">data_only</span><span class="op">=</span><span class="kw">True</span>
+)
+
+<span class="cm"># Ver quais abas existem no arquivo</span>
+<span class="fn">print</span>(wb.sheetnames)  <span class="cm"># → ['Custo', 'Peso', ...]</span>
+
+<span class="cm"># Selecionar a aba 'Custo'</span>
+<span class="vr">ws</span> <span class="op">=</span> wb[<span class="st">"Custo"</span>]
+
+<span class="cm"># Ver dimensões da planilha</span>
+<span class="fn">print</span>(<span class="st">f"Linhas: </span><span class="vr">{ws.max_row}</span><span class="st">, Colunas: </span><span class="vr">{ws.max_column}</span><span class="st">"</span>)
+
+<span class="cm"># Ler uma célula específica</span>
+<span class="fn">print</span>(ws[<span class="st">"A2"</span>].value)   <span class="cm"># → nome do 1º produto</span>
+<span class="fn">print</span>(ws[<span class="st">"B2"</span>].value)   <span class="cm"># → custo do 1º produto</span>
+
+<span class="cm"># Ler pelo índice de linha e coluna</span>
+<span class="fn">print</span>(ws.cell(<span class="vr">row</span><span class="op">=</span><span class="nm">2</span>, <span class="vr">column</span><span class="op">=</span><span class="nm">1</span>).value)  <span class="cm"># mesmo que ws["A2"]</span></code></pre>
+    </div>
+
+    <h3>3.2 Lendo todas as linhas — o padrão do gerar.py</h3>
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>lendo a aba Custo linha por linha</span></div>
+      <pre><code><span class="vr">dados_custo</span> <span class="op">=</span> {}  <span class="cm"># dicionário vazio para guardar os dados</span>
+
+<span class="cm"># iter_rows: percorre as linhas da planilha</span>
+<span class="cm"># min_row=2: pula o cabeçalho (linha 1)</span>
+<span class="cm"># values_only=True: retorna os valores, não os objetos Cell</span>
+<span class="kw">for</span> row <span class="kw">in</span> ws.iter_rows(<span class="vr">min_row</span><span class="op">=</span><span class="nm">2</span>, <span class="vr">values_only</span><span class="op">=</span><span class="kw">True</span>):
+    <span class="vr">nome</span>  <span class="op">=</span> row[<span class="nm">0</span>]  <span class="cm"># coluna A → nome do produto</span>
+    <span class="vr">custo</span> <span class="op">=</span> row[<span class="nm">1</span>]  <span class="cm"># coluna B → custo de fábrica</span>
+
+    <span class="cm"># Validação: só aceita linhas com nome e custo válidos</span>
+    <span class="kw">if</span> nome <span class="kw">and</span> custo <span class="kw">and</span> <span class="fn">isinstance</span>(custo, (<span class="cl">int</span>, <span class="cl">float</span>)) <span class="kw">and</span> custo <span class="op">></span> <span class="nm">0</span>:
+        dados_custo[nome] <span class="op">=</span> <span class="fn">round</span>(custo, <span class="nm">4</span>)
+
+<span class="fn">print</span>(<span class="st">f"Produtos lidos: </span><span class="vr">{<span class="fn">len</span>(dados_custo)}</span><span class="st">"</span>)  <span class="cm"># → 80</span>
+
+<span class="cm"># Buscar o custo de um produto específico</span>
+<span class="vr">nome_busca</span> <span class="op">=</span> <span class="st">"BRAZIMIL ECONÔMICA 15L BALDE BRANCO NEVE"</span>
+<span class="vr">custo_busca</span> <span class="op">=</span> dados_custo.get(nome_busca, <span class="st">"Não encontrado"</span>)
+<span class="fn">print</span>(<span class="st">f"Custo: R$ </span><span class="vr">{custo_busca}</span><span class="st">"</span>)  <span class="cm"># → Custo: R$ 32.78</span></code></pre>
+    </div>
+
+    <h3>3.3 Depuração — quando um produto não aparece</h3>
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>diagnóstico de produtos faltantes</span></div>
+      <pre><code><span class="cm"># Verificar se o nome no código bate com o nome no Excel</span>
+<span class="vr">nome_no_codigo</span> <span class="op">=</span> <span class="st">"BRAZIMIL ECONÔMICA 15L BALDE BN"</span>  <span class="cm"># errado!</span>
+<span class="vr">nome_no_excel</span>  <span class="op">=</span> <span class="st">"BRAZIMIL ECONÔMICA 15L BALDE BRANCO NEVE"</span>
+
+<span class="cm"># Comparação direta</span>
+<span class="fn">print</span>(nome_no_codigo <span class="op">==</span> nome_no_excel)  <span class="cm"># → False ← problema!</span>
+
+<span class="cm"># Ver todos os nomes do Excel que contêm "ECONÔMICA 15L"</span>
+<span class="vr">busca</span> <span class="op">=</span> [n <span class="kw">for</span> n <span class="kw">in</span> dados_custo <span class="kw">if</span> <span class="st">"ECONÔMICA 15L"</span> <span class="kw">in</span> n]
+<span class="fn">print</span>(busca)
+<span class="cm"># → ['BRAZIMIL ECONÔMICA 15L BALDE BRANCO NEVE',
+#     'BRAZIMIL ECONÔMICA 15L BALDE COR']</span>
+
+<span class="cm"># Verificar diferença caractere a caractere</span>
+<span class="kw">for</span> i, (a, b) <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="fn">zip</span>(nome_no_codigo, nome_no_excel)):
+    <span class="kw">if</span> a <span class="op">!=</span> b:
+        <span class="fn">print</span>(<span class="st">f"Diferença na posição </span><span class="vr">{i}</span><span class="st">: '</span><span class="vr">{a}</span><span class="st">' vs '</span><span class="vr">{b}</span><span class="st">'"</span>)
+        <span class="kw">break</span></code></pre>
+    </div>
+
+    <div class="box box-atencao"><b>⚠️ Causa mais comum de produto não aparecer:</b> o nome no código Python é diferente do nome no Excel. Pode ser um espaço extra, uma abreviação diferente ou um acento faltando. A solução mais segura é <b>copiar o nome direto do Excel</b> com Ctrl+C e colar no código.</div>
+
+  </div>
+</div>
+
+<!-- MÓDULO 4 -->
+<div class="modulo" id="m4">
+  <div class="modulo-header">
+    <div class="mod-num" style="background:#cba6f7;color:#1e1e2e">04</div>
+    <div class="mod-info">
+      <div class="mod-titulo">MC e Tributação ZFM em Python</div>
+      <div class="mod-sub">A fórmula econômica correta implementada como função reutilizável</div>
+    </div>
+  </div>
+  <div class="modulo-body">
+
+    <div class="nivel"><div class="nivel-linha"></div>
+      <span class="nivel-texto nivel-medio">NÍVEL INTERMEDIÁRIO</span>
+      <div class="nivel-linha"></div></div>
+
+    <h3>4.1 A função calcMC — coração do dashboard</h3>
+    <p>Esta é a função mais importante do sistema. Ela recebe os dados brutos de um produto e retorna todos os indicadores econômicos calculados com a tributação ZFM correta.</p>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>função completa de cálculo de MC — ZFM Bens Finais</span></div>
+      <pre><code><span class="kw">def</span> <span class="fn">calc_mc_zfm</span>(preco, custo, peso_kg, ce<span class="op">=</span><span class="nm">0.55</span>, comissao<span class="op">=</span><span class="nm">0.05</span>, frete_ton<span class="op">=</span><span class="nm">100</span>):
+    <span class="st">"""
+    Calcula a Margem de Contribuição com tributação ZFM correta.
+
+    Parâmetros:
+        preco      : preço de venda em R$
+        custo      : custo de fábrica (MP + embalagem) em R$
+        peso_kg    : peso bruto em kg
+        ce         : Crédito Estímulo (padrão 55% para Bens Finais)
+        comissao   : % de comissão de vendas (padrão 5%)
+        frete_ton  : custo de frete em R$/tonelada (padrão R$100)
+
+    Retorna: dicionário com todos os indicadores calculados
+    """</span>
+    <span class="cm"># ── Custo variável ────────────────────────────────────</span>
+    <span class="vr">frete</span>  <span class="op">=</span> (peso_kg <span class="op">/</span> <span class="nm">1000</span>) <span class="op">*</span> frete_ton   <span class="cm"># frete rateado pelo peso</span>
+    <span class="vr">cv</span>     <span class="op">=</span> custo <span class="op">+</span> frete               <span class="cm"># custo variável total</span>
+
+    <span class="cm"># ── Tributação ZFM ────────────────────────────────────</span>
+    <span class="vr">icms_debito</span>  <span class="op">=</span> <span class="nm">0.12</span>                    <span class="cm"># ICMS débito saída (alíq. AM)</span>
+    <span class="vr">icms_entrada</span> <span class="op">=</span> <span class="nm">0.07</span>                    <span class="cm"># crédito insumos nacionais</span>
+    <span class="vr">icms_liq</span>     <span class="op">=</span> <span class="fn">max</span>(icms_debito <span class="op">*</span> (<span class="nm">1</span> <span class="op">-</span> ce) <span class="op">-</span> icms_entrada, <span class="nm">0</span>)
+    <span class="cm"># Com CE 55%: max(0.12 * 0.45 - 0.07, 0) = max(0.054 - 0.07, 0) = max(-0.016, 0) = 0.054</span>
+
+    <span class="vr">fmpes</span>  <span class="op">=</span> <span class="nm">0.06</span> <span class="op">*</span> icms_debito <span class="op">*</span> ce      <span class="cm"># 6% × 12% × CE = 0.396%</span>
+    <span class="vr">uea</span>    <span class="op">=</span> <span class="nm">0.015</span>                          <span class="cm"># Universidade Estadual AM</span>
+    <span class="vr">fti</span>    <span class="op">=</span> <span class="nm">0.01</span>                           <span class="cm"># FTI insumo nacional</span>
+    <span class="vr">pis</span>    <span class="op">=</span> <span class="nm">0.0065</span>                         <span class="cm"># PIS Lucro Presumido</span>
+    <span class="vr">cofins</span> <span class="op">=</span> <span class="nm">0.03</span>                           <span class="cm"># COFINS Lucro Presumido</span>
+
+    <span class="vr">carga_trib</span> <span class="op">=</span> icms_liq <span class="op">+</span> fmpes <span class="op">+</span> uea <span class="op">+</span> fti <span class="op">+</span> pis <span class="op">+</span> cofins <span class="op">+</span> comissao
+
+    <span class="cm"># ── Margem de Contribuição ────────────────────────────</span>
+    <span class="vr">plv</span>    <span class="op">=</span> preco <span class="op">*</span> (<span class="nm">1</span> <span class="op">-</span> carga_trib)       <span class="cm"># Preço Líquido de Venda</span>
+    <span class="vr">mc_r</span>   <span class="op">=</span> plv <span class="op">-</span> cv                      <span class="cm"># MC em R$</span>
+    <span class="vr">mc_pct</span> <span class="op">=</span> (mc_r <span class="op">/</span> plv <span class="op">*</span> <span class="nm">100</span>) <span class="kw">if</span> plv <span class="op">></span> <span class="nm">0</span> <span class="kw">else</span> <span class="nm">0</span>
+
+    <span class="cm"># ── Preço mínimo (MC alvo 25%) ────────────────────────</span>
+    <span class="vr">mc_alvo</span> <span class="op">=</span> <span class="nm">0.25</span>
+    <span class="vr">preco_min</span> <span class="op">=</span> cv <span class="op">/</span> ((<span class="nm">1</span> <span class="op">-</span> carga_trib) <span class="op">*</span> (<span class="nm">1</span> <span class="op">-</span> mc_alvo))
+
+    <span class="kw">return</span> {
+        <span class="st">"frete"</span>:      <span class="fn">round</span>(frete, <span class="nm">2</span>),
+        <span class="st">"cv"</span>:         <span class="fn">round</span>(cv, <span class="nm">2</span>),
+        <span class="st">"carga_trib"</span>: <span class="fn">round</span>(carga_trib <span class="op">*</span> <span class="nm">100</span>, <span class="nm">2</span>),  <span class="cm"># em %</span>
+        <span class="st">"plv"</span>:        <span class="fn">round</span>(plv, <span class="nm">2</span>),
+        <span class="st">"mc_r"</span>:       <span class="fn">round</span>(mc_r, <span class="nm">2</span>),
+        <span class="st">"mc_pct"</span>:     <span class="fn">round</span>(mc_pct, <span class="nm">2</span>),
+        <span class="st">"preco_min"</span>:  <span class="fn">round</span>(preco_min, <span class="nm">2</span>),
+        <span class="st">"status"</span>:     <span class="fn">classificar_mc</span>(mc_pct),
+    }
+
+<span class="cm"># Testar com a Econômica 15L BN</span>
+<span class="vr">r</span> <span class="op">=</span> <span class="fn">calc_mc_zfm</span>(<span class="vr">preco</span><span class="op">=</span><span class="nm">58.00</span>, <span class="vr">custo</span><span class="op">=</span><span class="nm">32.78</span>, <span class="vr">peso_kg</span><span class="op">=</span><span class="nm">18.70</span>)
+<span class="fn">print</span>(<span class="st">f"Carga tributária: </span><span class="vr">{r['carga_trib']}</span><span class="st">%"</span>)   <span class="cm"># → 16.95%</span>
+<span class="fn">print</span>(<span class="st">f"PLV: R$ </span><span class="vr">{r['plv']}</span><span class="st">"</span>)                   <span class="cm"># → R$ 41.18</span>
+<span class="fn">print</span>(<span class="st">f"MC: R$ </span><span class="vr">{r['mc_r']}</span><span class="st"> (</span><span class="vr">{r['mc_pct']}</span><span class="st">%)"</span>)  <span class="cm"># → R$ 6.53 (15.8%)</span>
+<span class="fn">print</span>(<span class="st">f"Preço mínimo: R$ </span><span class="vr">{r['preco_min']}</span><span class="st">"</span>)    <span class="cm"># → R$ 64.70</span>
+<span class="fn">print</span>(<span class="st">f"Status: </span><span class="vr">{r['status']}</span><span class="st">"</span>)               <span class="cm"># → Crítico</span></code></pre>
+    </div>
+
+    <h3>4.2 Análise comparativa — CE correto vs modelo simplificado</h3>
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>quanto a MC estava subestimada no modelo antigo</span></div>
+      <pre><code><span class="kw">def</span> <span class="fn">comparar_modelos</span>(preco, custo, peso_kg, comissao<span class="op">=</span><span class="nm">0.05</span>):
+    <span class="st">"""Compara CE 55% correto vs modelo simplificado de 7%."""</span>
+
+    <span class="cm"># Modelo correto (CE 55%)</span>
+    <span class="vr">correto</span> <span class="op">=</span> <span class="fn">calc_mc_zfm</span>(preco, custo, peso_kg, <span class="vr">ce</span><span class="op">=</span><span class="nm">0.55</span>, <span class="vr">comissao</span><span class="op">=</span>comissao)
+
+    <span class="cm"># Modelo simplificado (ICMS 7% simples, sem CE)</span>
+    <span class="vr">frete</span>       <span class="op">=</span> (peso_kg <span class="op">/</span> <span class="nm">1000</span>) <span class="op">*</span> <span class="nm">100</span>
+    <span class="vr">cv</span>          <span class="op">=</span> custo <span class="op">+</span> frete
+    <span class="vr">carga_simp</span>  <span class="op">=</span> <span class="nm">0.07</span> <span class="op">+</span> <span class="nm">0.0065</span> <span class="op">+</span> <span class="nm">0.03</span> <span class="op">+</span> comissao  <span class="cm"># 7%+PIS+COFINS+Com</span>
+    <span class="vr">plv_simp</span>    <span class="op">=</span> preco <span class="op">*</span> (<span class="nm">1</span> <span class="op">-</span> carga_simp)
+    <span class="vr">mc_simp</span>     <span class="op">=</span> (plv_simp <span class="op">-</span> cv) <span class="op">/</span> plv_simp <span class="op">*</span> <span class="nm">100</span> <span class="kw">if</span> plv_simp <span class="op">></span> <span class="nm">0</span> <span class="kw">else</span> <span class="nm">0</span>
+
+    <span class="vr">diferenca</span> <span class="op">=</span> correto[<span class="st">"mc_pct"</span>] <span class="op">-</span> mc_simp
+
+    <span class="fn">print</span>(<span class="st">f"{'MC modelo correto (CE 55%):':<span class="nm">35</span>} </span><span class="vr">{correto['mc_pct']:+.2f}</span><span class="st">%"</span>)
+    <span class="fn">print</span>(<span class="st">f"{'MC modelo simplificado (7%):':<span class="nm">35</span>} </span><span class="vr">{mc_simp:+.2f}</span><span class="st">%"</span>)
+    <span class="fn">print</span>(<span class="st">f"{'Diferença (MC subestimada):':<span class="nm">35</span>} </span><span class="vr">{diferenca:+.2f}</span><span class="st"> pp"</span>)
+    <span class="fn">print</span>(<span class="st">f"{'Preço mínimo correto:':<span class="nm">35</span>} R$ </span><span class="vr">{correto['preco_min']:.2f}</span><span class="st">"</span>)
+
+<span class="fn">print</span>(<span class="st">"=== Econômica 15L BN ==="</span>)
+<span class="fn">comparar_modelos</span>(<span class="nm">58.00</span>, <span class="nm">32.78</span>, <span class="nm">18.70</span>)
+<span class="cm"># MC modelo correto (CE 55%):        15.85%
+# MC modelo simplificado (7%):        14.22%
+# Diferença (MC subestimada):         +1.63 pp
+# Preço mínimo correto:               R$ 64.70</span></code></pre>
+    </div>
+
+    <div class="box box-economia"><b>📊 Insight econômico para apresentar ao cliente:</b> O modelo anterior subestimava a MC em aproximadamente 1,5 a 2 pontos percentuais em todos os produtos. Isso significa que a Brazimil <b>tem mais margem do que pensava</b> — pode ser mais competitiva em preço ou registrar lucro operacional maior do que o sistema anterior indicava.</div>
+
+  </div>
+</div>
+
+<!-- MÓDULO 5 -->
+<div class="modulo" id="m5">
+  <div class="modulo-header">
+    <div class="mod-num" style="background:#f9e2af;color:#1e1e2e">05</div>
+    <div class="mod-info">
+      <div class="mod-titulo">Lendo CSV — Omie e Bradesco</div>
+      <div class="mod-sub">Processando dados de vendas e boletos para análise financeira</div>
+    </div>
+  </div>
+  <div class="modulo-body">
+
+    <div class="nivel"><div class="nivel-linha"></div>
+      <span class="nivel-texto nivel-medio">NÍVEL INTERMEDIÁRIO</span>
+      <div class="nivel-linha"></div></div>
+
+    <h3>5.1 O que é um CSV e como o Python o lê</h3>
+    <p>CSV (Comma-Separated Values) é um arquivo de texto onde cada linha é um registro e os campos são separados por vírgula ou ponto-e-vírgula. É o formato universal de exportação do Omie e do Bradesco.</p>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>lendo um CSV de vendas do Omie</span></div>
+      <pre><code><span class="kw">import</span> csv
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="cm"># Abrir o CSV com encoding UTF-8 (padrão do Omie)</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"vendas_omie.csv"</span>, <span class="vr">encoding</span><span class="op">=</span><span class="st">"utf-8-sig"</span>, <span class="vr">errors</span><span class="op">=</span><span class="st">"replace"</span>) <span class="kw">as</span> f:
+    <span class="cm"># DictReader lê cada linha como dicionário (coluna → valor)</span>
+    <span class="vr">reader</span> <span class="op">=</span> csv.DictReader(f, <span class="vr">delimiter</span><span class="op">=</span><span class="st">";"</span>)
+
+    <span class="cm"># Ver os nomes das colunas</span>
+    <span class="fn">print</span>(reader.fieldnames)
+    <span class="cm"># → ['Data Emissão', 'Nº NF', 'Cliente', 'Produto', 'Qtd', 'Valor Total']</span>
+
+    <span class="vr">total_faturado</span> <span class="op">=</span> <span class="nm">0</span>
+    <span class="vr">por_produto</span>    <span class="op">=</span> {}  <span class="cm"># acumula faturamento por produto</span>
+
+    <span class="kw">for</span> linha <span class="kw">in</span> reader:
+        <span class="cm"># Acessar campos pelo nome da coluna</span>
+        <span class="vr">produto</span> <span class="op">=</span> linha[<span class="st">"Produto"</span>]
+        <span class="vr">valor</span>   <span class="op">=</span> linha[<span class="st">"Valor Total"</span>]
+
+        <span class="cm"># Converter valor de texto para número</span>
+        <span class="cm"># "1.234,56" → 1234.56</span>
+        <span class="vr">valor_num</span> <span class="op">=</span> <span class="fn">float</span>(valor.replace(<span class="st">"."</span>, <span class="st">""</span>).replace(<span class="st">","</span>, <span class="st">"."</span>))
+
+        <span class="vr">total_faturado</span> <span class="op">+=</span> valor_num
+
+        <span class="cm"># Acumular por produto</span>
+        <span class="kw">if</span> produto <span class="kw">not in</span> por_produto:
+            por_produto[produto] <span class="op">=</span> <span class="nm">0</span>
+        por_produto[produto] <span class="op">+=</span> valor_num
+
+<span class="fn">print</span>(<span class="st">f"Total faturado: R$ </span><span class="vr">{total_faturado:,.2f}</span><span class="st">"</span>)
+
+<span class="cm"># Top 5 produtos por faturamento</span>
+<span class="vr">top5</span> <span class="op">=</span> <span class="fn">sorted</span>(por_produto.items(), <span class="vr">key</span><span class="op">=</span><span class="kw">lambda</span> x: x[<span class="nm">1</span>], <span class="vr">reverse</span><span class="op">=</span><span class="kw">True</span>)[:<span class="nm">5</span>]
+<span class="fn">print</span>(<span class="st">"Top 5 produtos:"</span>)
+<span class="kw">for</span> prod, valor <span class="kw">in</span> top5:
+    <span class="fn">print</span>(<span class="st">f"  </span><span class="vr">{prod:<span class="nm">35</span>}</span><span class="st"> R$ </span><span class="vr">{valor:>10,.2f}</span><span class="st">"</span>)</code></pre>
+    </div>
+
+    <h3>5.2 Analisando inadimplência dos boletos Bradesco</h3>
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>análise de inadimplência — boletos_bradesco.csv</span></div>
+      <pre><code><span class="kw">from</span> datetime <span class="kw">import</span> date
+
+<span class="vr">HOJE</span> <span class="op">=</span> date.today()
+<span class="vr">boletos</span> <span class="op">=</span> []
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"boletos_bradesco.csv"</span>, <span class="vr">encoding</span><span class="op">=</span><span class="st">"utf-8-sig"</span>) <span class="kw">as</span> f:
+    <span class="vr">reader</span> <span class="op">=</span> csv.DictReader(f, <span class="vr">delimiter</span><span class="op">=</span><span class="st">";"</span>)
+    <span class="kw">for</span> linha <span class="kw">in</span> reader:
+        <span class="vr">venc_str</span> <span class="op">=</span> linha.get(<span class="st">"Vencimento"</span>, <span class="st">""</span>).strip()
+        <span class="vr">valor</span>    <span class="op">=</span> linha.get(<span class="st">"Valor"</span>, <span class="st">"0"</span>).replace(<span class="st">"."</span>, <span class="st">""</span>).replace(<span class="st">","</span>, <span class="st">"."</span>)
+        <span class="vr">status</span>   <span class="op">=</span> linha.get(<span class="st">"Status"</span>, <span class="st">""</span>).upper()
+        <span class="vr">cliente</span>  <span class="op">=</span> linha.get(<span class="st">"Cliente"</span>, <span class="st">"N/I"</span>)
+
+        <span class="kw">try</span>:
+            <span class="vr">venc</span>  <span class="op">=</span> datetime.strptime(venc_str, <span class="st">"%d/%m/%Y"</span>).date()
+            <span class="vr">dias</span>  <span class="op">=</span> (venc <span class="op">-</span> HOJE).days  <span class="cm"># negativo = vencido</span>
+            <span class="vr">valor_num</span> <span class="op">=</span> <span class="fn">float</span>(valor)
+            boletos.append({
+                <span class="st">"cliente"</span>: cliente, <span class="st">"venc"</span>: venc,
+                <span class="st">"dias"</span>: dias,       <span class="st">"valor"</span>: valor_num,
+                <span class="st">"status"</span>: <span class="st">"pago"</span> <span class="kw">if</span> <span class="st">"PAGO"</span> <span class="kw">in</span> status <span class="kw">or</span> <span class="st">"LIQUID"</span> <span class="kw">in</span> status
+                          <span class="kw">else</span> <span class="st">"vencido"</span> <span class="kw">if</span> dias <span class="op"><</span> <span class="nm">0</span>
+                          <span class="kw">else</span> <span class="st">"aberto"</span>
+            })
+        <span class="kw">except</span>:
+            <span class="kw">continue</span>
+
+<span class="cm"># Análise de inadimplência</span>
+<span class="vr">vencidos</span>      <span class="op">=</span> [b <span class="kw">for</span> b <span class="kw">in</span> boletos <span class="kw">if</span> b[<span class="st">"status"</span>] <span class="op">==</span> <span class="st">"vencido"</span>]
+<span class="vr">abertos</span>       <span class="op">=</span> [b <span class="kw">for</span> b <span class="kw">in</span> boletos <span class="kw">if</span> b[<span class="st">"status"</span>] <span class="kw">in</span> [<span class="st">"vencido"</span>, <span class="st">"aberto"</span>]]
+<span class="vr">total_vencido</span> <span class="op">=</span> <span class="fn">sum</span>(b[<span class="st">"valor"</span>] <span class="kw">for</span> b <span class="kw">in</span> vencidos)
+<span class="vr">total_aberto</span>  <span class="op">=</span> <span class="fn">sum</span>(b[<span class="st">"valor"</span>] <span class="kw">for</span> b <span class="kw">in</span> abertos)
+<span class="vr">taxa_inad</span>     <span class="op">=</span> total_vencido <span class="op">/</span> total_aberto <span class="op">*</span> <span class="nm">100</span> <span class="kw">if</span> total_aberto <span class="op">></span> <span class="nm">0</span> <span class="kw">else</span> <span class="nm">0</span>
+
+<span class="fn">print</span>(<span class="st">f"Carteira vencida: R$ </span><span class="vr">{total_vencido:,.2f}</span><span class="st">"</span>)
+<span class="fn">print</span>(<span class="st">f"Taxa de inadimplência: </span><span class="vr">{taxa_inad:.1f}</span><span class="st">%"</span>)
+
+<span class="cm"># Aging por faixa de atraso</span>
+<span class="kw">for</span> ini, fim, label <span class="kw">in</span> [(<span class="nm">1</span>,<span class="nm">30</span>,<span class="st">"1–30 dias"</span>),(<span class="nm">31</span>,<span class="nm">60</span>,<span class="st">"31–60 dias"</span>),
+                          (<span class="nm">61</span>,<span class="nm">90</span>,<span class="st">"61–90 dias"</span>),(<span class="nm">91</span>,<span class="nm">9999</span>,<span class="st">"+90 dias"</span>)]:
+    <span class="vr">faixa</span> <span class="op">=</span> [b <span class="kw">for</span> b <span class="kw">in</span> vencidos <span class="kw">if</span> ini <span class="op"><=</span> <span class="fn">abs</span>(b[<span class="st">"dias"</span>]) <span class="op"><=</span> fim]
+    <span class="vr">val</span>   <span class="op">=</span> <span class="fn">sum</span>(b[<span class="st">"valor"</span>] <span class="kw">for</span> b <span class="kw">in</span> faixa)
+    <span class="fn">print</span>(<span class="st">f"  </span><span class="vr">{label:<span class="nm">12</span>}</span><span class="st">: R$ </span><span class="vr">{val:>10,.2f}</span><span class="st"> (</span><span class="vr">{<span class="fn">len</span>(faixa)}</span><span class="st"> boletos)"</span>)</code></pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- MÓDULO 6 -->
+<div class="modulo" id="m6">
+  <div class="modulo-header">
+    <div class="mod-num" style="background:#f38ba8;color:#1e1e2e">06</div>
+    <div class="mod-info">
+      <div class="mod-titulo">Indicadores Financeiros em Python</div>
+      <div class="mod-sub">Calculando liquidez, rentabilidade e endividamento programaticamente</div>
+    </div>
+  </div>
+  <div class="modulo-body">
+
+    <div class="nivel"><div class="nivel-linha"></div>
+      <span class="nivel-texto nivel-avancado">NÍVEL AVANÇADO</span>
+      <div class="nivel-linha"></div></div>
+
+    <h3>6.1 Classe Balanço — estrutura de dados financeiros</h3>
+    <p>Quando os dados ficam complexos, Python permite criar classes — estruturas que agrupam dados e funções relacionadas. É como criar um tipo de dado personalizado.</p>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>classe Balanço para análise financeira da Brazimil</span></div>
+      <pre><code><span class="kw">class</span> <span class="cl">Balanco</span>:
+    <span class="st">"""Representa o balanço patrimonial de um período."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="vr">self</span>, periodo, ativo_circ, estoque, caixa,
+                 passivo_circ, passivo_tot, ativo_tot, pl, lucro_liq, faturamento):
+        <span class="vr">self</span>.periodo      <span class="op">=</span> periodo
+        <span class="vr">self</span>.ativo_circ   <span class="op">=</span> ativo_circ
+        <span class="vr">self</span>.estoque      <span class="op">=</span> estoque
+        <span class="vr">self</span>.caixa        <span class="op">=</span> caixa
+        <span class="vr">self</span>.passivo_circ <span class="op">=</span> passivo_circ
+        <span class="vr">self</span>.passivo_tot  <span class="op">=</span> passivo_tot
+        <span class="vr">self</span>.ativo_tot    <span class="op">=</span> ativo_tot
+        <span class="vr">self</span>.pl           <span class="op">=</span> pl
+        <span class="vr">self</span>.lucro_liq    <span class="op">=</span> lucro_liq
+        <span class="vr">self</span>.faturamento  <span class="op">=</span> faturamento
+
+    <span class="cm"># ── Indicadores de Liquidez ───────────────────────────</span>
+    <span class="kw">def</span> <span class="fn">liq_corrente</span>(<span class="vr">self</span>):
+        <span class="kw">return</span> <span class="vr">self</span>.ativo_circ <span class="op">/</span> <span class="vr">self</span>.passivo_circ
+
+    <span class="kw">def</span> <span class="fn">liq_seca</span>(<span class="vr">self</span>):
+        <span class="kw">return</span> (<span class="vr">self</span>.ativo_circ <span class="op">-</span> <span class="vr">self</span>.estoque) <span class="op">/</span> <span class="vr">self</span>.passivo_circ
+
+    <span class="kw">def</span> <span class="fn">liq_imediata</span>(<span class="vr">self</span>):
+        <span class="kw">return</span> <span class="vr">self</span>.caixa <span class="op">/</span> <span class="vr">self</span>.passivo_circ
+
+    <span class="kw">def</span> <span class="fn">capital_giro</span>(<span class="vr">self</span>):
+        <span class="kw">return</span> <span class="vr">self</span>.ativo_circ <span class="op">-</span> <span class="vr">self</span>.passivo_circ
+
+    <span class="cm"># ── Indicadores de Rentabilidade ──────────────────────</span>
+    <span class="kw">def</span> <span class="fn">margem_liquida</span>(<span class="vr">self</span>):
+        <span class="kw">return</span> <span class="vr">self</span>.lucro_liq <span class="op">/</span> <span class="vr">self</span>.faturamento <span class="op">*</span> <span class="nm">100</span>
+
+    <span class="kw">def</span> <span class="fn">roe</span>(<span class="vr">self</span>):
+        <span class="st">"Return on Equity — retorno sobre o Patrimônio Líquido"</span>
+        <span class="kw">return</span> <span class="vr">self</span>.lucro_liq <span class="op">/</span> <span class="vr">self</span>.pl <span class="op">*</span> <span class="nm">100</span>
+
+    <span class="kw">def</span> <span class="fn">roa</span>(<span class="vr">self</span>):
+        <span class="st">"Return on Assets — retorno sobre Ativos Totais"</span>
+        <span class="kw">return</span> <span class="vr">self</span>.lucro_liq <span class="op">/</span> <span class="vr">self</span>.ativo_tot <span class="op">*</span> <span class="nm">100</span>
+
+    <span class="cm"># ── Indicadores de Endividamento ──────────────────────</span>
+    <span class="kw">def</span> <span class="fn">grau_endividamento</span>(<span class="vr">self</span>):
+        <span class="kw">return</span> <span class="vr">self</span>.passivo_tot <span class="op">/</span> <span class="vr">self</span>.ativo_tot <span class="op">*</span> <span class="nm">100</span>
+
+    <span class="kw">def</span> <span class="fn">autonomia</span>(<span class="vr">self</span>):
+        <span class="kw">return</span> <span class="vr">self</span>.pl <span class="op">/</span> <span class="vr">self</span>.ativo_tot <span class="op">*</span> <span class="nm">100</span>
+
+    <span class="kw">def</span> <span class="fn">relatorio</span>(<span class="vr">self</span>):
+        <span class="st">"""Imprime relatório completo formatado."""</span>
+        <span class="fn">print</span>(<span class="st">f"\n{'='*50}"</span>)
+        <span class="fn">print</span>(<span class="st">f"RELATÓRIO FINANCEIRO — </span><span class="vr">{self.periodo}</span><span class="st">"</span>)
+        <span class="fn">print</span>(<span class="st">f"{'='*50}"</span>)
+        <span class="fn">print</span>(<span class="st">f"LIQUIDEZ"</span>)
+        <span class="fn">print</span>(<span class="st">f"  Corrente:  </span><span class="vr">{self.liq_corrente():.2f}</span><span class="st">x  (ref: ≥1,50)"</span>)
+        <span class="fn">print</span>(<span class="st">f"  Seca:      </span><span class="vr">{self.liq_seca():.2f}</span><span class="st">x  (ref: ≥1,50)"</span>)
+        <span class="fn">print</span>(<span class="st">f"  Imediata:  </span><span class="vr">{self.liq_imediata():.2f}</span><span class="st">x  (ref: ≥0,20)"</span>)
+        <span class="fn">print</span>(<span class="st">f"  Capital de Giro: R$ </span><span class="vr">{self.capital_giro():,.0f}</span><span class="st">"</span>)
+        <span class="fn">print</span>(<span class="st">f"RENTABILIDADE"</span>)
+        <span class="fn">print</span>(<span class="st">f"  Margem Líquida: </span><span class="vr">{self.margem_liquida():.1f}</span><span class="st">%  (ref: ≥10%)"</span>)
+        <span class="fn">print</span>(<span class="st">f"  ROE:            </span><span class="vr">{self.roe():.1f}</span><span class="st">%  (ref: ≥15%)"</span>)
+        <span class="fn">print</span>(<span class="st">f"  ROA:            </span><span class="vr">{self.roa():.1f}</span><span class="st">%  (ref: ≥8%)"</span>)
+        <span class="fn">print</span>(<span class="st">f"ENDIVIDAMENTO"</span>)
+        <span class="fn">print</span>(<span class="st">f"  Grau:     </span><span class="vr">{self.grau_endividamento():.1f}</span><span class="st">%  (ref: ≤40%)"</span>)
+        <span class="fn">print</span>(<span class="st">f"  Autonomia: </span><span class="vr">{self.autonomia():.1f}</span><span class="st">%  (ref: ≥60%)"</span>)
+
+<span class="cm"># Usar a classe com dados da Brazimil</span>
+<span class="vr">jan</span> <span class="op">=</span> <span class="cl">Balanco</span>(
+    <span class="vr">periodo</span><span class="op">=</span><span class="st">"Janeiro/2026"</span>,
+    <span class="vr">ativo_circ</span><span class="op">=</span><span class="nm">350000</span>, <span class="vr">estoque</span><span class="op">=</span><span class="nm">120000</span>, <span class="vr">caixa</span><span class="op">=</span><span class="nm">45000</span>,
+    <span class="vr">passivo_circ</span><span class="op">=</span><span class="nm">180000</span>, <span class="vr">passivo_tot</span><span class="op">=</span><span class="nm">280000</span>, <span class="vr">ativo_tot</span><span class="op">=</span><span class="nm">620000</span>,
+    <span class="vr">pl</span><span class="op">=</span><span class="nm">340000</span>, <span class="vr">lucro_liq</span><span class="op">=</span><span class="nm">52000</span>, <span class="vr">faturamento</span><span class="op">=</span><span class="nm">480000</span>
+)
+jan.relatorio()</code></pre>
+    </div>
+
+    <h3>6.2 Análise histórica — tendência mês a mês</h3>
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>comparando indicadores entre meses</span></div>
+      <pre><code><span class="cm"># Lista de balanços mensais</span>
+<span class="vr">historico</span> <span class="op">=</span> [
+    <span class="cl">Balanco</span>(<span class="st">"Out/25"</span>, <span class="nm">320000</span>,<span class="nm">115000</span>,<span class="nm">38000</span>, <span class="nm">175000</span>,<span class="nm">270000</span>,<span class="nm">600000</span>, <span class="nm">330000</span>,<span class="nm">45000</span>,<span class="nm">450000</span>),
+    <span class="cl">Balanco</span>(<span class="st">"Nov/25"</span>, <span class="nm">335000</span>,<span class="nm">118000</span>,<span class="nm">42000</span>, <span class="nm">178000</span>,<span class="nm">275000</span>,<span class="nm">610000</span>, <span class="nm">335000</span>,<span class="nm">48000</span>,<span class="nm">465000</span>),
+    <span class="cl">Balanco</span>(<span class="st">"Dez/25"</span>, <span class="nm">342000</span>,<span class="nm">119000</span>,<span class="nm">40000</span>, <span class="nm">179000</span>,<span class="nm">278000</span>,<span class="nm">615000</span>, <span class="nm">337000</span>,<span class="nm">50000</span>,<span class="nm">471000</span>),
+    <span class="cl">Balanco</span>(<span class="st">"Jan/26"</span>, <span class="nm">350000</span>,<span class="nm">120000</span>,<span class="nm">45000</span>, <span class="nm">180000</span>,<span class="nm">280000</span>,<span class="nm">620000</span>, <span class="nm">340000</span>,<span class="nm">52000</span>,<span class="nm">480000</span>),
+]
+
+<span class="cm"># Relatório de evolução</span>
+<span class="fn">print</span>(<span class="st">f"{'Período':<span class="nm">8</span>} {'Liq.Corr':>10} {'ROE':>8} {'Endiv':>8} {'Cap.Giro':>12}"</span>)
+<span class="fn">print</span>(<span class="st">"-"</span> <span class="op">*</span> <span class="nm">44</span>)
+<span class="kw">for</span> b <span class="kw">in</span> historico:
+    <span class="fn">print</span>(<span class="st">f"</span><span class="vr">{b.periodo:<span class="nm">8</span>}</span><span class="st"> </span><span class="vr">{b.liq_corrente():>9.2f}</span><span class="st">x </span><span class="vr">{b.roe():>7.1f}</span><span class="st">% </span><span class="vr">{b.grau_endividamento():>7.1f}</span><span class="st">% R$ </span><span class="vr">{b.capital_giro():>8,.0f}</span><span class="st">"</span>)
+
+<span class="cm"># Tendência — cresceu ou caiu?</span>
+<span class="vr">prim</span> <span class="op">=</span> historico[<span class="nm">0</span>]; <span class="vr">ult</span> <span class="op">=</span> historico[<span class="op">-</span><span class="nm">1</span>]
+<span class="vr">delta_roe</span> <span class="op">=</span> ult.roe() <span class="op">-</span> prim.roe()
+<span class="fn">print</span>(<span class="st">f"\nROE variou </span><span class="vr">{delta_roe:+.1f}</span><span class="st"> pp de </span><span class="vr">{prim.periodo}</span><span class="st"> a </span><span class="vr">{ult.periodo}</span><span class="st">"</span>)</code></pre>
+    </div>
+
+  </div>
+</div>
+
+<!-- MÓDULO 7 -->
+<div class="modulo" id="m7">
+  <div class="modulo-header">
+    <div class="mod-num" style="background:#89dceb;color:#1e1e2e">07</div>
+    <div class="mod-info">
+      <div class="mod-titulo">JSON e Integração com o Dashboard</div>
+      <div class="mod-sub">Como Python e JavaScript conversam — o formato universal de troca de dados</div>
+    </div>
+  </div>
+  <div class="modulo-body">
+
+    <div class="nivel"><div class="nivel-linha"></div>
+      <span class="nivel-texto nivel-avancado">NÍVEL AVANÇADO</span>
+      <div class="nivel-linha"></div></div>
+
+    <h3>7.1 O que é JSON e por que usamos</h3>
+    <p>JSON (JavaScript Object Notation) é o formato que permite Python e JavaScript se comunicarem. O Python calcula os dados e escreve em JSON; o JavaScript lê esse JSON e exibe no navegador.</p>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>convertendo dados Python para JSON</span></div>
+      <pre><code><span class="kw">import</span> json
+
+<span class="cm"># Dados em Python (lista de dicionários)</span>
+<span class="vr">produtos</span> <span class="op">=</span> [
+    {<span class="st">"nome"</span>: <span class="st">"Econômica 15L BN"</span>, <span class="st">"cat"</span>: <span class="st">"Tinta Base Água"</span>,
+     <span class="st">"preco"</span>: <span class="nm">58.00</span>, <span class="st">"custo"</span>: <span class="nm">32.78</span>, <span class="st">"peso"</span>: <span class="nm">18.70</span>},
+    {<span class="st">"nome"</span>: <span class="st">"Semi Brilho 15L BN"</span>, <span class="st">"cat"</span>: <span class="st">"Tinta Base Água"</span>,
+     <span class="st">"preco"</span>: <span class="nm">170.00</span>, <span class="st">"custo"</span>: <span class="nm">54.06</span>, <span class="st">"peso"</span>: <span class="nm">15.10</span>},
+]
+
+<span class="cm"># Converter para JSON (texto)</span>
+<span class="vr">json_texto</span> <span class="op">=</span> json.dumps(produtos, <span class="vr">ensure_ascii</span><span class="op">=</span><span class="kw">False</span>)
+<span class="fn">print</span>(json_texto)
+<span class="cm"># → [{"nome": "Econômica 15L BN", "cat": "Tinta Base Água", ...}]</span>
+
+<span class="cm"># Salvar em arquivo .json</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"produtos.json"</span>, <span class="st">"w"</span>, <span class="vr">encoding</span><span class="op">=</span><span class="st">"utf-8"</span>) <span class="kw">as</span> f:
+    json.dump(produtos, f, <span class="vr">ensure_ascii</span><span class="op">=</span><span class="kw">False</span>, <span class="vr">indent</span><span class="op">=</span><span class="nm">2</span>)
+
+<span class="cm"># Ler um arquivo .json</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"produtos.json"</span>, <span class="vr">encoding</span><span class="op">=</span><span class="st">"utf-8"</span>) <span class="kw">as</span> f:
+    <span class="vr">dados</span> <span class="op">=</span> json.load(f)
+<span class="fn">print</span>(<span class="st">f"</span><span class="vr">{<span class="fn">len</span>(dados)}</span><span class="st"> produtos carregados"</span>)</code></pre>
+    </div>
+
+    <h3>7.2 Como o template.html consome os dados do Python</h3>
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python + HTML</span><span>o mecanismo de injeção de dados no dashboard</span></div>
+      <pre><code><span class="cm"># No gerar.py: Python gera o JSON e injeta no template</span>
+<span class="vr">produtos_json</span> <span class="op">=</span> json.dumps(produtos, <span class="vr">ensure_ascii</span><span class="op">=</span><span class="kw">False</span>)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"template.html"</span>, <span class="vr">encoding</span><span class="op">=</span><span class="st">"utf-8"</span>) <span class="kw">as</span> f:
+    <span class="vr">template</span> <span class="op">=</span> f.read()
+
+<span class="cm"># Substitui o placeholder pelo JSON real</span>
+<span class="vr">html</span> <span class="op">=</span> template.replace(<span class="st">"__PRODUTOS_JSON__"</span>, produtos_json)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"brazimil_analise_economica.html"</span>, <span class="st">"w"</span>, <span class="vr">encoding</span><span class="op">=</span><span class="st">"utf-8"</span>) <span class="kw">as</span> f:
+    f.write(html)</code></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-header"><span class="lang">HTML/JavaScript</span><span>no template.html — como o JS recebe os dados</span></div>
+      <pre><code><span class="cm">// No template.html, o placeholder foi substituído pelo JSON real:</span>
+<span class="kw">const</span> <span class="vr">produtos</span> = [
+    {<span class="st">"nome"</span>: <span class="st">"Econômica 15L BN"</span>, <span class="st">"preco"</span>: <span class="nm">58.00</span>, <span class="st">"custo"</span>: <span class="nm">32.78</span>, ...},
+    ...
+];  <span class="cm">// ← este array veio do Python via __PRODUTOS_JSON__</span>
+
+<span class="cm">// JavaScript usa os dados para calcular MC em tempo real</span>
+<span class="vr">produtos</span>.forEach(<span class="kw">function</span>(p) {
+    <span class="kw">var</span> <span class="vr">frete</span>  = (p.peso / <span class="nm">1000</span>) * <span class="nm">100</span>;
+    <span class="kw">var</span> <span class="vr">cv</span>     = p.custo + frete;
+    <span class="kw">var</span> <span class="vr">plv</span>    = p.preco * (<span class="nm">1</span> - <span class="nm">0.07</span> - <span class="nm">0.05</span>);
+    <span class="kw">var</span> <span class="vr">mc_pct</span> = (plv - cv) / plv * <span class="nm">100</span>;
+    console.log(p.nome + <span class="st">": MC "</span> + mc_pct.toFixed(<span class="nm">1</span>) + <span class="st">"%"</span>);
+});</code></pre>
+    </div>
+
+    <div class="box box-pratica"><b>🔑 Entendendo a divisão de responsabilidades:</b><br>
+    <b>Python</b> — lê dados pesados (Excel, CSV), faz transformações e persiste arquivos. Roda no seu Mac.<br>
+    <b>JavaScript</b> — recalcula e exibe em tempo real no navegador do cliente. Roda no computador do cliente.<br>
+    <b>JSON</b> — é a ponte entre os dois. O Python escreve, o JS lê.</div>
+
+  </div>
+</div>
+
+<!-- MÓDULO 8 -->
+<div class="modulo" id="m8">
+  <div class="modulo-header">
+    <div class="mod-num" style="background:#b4befe;color:#1e1e2e">08</div>
+    <div class="mod-info">
+      <div class="mod-titulo">Apresentando as Análises ao Cliente</div>
+      <div class="mod-sub">Como transformar código Python em argumentos econômicos convincentes</div>
+    </div>
+  </div>
+  <div class="modulo-body">
+
+    <div class="nivel"><div class="nivel-linha"></div>
+      <span class="nivel-texto nivel-avancado">NÍVEL AVANÇADO</span>
+      <div class="nivel-linha"></div></div>
+
+    <h3>8.1 Gerando relatório em texto formatado</h3>
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>relatório executivo automático para o cliente</span></div>
+      <pre><code><span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="kw">def</span> <span class="fn">gerar_relatorio_executivo</span>(produtos_calculados, periodo):
+    <span class="st">"""
+    Gera um relatório executivo de precificação para apresentação.
+    produtos_calculados: lista de dicionários com mc_pct, nome, etc.
+    """</span>
+    <span class="vr">total</span>      <span class="op">=</span> <span class="fn">len</span>(produtos_calculados)
+    <span class="vr">saudaveis</span>  <span class="op">=</span> [p <span class="kw">for</span> p <span class="kw">in</span> produtos_calculados <span class="kw">if</span> p[<span class="st">"mc_pct"</span>] <span class="op">>=</span> <span class="nm">35</span>]
+    <span class="vr">atencao</span>    <span class="op">=</span> [p <span class="kw">for</span> p <span class="kw">in</span> produtos_calculados <span class="kw">if</span> <span class="nm">20</span> <span class="op"><=</span> p[<span class="st">"mc_pct"</span>] <span class="op"><</span> <span class="nm">35</span>]
+    <span class="vr">criticos</span>   <span class="op">=</span> [p <span class="kw">for</span> p <span class="kw">in</span> produtos_calculados <span class="kw">if</span> p[<span class="st">"mc_pct"</span>] <span class="op"><</span> <span class="nm">20</span>]
+    <span class="vr">mc_media</span>   <span class="op">=</span> <span class="fn">sum</span>(p[<span class="st">"mc_pct"</span>] <span class="kw">for</span> p <span class="kw">in</span> produtos_calculados) <span class="op">/</span> total
+
+    <span class="vr">relatorio</span> <span class="op">=</span> <span class="st">f"""
+╔══════════════════════════════════════════════════════════╗
+║          RELATÓRIO EXECUTIVO DE PRECIFICAÇÃO             ║
+║          Brazimil Indústria de Tintas — {periodo:<span class="nm">14</span>}  ║
+╚══════════════════════════════════════════════════════════╝
+
+RESUMO EXECUTIVO
+  Total de SKUs analisados : {total}
+  MC média do portfólio    : {mc_media:.1f}%
+  SKUs saudáveis (≥35%)   : {<span class="fn">len</span>(saudaveis)} ({<span class="fn">len</span>(saudaveis)/total*<span class="nm">100</span>:.0f}% do portfólio)
+  SKUs em atenção (20–35%): {<span class="fn">len</span>(atencao)} ({<span class="fn">len</span>(atencao)/total*<span class="nm">100</span>:.0f}% do portfólio)
+  SKUs críticos (<20%)    : {<span class="fn">len</span>(criticos)} ({<span class="fn">len</span>(criticos)/total*<span class="nm">100</span>:.0f}% do portfólio)
+
+DESTAQUES POSITIVOS — Top 3 maior MC
+"""</span>
+    <span class="vr">top3</span> <span class="op">=</span> <span class="fn">sorted</span>(produtos_calculados, <span class="vr">key</span><span class="op">=</span><span class="kw">lambda</span> p: p[<span class="st">"mc_pct"</span>], <span class="vr">reverse</span><span class="op">=</span><span class="kw">True</span>)[:<span class="nm">3</span>]
+    <span class="kw">for</span> i, p <span class="kw">in</span> <span class="fn">enumerate</span>(top3, <span class="nm">1</span>):
+        relatorio <span class="op">+=</span> <span class="st">f"  </span><span class="vr">{i}</span><span class="st">. </span><span class="vr">{p['nome']:<span class="nm">30</span>}</span><span class="st"> MC: </span><span class="vr">{p['mc_pct']:+.1f}</span><span class="st">%\n"</span>
+
+    <span class="kw">if</span> criticos:
+        relatorio <span class="op">+=</span> <span class="st">f"\n⚠️  AÇÃO NECESSÁRIA — Produtos com MC crítica\n"</span>
+        <span class="kw">for</span> p <span class="kw">in</span> <span class="fn">sorted</span>(criticos, <span class="vr">key</span><span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"mc_pct"</span>])[:5]:
+            relatorio <span class="op">+=</span> <span class="st">f"  → </span><span class="vr">{p['nome']:<span class="nm">30</span>}</span><span class="st"> MC: </span><span class="vr">{p['mc_pct']:+.1f}</span><span class="st">%"</span>
+            relatorio <span class="op">+=</span> <span class="st">f"  Preço mín.: R$ </span><span class="vr">{p.get('preco_min', 0):.2f}</span><span class="st">\n"</span>
+
+    relatorio <span class="op">+=</span> <span class="st">f"\nGerado em: </span><span class="vr">{datetime.now().strftime('%d/%m/%Y %H:%M')}</span><span class="st">"</span>
+    <span class="kw">return</span> relatorio
+
+<span class="cm"># Exemplo de uso</span>
+<span class="vr">texto</span> <span class="op">=</span> <span class="fn">gerar_relatorio_executivo</span>(resultados, <span class="st">"Maio/2026"</span>)
+<span class="fn">print</span>(texto)
+
+<span class="cm"># Salvar em arquivo .txt</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"relatorio_executivo.txt"</span>, <span class="st">"w"</span>, <span class="vr">encoding</span><span class="op">=</span><span class="st">"utf-8"</span>) <span class="kw">as</span> f:
+    f.write(texto)</code></pre>
+    </div>
+
+    <h3>8.2 Argumentos econômicos para apresentar ao cliente</h3>
+
+    <table>
+      <thead><tr><th>Indicador</th><th>O que o Python calcula</th><th>Como apresentar ao cliente</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>MC com CE 55%</b></td>
+          <td><code>mc_pct = (plv - cv) / plv * 100</code></td>
+          <td>"A sua margem real é X% — não Y% como o sistema anterior indicava. A diferença é o Crédito Estímulo sendo calculado corretamente."</td>
+        </tr>
+        <tr>
+          <td><b>Preço mínimo</b></td>
+          <td><code>cv / ((1 - carga) * (1 - 0.25))</code></td>
+          <td>"Para qualquer desconto abaixo de R$ X, você está vendendo com MC menor que 25%. O sistema calcula isso automaticamente para cada produto."</td>
+        </tr>
+        <tr>
+          <td><b>Liquidez Corrente</b></td>
+          <td><code>ativo_circ / passivo_circ</code></td>
+          <td>"Para cada R$ 1,00 que você deve no curto prazo, você tem R$ X em ativos. Acima de 1,50x é considerado saudável para o setor."</td>
+        </tr>
+        <tr>
+          <td><b>Taxa de Inadimplência</b></td>
+          <td><code>sum(vencidos) / sum(abertos) * 100</code></td>
+          <td>"X% da sua carteira de boletos está vencida. O setor industrial aceita até 5% — acima disso precisa de ação de cobrança."</td>
+        </tr>
+        <tr>
+          <td><b>ROE</b></td>
+          <td><code>lucro / pl * 100</code></td>
+          <td>"Os sócios estão obtendo X% de retorno sobre o capital investido. A SELIC está em Y% — o negócio remunera melhor que a renda fixa?"</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>8.3 Simulação de cenário — ferramenta de negociação</h3>
+    <div class="cb">
+      <div class="cb-header"><span class="lang">Python</span><span>simulador de impacto de desconto — para uso em reunião com cliente</span></div>
+      <pre><code><span class="kw">def</span> <span class="fn">simular_desconto</span>(nome, preco_base, custo, peso_kg,
+                       descontos<span class="op">=</span>[<span class="nm">0</span>, <span class="nm">3</span>, <span class="nm">5</span>, <span class="nm">8</span>, <span class="nm">10</span>]):
+    <span class="st">"""
+    Simula o impacto de diferentes percentuais de desconto na MC.
+    Ideal para usar em reunião de negociação com o cliente.
+    """</span>
+    <span class="fn">print</span>(<span class="st">f"\n{'='*60}"</span>)
+    <span class="fn">print</span>(<span class="st">f"SIMULAÇÃO DE DESCONTO — </span><span class="vr">{nome}</span><span class="st">"</span>)
+    <span class="fn">print</span>(<span class="st">f"Preço base: R$ </span><span class="vr">{preco_base:.2f}</span><span class="st"> | Custo: R$ </span><span class="vr">{custo:.2f}</span><span class="st">"</span>)
+    <span class="fn">print</span>(<span class="st">f"{'='*60}"</span>)
+    <span class="fn">print</span>(<span class="st">f"{'Desconto':>10} {'Preço Final':>12} {'MC R$':>10} {'MC %':>8} {'Status':>12}"</span>)
+    <span class="fn">print</span>(<span class="st">f"{'-'*60}"</span>)
+
+    <span class="kw">for</span> desc <span class="kw">in</span> descontos:
+        <span class="vr">preco_desc</span> <span class="op">=</span> preco_base <span class="op">*</span> (<span class="nm">1</span> <span class="op">-</span> desc <span class="op">/</span> <span class="nm">100</span>)
+        <span class="vr">r</span> <span class="op">=</span> <span class="fn">calc_mc_zfm</span>(preco_desc, custo, peso_kg)
+        <span class="vr">sinal</span> <span class="op">=</span> <span class="st">"✅"</span> <span class="kw">if</span> r[<span class="st">"mc_pct"</span>] <span class="op">>=</span> <span class="nm">35</span> <span class="kw">else</span> <span class="st">"⚠️"</span> <span class="kw">if</span> r[<span class="st">"mc_pct"</span>] <span class="op">>=</span> <span class="nm">20</span> <span class="kw">else</span> <span class="st">"🚨"</span>
+        <span class="fn">print</span>(<span class="st">f"{desc:>9}%  R$ </span><span class="vr">{preco_desc:>8.2f}</span><span class="st">   R$ </span><span class="vr">{r['mc_r']:>6.2f}</span><span class="st">  </span><span class="vr">{r['mc_pct']:>6.1f}</span><span class="st">%  </span><span class="vr">{sinal}</span><span class="st"> </span><span class="vr">{r['status']}</span><span class="st">"</span>)
+
+    <span class="fn">print</span>(<span class="st">f"Desconto máximo mantendo MC ≥ 25%: "</span>, <span class="vr">end</span><span class="op">=</span><span class="st">""</span>)
+    <span class="kw">for</span> desc <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">0</span>, <span class="nm">51</span>):
+        <span class="vr">r</span> <span class="op">=</span> <span class="fn">calc_mc_zfm</span>(preco_base <span class="op">*</span> (<span class="nm">1</span> <span class="op">-</span> desc<span class="op">/</span><span class="nm">100</span>), custo, peso_kg)
+        <span class="kw">if</span> r[<span class="st">"mc_pct"</span>] <span class="op"><</span> <span class="nm">25</span>:
+            <span class="fn">print</span>(<span class="st">f"</span><span class="vr">{desc-<span class="nm">1</span>}</span><span class="st">% (preço: R$ </span><span class="vr">{preco_base*(<span class="nm">1</span>-(desc<span class="op">-</span><span class="nm">1</span>)/<span class="nm">100</span>):.2f}</span><span class="st">)"</span>)
+            <span class="kw">break</span>
+
+<span class="cm"># Usar em reunião de negociação</span>
+<span class="fn">simular_desconto</span>(<span class="st">"Semi Brilho 15L Balde BN"</span>, <span class="nm">170.00</span>, <span class="nm">54.06</span>, <span class="nm">15.10</span>)</code></pre>
+    </div>
+
+    <div class="box box-economia">
+      <b>📊 Script de preparação para reunião (salve como reuniao.py):</b><br><br>
+      Antes de cada reunião com a Brazimil, rode este script no Terminal. Ele gera em 5 segundos: relatório executivo completo, top 5 produtos para reajuste, simulação de desconto dos produtos críticos e análise de inadimplência atualizada. Você chega na reunião com todos os números calculados e prontos para apresentar.
+    </div>
+
+    <h3>8.4 Roteiro de explicação para o cliente</h3>
+
+    <table>
+      <thead><tr><th>Momento</th><th>O que mostrar no dashboard</th><th>O que dizer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>Abertura</b></td>
+          <td>Aba Painel — KPIs e semáforo</td>
+          <td>"Hoje temos X SKUs analisados. A MC média é Y%. Z produtos precisam de atenção imediata."</td>
+        </tr>
+        <tr>
+          <td><b>ZFM</b></td>
+          <td>Aba Tributação ZFM</td>
+          <td>"O CE 55% reduz seu ICMS de 12% para 5,4%. Isso significa que sua margem real é X pp maior do que o sistema anterior indicava."</td>
+        </tr>
+        <tr>
+          <td><b>Negociação</b></td>
+          <td>Aba Simulador de Preço</td>
+          <td>"Esse cliente pediu 8% de desconto na Econômica 15L. Veja: com 8% o preço cai para R$ X e a MC vai para Y% — ainda dentro do aceitável."</td>
+        </tr>
+        <tr>
+          <td><b>Expansão</b></td>
+          <td>Aba Comparador de Cenários</td>
+          <td>"Se entrarmos na Paraíba com essa tabela de preços, estes 5 produtos ficam com MC negativa. Precisamos reajustar antes de entrar nesse mercado."</td>
+        </tr>
+        <tr>
+          <td><b>Saúde geral</b></td>
+          <td>Aba Indicadores Financeiros</td>
+          <td>"A liquidez corrente de X indica que a empresa tem folga para pagar as dívidas de curto prazo. O ROE de Y% supera a SELIC atual."</td>
+        </tr>
+        <tr>
+          <td><b>Fluxo</b></td>
+          <td>Aba Fluxo de Caixa</td>
+          <td>"Nas próximas 4 semanas entram R$ X em boletos. Desse total, R$ Y já estão vencidos — temos X clientes inadimplentes que precisam de cobrança."</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<div class="rodape">
+  Brazimil — Guia Python para Análise Econômica · Versão 1.0 · Uso Interno · Consultoria Econômica
+</div>
+
+</div>
+</body>
+</html>

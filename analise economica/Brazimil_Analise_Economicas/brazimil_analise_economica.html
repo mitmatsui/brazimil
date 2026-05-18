@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brazimil — Análise Econômica</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 24px; color: #222; }
+
+    .topbar { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }
+    .topbar h1 { font-size: 20px; font-weight: 700; color: #1F3864; }
+    .topbar .sub { font-size: 12px; color: #999; }
+
+    .abas { display: flex; gap: 4px; margin-bottom: 18px; border-bottom: 2px solid #e0e0e0; }
+    .aba { padding: 9px 22px; font-size: 13px; font-weight: 600; border: none; background: none; cursor: pointer; color: #888; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .15s; }
+    .aba.ativa { color: #1F3864; border-bottom-color: #1F3864; }
+    .pagina { display: none; }
+    .pagina.ativa { display: block; }
+
+    .filtros { display: flex; gap: 14px; align-items: center; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 11px 16px; margin-bottom: 16px; flex-wrap: wrap; }
+    .filtros label { font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: .04em; }
+    select { padding: 6px 11px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; background: #fff; cursor: pointer; }
+    input[type=number] { padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; width: 100px; }
+    input[type=range] { cursor: pointer; }
+    input[type=text] { padding: 7px 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; width: 100%; margin-bottom: 10px; }
+
+    .ordem-bar { display: flex; gap: 6px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+    .ordem-bar span { font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase; }
+    .ord-btn { padding: 5px 13px; font-size: 12px; border-radius: 20px; border: 1px solid #ccc; background: #fff; cursor: pointer; color: #555; transition: all .15s; }
+    .ord-btn.ativo { background: #1F3864; color: #fff; border-color: #1F3864; }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+    .kpi-card { background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; padding: 13px 15px; }
+    .kpi-label { font-size: 11px; color: #666; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-value { font-size: 25px; font-weight: 700; color: #1F3864; }
+    .kpi-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+    .card { background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; padding: 16px; margin-bottom: 14px; }
+    .card-titulo { font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; }
+
+    .grid2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+    .nav-cats { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .cat-btn { padding: 5px 14px; font-size: 12px; border-radius: 20px; border: 1px solid #ccc; background: #fff; cursor: pointer; color: #555; transition: all .15s; }
+    .cat-btn.ativo { background: #1F3864; color: #fff; border-color: #1F3864; font-weight: 600; }
+
+    .breadcrumb { display: flex; gap: 4px; align-items: center; font-size: 12px; color: #999; margin-bottom: 8px; min-height: 16px; }
+    .bc-link { color: #2E75B6; cursor: pointer; }
+    .bc-link:hover { text-decoration: underline; }
+    .bc-sep { color: #ccc; }
+
+    .bars { display: flex; flex-direction: column; gap: 6px; }
+    .bar-row { display: flex; align-items: center; gap: 7px; }
+    .bar-row.clicavel { cursor: pointer; }
+    .bar-row.clicavel:hover .bar-nome { color: #2E75B6; }
+    .bar-nome { font-size: 11px; color: #555; width: 155px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { flex: 1; height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 5px; transition: width .35s; }
+    .bar-val { font-size: 11px; font-weight: 700; width: 42px; text-align: right; flex-shrink: 0; }
+
+    .leg { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: #555; margin-bottom: 8px; }
+    .leg-item { display: flex; align-items: center; gap: 4px; }
+    .leg-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+    .pill { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 12px; }
+    .p-g { background: #EAF3DE; color: #27500A; }
+    .p-a { background: #FAEEDA; color: #633806; }
+    .p-r { background: #FCEBEB; color: #791F1F; }
+
+    .tabela-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    th { text-align: left; padding: 7px 9px; background: #f7f7f7; border-bottom: 2px solid #e0e0e0; font-size: 10px; font-weight: 700; color: #555; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
+    th:hover { background: #eeeeee; }
+    td { padding: 7px 9px; border-bottom: 1px solid #f5f5f5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    tr:hover td { background: #fafafa; }
+    .alerta { color: #E24B4A; font-weight: 700; }
+
+    /* Simulador */
+    .sim-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 14px; }
+    .sim-item { padding: 9px 13px; border-radius: 6px; border: 1px solid #e0e0e0; background: #fafafa; cursor: pointer; transition: all .15s; margin-bottom: 5px; }
+    .sim-item:hover { border-color: #2E75B6; background: #f0f6ff; }
+    .sim-item.sel { border-color: #1F3864; background: #e8f0fb; }
+    .sim-item-nome { font-size: 12px; color: #333; font-weight: 600; }
+    .sim-item-cat { font-size: 10px; color: #999; margin-top: 2px; }
+    .res-box { background: #f7f7f7; border-radius: 8px; padding: 14px; margin-top: 10px; }
+    .res-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee; font-size: 13px; }
+    .res-row:last-child { border-bottom: none; font-weight: 700; font-size: 14px; padding-top: 8px; }
+    .res-label { color: #555; }
+    .res-val { font-weight: 600; }
+    .decomp-wrap { margin: 10px 0; }
+    .decomp-barra { display: flex; height: 14px; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
+    .decomp-leg { display: flex; gap: 14px; font-size: 11px; color: #666; flex-wrap: wrap; }
+    .decomp-leg span { display: flex; align-items: center; gap: 4px; }
+    .dsq { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+    .alerta-sim { padding: 9px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; text-align: center; margin-top: 10px; }
+    .alerta-ok { background: #EAF3DE; color: #27500A; }
+    .alerta-warn { background: #FAEEDA; color: #633806; }
+    .alerta-danger { background: #FCEBEB; color: #791F1F; }
+
+    /* Comparador */
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+    .comp-card { background: #fff; border-radius: 8px; padding: 16px; border: 2px solid #e0e0e0; }
+    .comp-card.a { border-color: #2E75B6; }
+    .comp-card.b { border-color: #639922; }
+    .comp-titulo { font-size: 14px; font-weight: 700; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+    .comp-titulo.a { color: #2E75B6; }
+    .comp-titulo.b { color: #639922; }
+    .comp-filtros { display: flex; flex-direction: column; gap: 8px; }
+    .comp-linha-filtro { display: flex; gap: 10px; align-items: center; }
+    .comp-filtro-label { font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase; width: 75px; flex-shrink: 0; }
+    .comp-linha { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid #f5f5f5; }
+    .comp-linha:last-child { border-bottom: none; font-weight: 700; }
+    .diff-card { background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; padding: 16px; }
+    .diff-titulo { font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; margin-bottom: 12px; }
+    .diff-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 12px; }
+    .diff-nome { width: 190px; flex-shrink: 0; color: #444; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .diff-col { flex: 1; height: 14px; border-radius: 3px; overflow: hidden; background: #f0f0f0; }
+    .diff-bar { height: 100%; border-radius: 3px; transition: width .3s; }
+    .diff-vals { display: flex; gap: 10px; font-size: 11px; font-weight: 700; flex-shrink: 0; width: 110px; }
+
+  /* ── Tela de login ── */
+  #login-screen {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #1F3864;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #login-box {
+    background: #fff; border-radius: 12px;
+    padding: 40px 48px; width: 360px; text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  }
+  #login-box .marca { font-size: 24px; font-weight: 700; color: #1F3864; margin-bottom: 2px; }
+  #login-box .sub   { font-size: 13px; color: #888; margin-bottom: 28px; }
+  #login-box input[type=password] {
+    width: 100%; padding: 11px 14px; border-radius: 7px;
+    border: 1.5px solid #ddd; font-size: 15px; margin-bottom: 12px;
+    outline: none; transition: border .2s; font-family: Arial, sans-serif;
+    box-sizing: border-box;
+  }
+  #login-box input[type=password]:focus { border-color: #2E75B6; }
+  #login-box button {
+    width: 100%; padding: 12px; border-radius: 7px;
+    background: #1F3864; color: #fff; font-size: 15px;
+    font-weight: 700; border: none; cursor: pointer; transition: background .2s;
+    font-family: Arial, sans-serif;
+  }
+  #login-box button:hover { background: #2E75B6; }
+  #login-erro { color: #E24B4A; font-size: 13px; margin-top: 10px; min-height: 18px; font-weight: 600; }
+  #login-box .rodape { font-size: 11px; color: #bbb; margin-top: 20px; }
+
+
+  /* ── Tributação ZFM ── */
+  .zfm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .param-card { background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; padding: 16px; }
+  .param-titulo { font-size: 12px; font-weight: 700; color: #1F3864; text-transform: uppercase; margin-bottom: 12px; letter-spacing: .04em; }
+  .param-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
+  .param-row:last-child { border-bottom: none; font-weight: 700; }
+  .param-label { color: #555; }
+  .param-val { font-weight: 600; color: #1F3864; }
+  .param-val.destaque { color: #2E75B6; font-size: 16px; }
+  .slider-wrap { margin: 10px 0 6px; }
+  .slider-wrap label { font-size: 12px; color: #444; font-weight: 700; display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .slider-wrap input[type=range] { width: 100%; cursor: pointer; }
+  .zfm-tabela-wrap { overflow-x: auto; }
+  .diff-positivo { color: #639922; font-weight: 700; }
+  .diff-negativo { color: #E24B4A; font-weight: 700; }
+  .badge-fonte { font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 500; }
+  .badge-time { background: #EAF3DE; color: #27500A; }
+  .badge-manual { background: #FFF2CC; color: #7F6000; }
+  .sens-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+  .sens-card { border-radius: 8px; padding: 12px 14px; border: 2px solid transparent; cursor: pointer; transition: all .15s; }
+  .sens-card.ativo { border-color: #1F3864; }
+  .sens-card .s-pct { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+  .sens-card .s-label { font-size: 11px; color: #888; }
+  .insight-box { background: #E6F1FB; border-left: 4px solid #2E75B6; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13px; color: #444; margin-bottom: 14px; }
+  .insight-box b { color: #1F3864; }
+
+
+  /* ── Vendas & Fluxo de Caixa ── */
+  .grid3    { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px; }
+  .grid4    { display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px; }
+  .mini-kpi { background:#fff;border-radius:8px;border:1px solid #e0e0e0;padding:13px 15px; }
+  .mini-kpi .mk-label { font-size:11px;color:#666;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em; }
+  .mini-kpi .mk-val   { font-size:22px;font-weight:700;color:#1F3864; }
+  .mini-kpi .mk-sub   { font-size:11px;color:#aaa;margin-top:2px; }
+  .exemplo-banner { background:#FFF2CC;border:1px solid #EF9F27;border-radius:8px;
+    padding:10px 16px;font-size:12px;color:#7F6000;margin-bottom:14px;display:none; }
+  .aging-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px; }
+  .aging-card { border-radius:8px;padding:12px 14px;text-align:center; }
+  .aging-card .a-val   { font-size:18px;font-weight:700; }
+  .aging-card .a-label { font-size:11px;margin-top:3px;color:#666; }
+  .bolt-row { display:flex;align-items:center;gap:8px;padding:7px 0;
+    border-bottom:1px solid #f5f5f5;font-size:12px; }
+  .bolt-row:last-child { border-bottom:none; }
+  .bolt-status { display:inline-block;font-size:10px;font-weight:700;
+    padding:2px 8px;border-radius:12px;flex-shrink:0; }
+  .st-aberto  { background:#E6F1FB;color:#1F3864; }
+  .st-vencido { background:#FCEBEB;color:#791F1F; }
+  .st-pago    { background:#EAF3DE;color:#27500A; }
+  .semana-bar { display:flex;flex-direction:column;gap:6px; }
+  .sb-row { display:flex;align-items:center;gap:8px; }
+  .sb-label { font-size:11px;color:#555;width:120px;flex-shrink:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .sb-track { flex:1;height:10px;background:#f0f0f0;border-radius:5px;overflow:hidden; }
+  .sb-fill  { height:100%;border-radius:5px;transition:width .3s; }
+  .sb-val   { font-size:11px;font-weight:700;width:80px;text-align:right;flex-shrink:0; }
+
+
+  /* ── Indicadores Financeiros ── */
+  .ind-grid3 { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px; }
+  .ind-grupo { background:#fff;border-radius:10px;border:1px solid #e0e0e0;padding:18px; }
+  .ind-grupo-titulo { font-size:13px;font-weight:700;text-transform:uppercase;
+    letter-spacing:.06em;margin-bottom:14px;padding-bottom:10px;
+    border-bottom:2px solid #BDD7EE;color:#1F3864; }
+  .ind-row { display:flex;justify-content:space-between;align-items:center;
+    padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:13px; }
+  .ind-row:last-child { border-bottom:none;padding-top:10px;margin-top:4px;
+    border-top:2px solid #f0f0f0; }
+  .ind-label { color:#555;flex:1; }
+  .ind-formula { font-size:10px;color:#aaa;font-style:italic;margin-top:1px; }
+  .ind-val { font-size:17px;font-weight:700;text-align:right;min-width:70px; }
+  .ind-status { font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;
+    margin-left:8px;flex-shrink:0; }
+  .ist-ok   { background:#EAF3DE;color:#27500A; }
+  .ist-warn { background:#FFF2CC;color:#7F6000; }
+  .ist-bad  { background:#FCEBEB;color:#791F1F; }
+
+  /* Inputs editáveis */
+  .ind-input-wrap { display:flex;align-items:center;gap:8px;margin-top:6px;margin-bottom:14px;
+    background:#f7f7f7;border-radius:8px;padding:12px 14px;flex-wrap:wrap; }
+  .ind-input-wrap label { font-size:11px;font-weight:700;color:#1F3864;
+    text-transform:uppercase;letter-spacing:.04em;min-width:180px; }
+  .ind-inp { padding:6px 10px;border-radius:6px;border:1.5px solid #2E75B6;
+    font-size:13px;width:140px;text-align:right;font-weight:600;color:#1F3864;
+    background:#fff; }
+  .ind-inp:focus { outline:none;border-color:#1F3864;background:#EEF4FF; }
+  .ind-inp-hint { font-size:10px;color:#888;font-style:italic; }
+
+  /* Gráfico histórico */
+  .ind-hist-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px; }
+  .ind-semaforo { display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap; }
+  .sem-card { flex:1;min-width:120px;border-radius:8px;padding:12px 14px;text-align:center; }
+  .sem-card .s-ico  { font-size:22px;margin-bottom:4px; }
+  .sem-card .s-nome { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em; }
+  .sem-card .s-val  { font-size:20px;font-weight:700;margin-top:2px; }
+  .sem-card .s-ref  { font-size:10px;margin-top:2px;opacity:.7; }
+  .calc-badge { display:inline-block;font-size:9px;padding:1px 5px;border-radius:8px;
+    background:#E6F1FB;color:#2E75B6;font-weight:700;margin-left:4px;vertical-align:middle; }
+  .edit-badge { display:inline-block;font-size:9px;padding:1px 5px;border-radius:8px;
+    background:#FFF2CC;color:#7F6000;font-weight:700;margin-left:4px;vertical-align:middle; }
+
+  </style>
+</head>
+<body>
+
+<!-- Tela de login -->
+<div id="login-screen">
+  <div id="login-box">
+    <div class="marca">Brazimil</div>
+    <div class="sub">Painel de Precificação &mdash; Acesso Restrito</div>
+    <input type="password" id="login-senha" placeholder="Digite a senha"
+      onkeydown="if(event.key==='Enter') fazerLogin()">
+    <button onclick="fazerLogin()">Entrar</button>
+    <div id="login-erro"></div>
+    <div class="rodape">Acesso autorizado apenas para usuários cadastrados.</div>
+  </div>
+</div>
+
+
+<div class="topbar">
+  <div>
+    <h1>Brazimil &mdash; Análise Econômica</h1>
+    <div class="sub">Gerado em 18/05/2026 12:21 &middot; 65 produtos &middot; Análise Econômica Integrada</div>
+  </div>
+</div>
+
+<div class="abas">
+  <button class="aba ativa" onclick="irPara(this,'pg-painel')">Painel Geral</button>
+  <button class="aba" onclick="irPara(this,'pg-simulador')">Simulador de Preço</button>
+  <button class="aba" onclick="irPara(this,'pg-comparador')">Comparador de Cenários</button>
+  <button class="aba" onclick="irPara(this,'pg-zfm')">Tributação ZFM</button>
+  <button class="aba" onclick="irPara(this,'pg-vendas')">Evolução de Vendas</button>
+  <button class="aba" onclick="irPara(this,'pg-fluxo')">Fluxo de Caixa</button>
+  <button class="aba" onclick="irPara(this,'pg-indicadores')">Indicadores Financeiros</button>
+</div>
+
+<!-- PAINEL GERAL -->
+<div class="pagina ativa" id="pg-painel">
+  <div class="filtros">
+    <label>Região:</label>
+    <select id="p-regiao" onchange="atualizarPainel()">
+      <option value="0.07">Manaus CIF (7%)</option>
+      <option value="0.1065">Interior AM (10,65%)</option>
+      <option value="0.1565">Interestadual (15,65%)</option>
+      <option value="0.2365">Paraíba (23,65%)</option>
+    </select>
+    <label>Comissão:</label>
+    <select id="p-comissao" onchange="atualizarPainel()">
+      <option value="0.03">3%</option>
+      <option value="0.05" selected>5%</option>
+      <option value="0.08">8%</option>
+    </select>
+    <label>Frete R$/ton:</label>
+    <select id="p-frete" onchange="atualizarPainel()">
+      <option value="100">R$ 100</option>
+      <option value="120">R$ 120</option>
+      <option value="150">R$ 150</option>
+    </select>
+  </div>
+
+  <div class="ordem-bar">
+    <span>Ordenar:</span>
+    <button class="ord-btn" id="ord-maior" onclick="setOrdem('maior')">Maior MC %</button>
+    <button class="ord-btn" id="ord-menor" onclick="setOrdem('menor')">Menor MC %</button>
+    <button class="ord-btn ativo" id="ord-nome" onclick="setOrdem('nome')">Alfabético</button>
+    <button class="ord-btn" id="ord-preco" onclick="setOrdem('preco')">Maior preço</button>
+    <button class="ord-btn" id="ord-prej" onclick="setOrdem('prej')">Prejuízo primeiro</button>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">MC Média geral</div><div class="kpi-value" id="p-mc"></div><div class="kpi-sub" id="p-mc-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">Saudáveis &ge;35%</div><div class="kpi-value" id="p-ok" style="color:#639922"></div><div class="kpi-sub" id="p-ok-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">Atenção 20&ndash;35%</div><div class="kpi-value" id="p-at" style="color:#EF9F27"></div><div class="kpi-sub" id="p-at-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">Com prejuízo</div><div class="kpi-value" id="p-pr" style="color:#E24B4A"></div><div class="kpi-sub" id="p-pr-sub"></div></div>
+  </div>
+
+  <div class="nav-cats" id="p-nav-cats"></div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-titulo">MC por grupo &mdash; clique para detalhar</div>
+      <div class="breadcrumb" id="p-breadcrumb"></div>
+      <div class="bars" id="p-bars"></div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Distribuição de status</div>
+      <div class="leg">
+        <span class="leg-item"><span class="leg-sq" style="background:#639922"></span>Saudável &ge;35%</span>
+        <span class="leg-item"><span class="leg-sq" style="background:#EF9F27"></span>Atenção 20&ndash;35%</span>
+        <span class="leg-item"><span class="leg-sq" style="background:#E24B4A"></span>Prejuízo</span>
+      </div>
+      <div style="position:relative;height:190px"><canvas id="p-donut" role="img" aria-label="Distribuição de status"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-titulo" id="p-tab-titulo">Todos os produtos</div>
+    <div class="tabela-wrap">
+      <table>
+        <colgroup>
+          <col style="width:25%"><col style="width:13%"><col style="width:9%">
+          <col style="width:10%"><col style="width:9%"><col style="width:8%">
+          <col style="width:11%"><col style="width:15%">
+        </colgroup>
+        <thead><tr>
+          <th onclick="sortTab('nome')">Produto</th>
+          <th onclick="sortTab('sub')">Subcategoria</th>
+          <th onclick="sortTab('preco')">Preço</th>
+          <th onclick="sortTab('cv')">Custo Var.</th>
+          <th onclick="sortTab('mc')">MC R$</th>
+          <th onclick="sortTab('mcPct')">MC %</th>
+          <th>Status</th>
+          <th onclick="sortTab('pmin')">Preço mín. MC 25%</th>
+        </tr></thead>
+        <tbody id="p-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SIMULADOR -->
+<div class="pagina" id="pg-simulador">
+  <div class="filtros">
+    <label>Região:</label>
+    <select id="s-regiao" onchange="atualizarSim()">
+      <option value="0.07">Manaus CIF (7%)</option>
+      <option value="0.1065">Interior AM (10,65%)</option>
+      <option value="0.1565">Interestadual (15,65%)</option>
+      <option value="0.2365">Paraíba (23,65%)</option>
+    </select>
+    <label>Comissão:</label>
+    <select id="s-comissao" onchange="atualizarSim()">
+      <option value="0.03">3%</option>
+      <option value="0.05" selected>5%</option>
+      <option value="0.08">8%</option>
+    </select>
+    <label>Frete R$/ton:</label>
+    <select id="s-frete" onchange="atualizarSim()">
+      <option value="100">R$ 100</option>
+      <option value="120">R$ 120</option>
+      <option value="150">R$ 150</option>
+    </select>
+    <label>MC alvo:</label>
+    <select id="s-mc-alvo" onchange="atualizarSim()">
+      <option value="0.20">20%</option>
+      <option value="0.25" selected>25%</option>
+      <option value="0.30">30%</option>
+      <option value="0.35">35%</option>
+    </select>
+  </div>
+
+  <div class="sim-grid">
+    <div class="card">
+      <div class="card-titulo">Selecione um produto</div>
+      <input type="text" id="s-busca" placeholder="Buscar produto..." oninput="filtrarSim()">
+      <div id="s-lista" style="max-height:500px;overflow-y:auto"></div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-titulo" id="s-prod-nome">Selecione um produto à esquerda</div>
+        <div style="margin-bottom:14px">
+          <label style="font-size:12px;font-weight:700;color:#444;display:block;margin-bottom:6px">Preço de venda (R$)</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="range" id="s-slider" min="0" max="500" step="0.5" value="0" oninput="syncP('slider')" style="flex:1">
+            <input type="number" id="s-num" min="0" max="9999" step="0.5" value="0" oninput="syncP('num')">
+          </div>
+        </div>
+        <div class="card-titulo">Composição do custo variável</div>
+        <div class="decomp-wrap">
+          <div class="decomp-barra" id="s-barra"></div>
+          <div class="decomp-leg">
+            <span><span class="dsq" style="background:#1F3864"></span>Custo fábrica</span>
+            <span><span class="dsq" style="background:#EF9F27"></span>Frete</span>
+            <span><span class="dsq" style="background:#E24B4A"></span>Impostos + comissão</span>
+            <span><span class="dsq" style="background:#EAF3DE;border:1px solid #ccc"></span>MC</span>
+          </div>
+        </div>
+        <div class="res-box">
+          <div class="res-row"><span class="res-label">Preço de venda</span><span class="res-val" id="s-r-preco">—</span></div>
+          <div class="res-row"><span class="res-label">(-) Impostos</span><span class="res-val" id="s-r-imp">—</span></div>
+          <div class="res-row"><span class="res-label">(-) Comissão</span><span class="res-val" id="s-r-com">—</span></div>
+          <div class="res-row"><span class="res-label">= Preço líquido (PLV)</span><span class="res-val" id="s-r-plv">—</span></div>
+          <div class="res-row"><span class="res-label">(-) Custo de fábrica</span><span class="res-val" id="s-r-fab">—</span></div>
+          <div class="res-row"><span class="res-label">(-) Frete</span><span class="res-val" id="s-r-frete">—</span></div>
+          <div class="res-row"><span class="res-label">= Margem de contribuição (R$)</span><span class="res-val" id="s-r-mc">—</span></div>
+          <div class="res-row"><span class="res-label">MC (%)</span><span class="res-val" id="s-r-mcpct">—</span></div>
+          <div class="res-row"><span class="res-label">Preço mínimo (MC alvo)</span><span class="res-val" id="s-r-pmin">—</span></div>
+        </div>
+        <div class="alerta-sim" id="s-alerta"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARADOR -->
+<div class="pagina" id="pg-comparador">
+  <div class="comp-grid">
+    <div class="comp-card a">
+      <div class="comp-titulo a">Cenário A</div>
+      <div class="comp-filtros">
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Região:</span>
+          <select id="ca-reg" onchange="atualizarComp()">
+            <option value="0.07">Manaus CIF (7%)</option>
+            <option value="0.1065">Interior AM (10,65%)</option>
+            <option value="0.1565">Interestadual (15,65%)</option>
+            <option value="0.2365">Paraíba (23,65%)</option>
+          </select>
+        </div>
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Comissão:</span>
+          <select id="ca-com" onchange="atualizarComp()">
+            <option value="0.03">3%</option><option value="0.05" selected>5%</option><option value="0.08">8%</option>
+          </select>
+        </div>
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Frete:</span>
+          <select id="ca-fr" onchange="atualizarComp()">
+            <option value="100" selected>R$ 100</option><option value="120">R$ 120</option><option value="150">R$ 150</option>
+          </select>
+        </div>
+      </div>
+      <div id="ca-kpis" style="margin-top:14px"></div>
+    </div>
+    <div class="comp-card b">
+      <div class="comp-titulo b">Cenário B</div>
+      <div class="comp-filtros">
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Região:</span>
+          <select id="cb-reg" onchange="atualizarComp()">
+            <option value="0.07">Manaus CIF (7%)</option>
+            <option value="0.1065">Interior AM (10,65%)</option>
+            <option value="0.1565" selected>Interestadual (15,65%)</option>
+            <option value="0.2365">Paraíba (23,65%)</option>
+          </select>
+        </div>
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Comissão:</span>
+          <select id="cb-com" onchange="atualizarComp()">
+            <option value="0.03">3%</option><option value="0.05">5%</option><option value="0.08" selected>8%</option>
+          </select>
+        </div>
+        <div class="comp-linha-filtro">
+          <span class="comp-filtro-label">Frete:</span>
+          <select id="cb-fr" onchange="atualizarComp()">
+            <option value="100">R$ 100</option><option value="120">R$ 120</option><option value="150" selected>R$ 150</option>
+          </select>
+        </div>
+      </div>
+      <div id="cb-kpis" style="margin-top:14px"></div>
+    </div>
+  </div>
+  <div class="diff-card">
+    <div class="diff-titulo">Top 20 produtos com maior diferença de MC — Cenário A (azul) vs B (verde)</div>
+    <div id="comp-diff"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+
+const produtos = [{"nome": "Econômica 3,0L Refil Branco Neve", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 9.5, "custo": 4.5, "peso": 3.85, "fonte": "ref"}, {"nome": "Econômica 3,0L Refil Cor", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 9.5, "custo": 3.98, "peso": 3.35, "fonte": "ref"}, {"nome": "Econômica 3,0L Galão Branco Neve", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 17.99, "custo": 7.97, "peso": 4, "fonte": "ref"}, {"nome": "Econômica 3,0L Galão Cor", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 17.99, "custo": 7.45, "peso": 3.5, "fonte": "ref"}, {"nome": "Econômica 15L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 69.9, "custo": 32.78, "peso": 18.7, "fonte": "time"}, {"nome": "Econômica 15L Balde Cor", "cat": "Tinta Base Água", "sub": "Econômica", "preco": 69.9, "custo": 29.42, "peso": 17, "fonte": "time"}, {"nome": "Externa 3,0L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Externa", "preco": 26.0, "custo": 11.25, "peso": 4.2, "fonte": "ref"}, {"nome": "Externa 3,0L Balde Cor", "cat": "Tinta Base Água", "sub": "Externa", "preco": 24.2, "custo": 9.39, "peso": 3.9, "fonte": "ref"}, {"nome": "Externa 15L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Externa", "preco": 94.0, "custo": 53.75, "peso": 19, "fonte": "ref"}, {"nome": "Externa 15L Balde Cor", "cat": "Tinta Base Água", "sub": "Externa", "preco": 90.11, "custo": 41.94, "peso": 17, "fonte": "ref"}, {"nome": "Semi Brilho 3,0L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Semi Brilho", "preco": 43.0, "custo": 11.61, "peso": 3.6, "fonte": "ref"}, {"nome": "Semi Brilho 3,0L Balde Cor", "cat": "Tinta Base Água", "sub": "Semi Brilho", "preco": 35.0, "custo": 15.13, "peso": 3.5, "fonte": "ref"}, {"nome": "Semi Brilho 15L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Semi Brilho", "preco": 170.0, "custo": 54.06, "peso": 15.1, "fonte": "ref"}, {"nome": "Semi Brilho 15L Balde Cor", "cat": "Tinta Base Água", "sub": "Semi Brilho", "preco": 170.0, "custo": 74.32, "peso": 15.1, "fonte": "ref"}, {"nome": "Tinta Piso 3,0L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Piso", "preco": 30.0, "custo": 18.73, "peso": 3.7, "fonte": "ref"}, {"nome": "Tinta Piso 3,0L Balde Cor", "cat": "Tinta Base Água", "sub": "Piso", "preco": 28.5, "custo": 17.48, "peso": 3.6, "fonte": "ref"}, {"nome": "Tinta Piso 15L Balde Branco Neve", "cat": "Tinta Base Água", "sub": "Piso", "preco": 130.0, "custo": 102.7, "peso": 16, "fonte": "ref"}, {"nome": "Tinta Piso 15L Balde Cor", "cat": "Tinta Base Água", "sub": "Piso", "preco": 108.0, "custo": 96.69, "peso": 15.8, "fonte": "ref"}, {"nome": "Selador Acril 3,0L Balde Pigmentado", "cat": "Tinta Base Água", "sub": "Selador Acril", "preco": 16.99, "custo": 6.74, "peso": 4.05, "fonte": "time"}, {"nome": "Selador Acril 15L Balde Pigmentado", "cat": "Tinta Base Água", "sub": "Selador Acril", "preco": 66.49, "custo": 24.77, "peso": 18, "fonte": "time"}, {"nome": "Tinta P Gesso 3,0L", "cat": "Tinta Base Água", "sub": "Gesso", "preco": 20.0, "custo": 7.43, "peso": 4.1, "fonte": "ref"}, {"nome": "Tinta P Gesso 15L", "cat": "Tinta Base Água", "sub": "Gesso", "preco": 73.0, "custo": 31.95, "peso": 20.03, "fonte": "ref"}, {"nome": "Liquibrilho 3,0L Balde Incolor", "cat": "Tinta Base Água", "sub": "Liquibrilho", "preco": 32.0, "custo": 14.15, "peso": 3.185, "fonte": "ref"}, {"nome": "Liquibrilho 15L Balde Incolor", "cat": "Tinta Base Água", "sub": "Liquibrilho", "preco": 135.0, "custo": 65.63, "peso": 13.5, "fonte": "ref"}, {"nome": "Esmalte Sintético 0,75L Lata Alumínio", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 27.2, "custo": 16.03, "peso": 0.85, "fonte": "ref"}, {"nome": "Esmalte Sintético 0,75L Lata Branco", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 16.11, "custo": 10.06, "peso": 1.05, "fonte": "ref"}, {"nome": "Esmalte Sintético 0,75L Lata Preto", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 16.87, "custo": 8.21, "peso": 19, "fonte": "ref"}, {"nome": "Esmalte Sintético 0,75L Lata Cor", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 16.87, "custo": 8.68, "peso": 0.85, "fonte": "ref"}, {"nome": "Esmalte Sintético 3,0L Lata Alumínio", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 99.0, "custo": 58.3, "peso": 3.1, "fonte": "ref"}, {"nome": "Esmalte Sintético 3,0L Lata Branco", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 52.26, "custo": 34.91, "peso": 3.35, "fonte": "ref"}, {"nome": "Esmalte Sintético 3,0L Lata Preto", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 39.9, "custo": 27.51, "peso": 3.35, "fonte": "ref"}, {"nome": "Esmalte Sintético 3,0L Lata Cor", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 46.9, "custo": 29.38, "peso": 3.35, "fonte": "ref"}, {"nome": "Esmalte Sintético 3,0L Lata Fosco", "cat": "Tinta Base Solvente", "sub": "Esmalte Sint.", "preco": 54.5, "custo": 31.62, "peso": 3.6, "fonte": "ref"}, {"nome": "Esmalte Base Água 0,75L", "cat": "Tinta Base Solvente", "sub": "Esmalte Base Água", "preco": 20.0, "custo": 11.0, "peso": 0.85, "fonte": "ref"}, {"nome": "Esmalte Base Água 3,0L", "cat": "Tinta Base Solvente", "sub": "Esmalte Base Água", "preco": 80.0, "custo": 38.2, "peso": 3.5, "fonte": "ref"}, {"nome": "Verniz 0,75L Lata Incolor", "cat": "Tinta Base Solvente", "sub": "Verniz", "preco": 20.5, "custo": 11.35, "peso": 0.85, "fonte": "ref"}, {"nome": "Verniz 0,75L Lata Pigmentado", "cat": "Tinta Base Solvente", "sub": "Verniz", "preco": 20.5, "custo": 9.76, "peso": 0.85, "fonte": "ref"}, {"nome": "Verniz 3,0L Lata Incolor", "cat": "Tinta Base Solvente", "sub": "Verniz", "preco": 63.0, "custo": 39.59, "peso": 3.1, "fonte": "ref"}, {"nome": "Verniz 3,0L Lata Pigmentado", "cat": "Tinta Base Solvente", "sub": "Verniz", "preco": 63.0, "custo": 35.49, "peso": 3.1, "fonte": "ref"}, {"nome": "Zarcão 0,75L Lata Branco", "cat": "Tinta Base Solvente", "sub": "Zarcão", "preco": 15.9, "custo": 6.59, "peso": 1.02, "fonte": "ref"}, {"nome": "Zarcão 0,75L Lata Cinza", "cat": "Tinta Base Solvente", "sub": "Zarcão", "preco": 14.9, "custo": 6.59, "peso": 1.02, "fonte": "ref"}, {"nome": "Zarcão 0,75L Lata Cor", "cat": "Tinta Base Solvente", "sub": "Zarcão", "preco": 14.0, "custo": 6.59, "peso": 1.02, "fonte": "ref"}, {"nome": "Zarcão 3,0L Lata Cinza", "cat": "Tinta Base Solvente", "sub": "Zarcão", "preco": 45.55, "custo": 20.58, "peso": 3.5, "fonte": "ref"}, {"nome": "Zarcão  18L Lata Cor", "cat": "Tinta Base Solvente", "sub": "Zarcão", "preco": 200.0, "custo": 89.54, "peso": 20.5, "fonte": "ref"}, {"nome": "Selador P/ Mad. 0,75L Lata Incolor", "cat": "Tinta Base Solvente", "sub": "Selador Mad.", "preco": 19.0, "custo": 11.12, "peso": 0.85, "fonte": "ref"}, {"nome": "Selador P/ Mad. 3,0L Lata Incolor", "cat": "Tinta Base Solvente", "sub": "Selador Mad.", "preco": 68.0, "custo": 38.67, "peso": 3.1, "fonte": "ref"}, {"nome": "Corrida Pote 1Kg", "cat": "Massas e Texturas", "sub": "Corrida", "preco": 15.99, "custo": 1.15, "peso": 1.04, "fonte": "time"}, {"nome": "Corrida Galão 5Kg", "cat": "Massas e Texturas", "sub": "Corrida", "preco": 14.9, "custo": 6.51, "peso": 5.185, "fonte": "ref"}, {"nome": "Corrida Saco Valv 10 Kg", "cat": "Massas e Texturas", "sub": "Corrida", "preco": 11.0, "custo": 5.82, "peso": 10.05, "fonte": "ref"}, {"nome": "Corrida Balde 20Kg", "cat": "Massas e Texturas", "sub": "Corrida", "preco": 38.9, "custo": 21.43, "peso": 20.64, "fonte": "time"}, {"nome": "Acrilica Pote 1Kg", "cat": "Massas e Texturas", "sub": "Acrílica", "preco": 6.0, "custo": 2.56, "peso": 1.04, "fonte": "ref"}, {"nome": "Acrilica Galão 5Kg", "cat": "Massas e Texturas", "sub": "Acrílica", "preco": 19.99, "custo": 10.45, "peso": 5.185, "fonte": "time"}, {"nome": "Acrilica Saco Valv 10,0Kg", "cat": "Massas e Texturas", "sub": "Acrílica", "preco": 27.0, "custo": 12.88, "peso": 10.05, "fonte": "ref"}, {"nome": "Acrilica Balde 20Kg", "cat": "Massas e Texturas", "sub": "Acrílica", "preco": 69.9, "custo": 36.02, "peso": 20.7, "fonte": "time"}, {"nome": "Vedamil / Manta Líquida Balde 3,6Kg", "cat": "Complementos", "sub": "Vedamil", "preco": 32.5, "custo": 16.86, "peso": 3.6, "fonte": "ref"}, {"nome": "Vedamil / Manta Líquida Balde 12Kg", "cat": "Complementos", "sub": "Vedamil", "preco": 133.0, "custo": 56.56, "peso": 12.85, "fonte": "ref"}, {"nome": "Vedamil / Manta Líquida Balde 15Kg", "cat": "Complementos", "sub": "Vedamil", "preco": 100.0, "custo": 68.3, "peso": 15.85, "fonte": "ref"}, {"nome": "Vedamil / Manta Líquida Balde 18Kg", "cat": "Complementos", "sub": "Vedamil", "preco": 150.0, "custo": 79.74, "peso": 18.85, "fonte": "ref"}, {"nome": "Borracha Liquida 3,6 Kg", "cat": "Complementos", "sub": "Borracha Líquida", "preco": 86.67, "custo": 37.7, "peso": 4, "fonte": "ref"}, {"nome": "Borracha Liquida 14,0 Kg", "cat": "Complementos", "sub": "Borracha Líquida", "preco": 285.0, "custo": 134.14, "peso": 17, "fonte": "ref"}, {"nome": "Cimento Queimado Galão", "cat": "Complementos", "sub": "Cimento Queimado", "preco": 40.0, "custo": 10.09, "peso": 3.185, "fonte": "ref"}, {"nome": "Cola Branca 0,5Kg", "cat": "Complementos", "sub": "Cola e Solvente", "preco": 7.0, "custo": 3.37, "peso": 0.51, "fonte": "ref"}, {"nome": "Cola Branca 1,0Kg", "cat": "Complementos", "sub": "Cola e Solvente", "preco": 11.5, "custo": 5.95, "peso": 1.01, "fonte": "ref"}, {"nome": "Aguarras 0,900", "cat": "Complementos", "sub": "Cola e Solvente", "preco": 15.0, "custo": 8.7, "peso": 0.81, "fonte": "ref"}, {"nome": "Aguarras 0,450", "cat": "Complementos", "sub": "Cola e Solvente", "preco": 7.8, "custo": 4.77, "peso": 0.46, "fonte": "ref"}];
+const cats = [...new Set(produtos.map(p => p.cat))];
+
+let catAtiva = "todas", subAtiva = null, ordem = "nome";
+let sortCol = "mcPct", sortDir = -1;
+let donutChart = null, simProd = null;
+
+// ── Navegação de abas ────────────────────────────────────────────
+function irPara(btn, pg) {
+  document.querySelectorAll(".aba").forEach(a => a.classList.remove("ativa"));
+  document.querySelectorAll(".pagina").forEach(p => p.classList.remove("ativa"));
+  btn.classList.add("ativa");
+  document.getElementById(pg).classList.add("ativa");
+  if (pg === "pg-simulador")  { renderListaSim(produtos); }
+  if (pg === "pg-comparador") { atualizarComp(); }
+}
+
+// ── Cálculo de MC ────────────────────────────────────────────────
+function calcMC(p, imp, com, fr, precoOpt) {
+  const preco = (precoOpt !== undefined) ? precoOpt : p.preco;
+  const frete = (p.peso / 1000) * fr;
+  const fab   = p.custo;
+  const cv    = fab + frete;
+  const plv   = preco * (1 - imp - com);
+  const mc    = plv - cv;
+  const mcPct = (plv > 0) ? (mc / plv) * 100 : 0;
+  const pmin  = cv / ((1 - imp - com) * (1 - 0.25));
+  return { frete, fab, cv, plv, mc, mcPct, pmin,
+           impR: preco * imp, comR: preco * com, preco };
+}
+
+function cor(p)  { return p >= 35 ? "#639922" : p >= 20 ? "#EF9F27" : "#E24B4A"; }
+function pill(p) {
+  var c = p >= 35 ? "p-g" : p >= 20 ? "p-a" : "p-r";
+  var t = p >= 35 ? "Saudável" : p >= 20 ? "Atenção" : "Prejuízo";
+  return '<span class="pill ' + c + '">' + t + '</span>';
+}
+function fmt(n)  { return "R$ " + Math.abs(n).toFixed(2).replace(".", ","); }
+function fmtP(n) { return n.toFixed(1) + "%"; }
+
+// ── Controles do Painel ─────────────────────────────────────────
+function setCat(c)  { catAtiva = c; subAtiva = null; atualizarPainel(); }
+function setSub(s)  { subAtiva = s; atualizarPainel(); }
+function setOrdem(o) {
+  ordem = o;
+  document.querySelectorAll(".ord-btn").forEach(b => b.classList.remove("ativo"));
+  document.getElementById("ord-" + o).classList.add("ativo");
+  atualizarPainel();
+}
+function sortTab(col) {
+  sortDir = (sortCol === col) ? sortDir * -1 : (col === "nome" || col === "sub" ? 1 : -1);
+  sortCol = col;
+  atualizarPainel();
+}
+function aplicarOrdem(arr) {
+  return [...arr].sort(function(a, b) {
+    if (ordem === "maior") return b.mcPct - a.mcPct;
+    if (ordem === "menor") return a.mcPct - b.mcPct;
+    if (ordem === "preco") return b.preco - a.preco;
+    if (ordem === "prej")  return a.mcPct - b.mcPct;
+    return a.nome.localeCompare(b.nome, "pt-BR");
+  });
+}
+
+// ── Painel Geral ────────────────────────────────────────────────
+function atualizarPainel() {
+  var imp = parseFloat(document.getElementById("p-regiao").value);
+  var com = parseFloat(document.getElementById("p-comissao").value);
+  var fr  = parseFloat(document.getElementById("p-frete").value);
+
+  var todos = produtos.map(function(p) {
+    var r = calcMC(p, imp, com, fr);
+    return Object.assign({}, p, r);
+  });
+
+  var media = todos.reduce(function(s, r) { return s + r.mcPct; }, 0) / todos.length;
+  var ok  = todos.filter(function(r) { return r.mcPct >= 35; }).length;
+  var at  = todos.filter(function(r) { return r.mcPct >= 20 && r.mcPct < 35; }).length;
+  var pr  = todos.filter(function(r) { return r.mc < 0; }).length;
+
+  var elMC = document.getElementById("p-mc");
+  elMC.textContent = fmtP(media);
+  elMC.style.color = cor(media);
+  document.getElementById("p-mc-sub").textContent = "todos os " + todos.length + " SKUs";
+  document.getElementById("p-ok").textContent     = ok;
+  document.getElementById("p-ok-sub").textContent = ((ok / todos.length) * 100).toFixed(0) + "% do portfólio";
+  document.getElementById("p-at").textContent     = at;
+  document.getElementById("p-at-sub").textContent = ((at / todos.length) * 100).toFixed(0) + "% do portfólio";
+  document.getElementById("p-pr").textContent     = pr;
+  document.getElementById("p-pr-sub").textContent = pr > 0 ? "requer ação imediata" : "nenhum SKU";
+
+  // Nav categorias
+  var navHTML = '<button class="cat-btn ' + (catAtiva === "todas" ? "ativo" : "") + '" onclick="setCat(\'todas\')">Todas</button>';
+  cats.forEach(function(c) {
+    navHTML += '<button class="cat-btn ' + (catAtiva === c ? "ativo" : "") + '" onclick="setCat(\'' + c + '\')">' + c + '</button>';
+  });
+  document.getElementById("p-nav-cats").innerHTML = navHTML;
+
+  // Barras
+  var bcEl = document.getElementById("p-breadcrumb");
+  var grupos = [];
+
+  if (catAtiva === "todas") {
+    cats.forEach(function(cat) {
+      var its = todos.filter(function(r) { return r.cat === cat; });
+      var avg = its.reduce(function(s, r) { return s + r.mcPct; }, 0) / its.length;
+      grupos.push({ key: cat, label: cat, avg: avg, count: its.length, nivel: "cat" });
+    });
+    bcEl.innerHTML = "";
+  } else if (!subAtiva) {
+    var subs = [...new Set(todos.filter(function(r) { return r.cat === catAtiva; }).map(function(r) { return r.sub; }))];
+    subs.forEach(function(sub) {
+      var its = todos.filter(function(r) { return r.cat === catAtiva && r.sub === sub; });
+      var avg = its.reduce(function(s, r) { return s + r.mcPct; }, 0) / its.length;
+      grupos.push({ key: sub, label: sub, avg: avg, count: its.length, nivel: "sub" });
+    });
+    bcEl.innerHTML = '<span class="bc-link" onclick="setCat(\'todas\')">Todas</span><span class="bc-sep">›</span><span>' + catAtiva + '</span>';
+  } else {
+    todos.filter(function(r) { return r.cat === catAtiva && r.sub === subAtiva; }).forEach(function(r) {
+      grupos.push({ key: r.nome, label: r.nome, avg: r.mcPct, count: 1, nivel: "prod" });
+    });
+    bcEl.innerHTML = '<span class="bc-link" onclick="setCat(\'todas\')">Todas</span><span class="bc-sep">›</span>' +
+      '<span class="bc-link" onclick="setCat(\'' + catAtiva + '\')">' + catAtiva + '</span>' +
+      '<span class="bc-sep">›</span><span>' + subAtiva + '</span>';
+  }
+
+  // Aplica ordem nas barras
+  grupos = grupos.map(function(g) { return Object.assign({}, g, { mcPct: g.avg, nome: g.label }); });
+  grupos = aplicarOrdem(grupos);
+
+  var maxV = Math.max.apply(null, grupos.map(function(g) { return Math.abs(g.avg); }));
+  maxV = Math.max(maxV, 1);
+
+  var barsHTML = "";
+  grupos.forEach(function(g) {
+    var pct = Math.max(2, (Math.abs(g.avg) / maxV) * 100);
+    var clk = "";
+    if (g.nivel === "cat") {
+      clk = 'onclick="setCat(\'' + g.key + '\')" class="bar-row clicavel"';
+    } else if (g.nivel === "sub") {
+      clk = 'onclick="setSub(\'' + g.key + '\')" class="bar-row clicavel"';
+    } else {
+      clk = 'class="bar-row"';
+    }
+    var suffix = g.count > 1 ? " (" + g.count + ")" : ":";
+    barsHTML += '<div ' + clk + '>' +
+      '<div class="bar-nome" title="' + g.label + '">' + g.label + suffix + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct.toFixed(0) + '%;background:' + cor(g.avg) + '"></div></div>' +
+      '<div class="bar-val" style="color:' + cor(g.avg) + '">' + g.avg.toFixed(1) + '%</div>' +
+      '</div>';
+  });
+  document.getElementById("p-bars").innerHTML = barsHTML;
+
+  // Donut
+  if (donutChart) donutChart.destroy();
+  donutChart = new Chart(document.getElementById("p-donut"), {
+    type: "doughnut",
+    data: {
+      labels: ["Saudável", "Atenção", "Prejuízo"],
+      datasets: [{ data: [ok, at, pr], backgroundColor: ["#639922", "#EF9F27", "#E24B4A"], borderWidth: 0, hoverOffset: 4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: "65%",
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return " " + c.label + ": " + c.raw + " SKUs"; } } } }
+    }
+  });
+
+  // Tabela
+  var filtrados = todos;
+  if (catAtiva !== "todas") filtrados = filtrados.filter(function(r) { return r.cat === catAtiva; });
+  if (subAtiva)             filtrados = filtrados.filter(function(r) { return r.sub === subAtiva; });
+
+  filtrados = [...filtrados].sort(function(a, b) {
+    var va = typeof a[sortCol] === "string" ? a[sortCol] : +a[sortCol];
+    var vb = typeof b[sortCol] === "string" ? b[sortCol] : +b[sortCol];
+    return (typeof va === "string" ? va.localeCompare(vb, "pt-BR") : va - vb) * sortDir;
+  });
+  if (sortCol === "mcPct") filtrados = aplicarOrdem(filtrados);
+
+  var titulo = "Todos os produtos (" + filtrados.length + ")";
+  if (catAtiva !== "todas") titulo = catAtiva + (subAtiva ? " › " + subAtiva : "") + " (" + filtrados.length + " produtos)";
+  document.getElementById("p-tab-titulo").textContent = titulo;
+
+  var tbodyHTML = "";
+  filtrados.forEach(function(r) {
+    var al = r.preco < r.pmin ? ' class="alerta"' : "";
+    tbodyHTML += "<tr>" +
+      '<td title="' + r.nome + '">' + r.nome + "</td>" +
+      '<td style="color:#888">' + r.sub + "</td>" +
+      "<td>" + fmt(r.preco) + "</td>" +
+      "<td>" + fmt(r.cv) + "</td>" +
+      '<td style="color:' + cor(r.mcPct) + ';font-weight:700">' + fmt(r.mc) + "</td>" +
+      '<td style="color:' + cor(r.mcPct) + ';font-weight:700">' + fmtP(r.mcPct) + "</td>" +
+      "<td>" + pill(r.mcPct) + "</td>" +
+      "<td" + al + ">" + fmt(r.pmin) + "</td>" +
+      "</tr>";
+  });
+  document.getElementById("p-tbody").innerHTML = tbodyHTML;
+}
+
+// ── Simulador ────────────────────────────────────────────────────
+function renderListaSim(lista) {
+  var html = "";
+  lista.forEach(function(p) {
+    var idx = produtos.indexOf(p);
+    var sel = (simProd && simProd.nome === p.nome) ? " sel" : "";
+    html += '<div class="sim-item' + sel + '" onclick="selecionarProd(' + idx + ')">' +
+      '<div class="sim-item-nome">' + p.nome + '</div>' +
+      '<div class="sim-item-cat">' + p.cat + ' › ' + p.sub + '</div>' +
+      '</div>';
+  });
+  document.getElementById("s-lista").innerHTML = html;
+}
+
+function filtrarSim() {
+  var q = document.getElementById("s-busca").value.toLowerCase();
+  renderListaSim(produtos.filter(function(p) {
+    return p.nome.toLowerCase().includes(q) || p.sub.toLowerCase().includes(q);
+  }));
+}
+
+function selecionarProd(idx) {
+  simProd = produtos[idx];
+  document.getElementById("s-prod-nome").textContent = simProd.nome;
+  var sl = document.getElementById("s-slider");
+  sl.max   = Math.max(simProd.preco * 3, 500).toFixed(0);
+  sl.value = simProd.preco;
+  document.getElementById("s-num").value = simProd.preco;
+  renderListaSim(produtos);
+  atualizarSim();
+}
+
+function syncP(orig) {
+  if (orig === "slider") document.getElementById("s-num").value   = document.getElementById("s-slider").value;
+  else                   document.getElementById("s-slider").value = document.getElementById("s-num").value;
+  atualizarSim();
+}
+
+function atualizarSim() {
+  if (!simProd) return;
+  var imp    = parseFloat(document.getElementById("s-regiao").value);
+  var com    = parseFloat(document.getElementById("s-comissao").value);
+  var fr     = parseFloat(document.getElementById("s-frete").value);
+  var mcAlvo = parseFloat(document.getElementById("s-mc-alvo").value);
+  var preco  = parseFloat(document.getElementById("s-num").value) || 0;
+  var r      = calcMC(simProd, imp, com, fr, preco);
+
+  document.getElementById("s-r-preco").textContent  = fmt(preco);
+  document.getElementById("s-r-imp").textContent    = "- " + fmt(r.impR);
+  document.getElementById("s-r-com").textContent    = "- " + fmt(r.comR);
+  document.getElementById("s-r-plv").textContent    = fmt(r.plv);
+  document.getElementById("s-r-fab").textContent    = "- " + fmt(r.fab);
+  document.getElementById("s-r-frete").textContent  = "- " + fmt(r.frete);
+  document.getElementById("s-r-mc").textContent     = fmt(r.mc);
+  document.getElementById("s-r-mcpct").textContent  = fmtP(r.mcPct);
+  var pmin = r.cv / ((1 - imp - com) * (1 - mcAlvo));
+  document.getElementById("s-r-pmin").textContent   = fmt(pmin);
+
+  // Barra de decomposição
+  var tot  = Math.max(preco, r.cv + r.impR + r.comR, 0.01);
+  var pFab = (r.fab / tot * 100).toFixed(1);
+  var pFr  = (r.frete / tot * 100).toFixed(1);
+  var pImp = ((r.impR + r.comR) / tot * 100).toFixed(1);
+  var pMC  = Math.max(0, r.mc / tot * 100).toFixed(1);
+  document.getElementById("s-barra").innerHTML =
+    '<div style="width:' + pFab + '%;background:#1F3864"></div>' +
+    '<div style="width:' + pFr  + '%;background:#EF9F27"></div>' +
+    '<div style="width:' + pImp + '%;background:#E24B4A"></div>' +
+    '<div style="width:' + pMC  + '%;background:#EAF3DE"></div>';
+
+  // Alerta
+  var el = document.getElementById("s-alerta");
+  if (preco <= 0) {
+    el.textContent = ""; el.className = "alerta-sim";
+  } else if (r.mcPct >= 35) {
+    el.textContent = "Saudável — MC " + fmtP(r.mcPct) + " acima de 35%";
+    el.className = "alerta-sim alerta-ok";
+  } else if (r.mcPct >= mcAlvo * 100) {
+    el.textContent = "Atenção — MC " + fmtP(r.mcPct) + ", acima do alvo mas abaixo de 35%";
+    el.className = "alerta-sim alerta-warn";
+  } else {
+    el.textContent = "Preço insuficiente — MC " + fmtP(r.mcPct) + ". Mínimo: " + fmt(pmin);
+    el.className = "alerta-sim alerta-danger";
+  }
+}
+
+// ── Comparador ──────────────────────────────────────────────────
+function atualizarComp() {
+  var impA = parseFloat(document.getElementById("ca-reg").value);
+  var comA = parseFloat(document.getElementById("ca-com").value);
+  var frA  = parseFloat(document.getElementById("ca-fr").value);
+  var impB = parseFloat(document.getElementById("cb-reg").value);
+  var comB = parseFloat(document.getElementById("cb-com").value);
+  var frB  = parseFloat(document.getElementById("cb-fr").value);
+
+  var resA = produtos.map(function(p) { return Object.assign({}, p, calcMC(p, impA, comA, frA)); });
+  var resB = produtos.map(function(p) { return Object.assign({}, p, calcMC(p, impB, comB, frB)); });
+
+  function kpiHtml(res) {
+    var med = res.reduce(function(s, r) { return s + r.mcPct; }, 0) / res.length;
+    var ok  = res.filter(function(r) { return r.mcPct >= 35; }).length;
+    var at  = res.filter(function(r) { return r.mcPct >= 20 && r.mcPct < 35; }).length;
+    var pr  = res.filter(function(r) { return r.mc < 0; }).length;
+    return '<div class="comp-linha"><span>MC Média</span><span style="color:' + cor(med) + ';font-weight:700">' + fmtP(med) + '</span></div>' +
+      '<div class="comp-linha"><span>Saudáveis ≥35%</span><span style="color:#639922;font-weight:700">' + ok + ' SKUs</span></div>' +
+      '<div class="comp-linha"><span>Atenção 20–35%</span><span style="color:#EF9F27;font-weight:700">' + at + ' SKUs</span></div>' +
+      '<div class="comp-linha"><span>Com prejuízo</span><span style="color:#E24B4A;font-weight:700">' + pr + ' SKUs</span></div>';
+  }
+
+  document.getElementById("ca-kpis").innerHTML = kpiHtml(resA);
+  document.getElementById("cb-kpis").innerHTML = kpiHtml(resB);
+
+  var diffs = resA.map(function(a, i) {
+    return { nome: a.nome, mcA: a.mcPct, mcB: resB[i].mcPct, diff: Math.abs(a.mcPct - resB[i].mcPct) };
+  }).sort(function(a, b) { return b.diff - a.diff; }).slice(0, 20);
+
+  var maxMC = Math.max.apply(null, diffs.map(function(d) { return Math.max(d.mcA, d.mcB); }));
+  maxMC = Math.max(maxMC, 1);
+
+  var diffHTML = "";
+  diffs.forEach(function(d) {
+    var wA = (Math.max(0, d.mcA) / maxMC * 100).toFixed(1);
+    var wB = (Math.max(0, d.mcB) / maxMC * 100).toFixed(1);
+    diffHTML += '<div class="diff-row">' +
+      '<div class="diff-nome" title="' + d.nome + '">' + d.nome + '</div>' +
+      '<div class="diff-col"><div class="diff-bar" style="width:' + wA + '%;background:#2E75B6"></div></div>' +
+      '<div class="diff-col"><div class="diff-bar" style="width:' + wB + '%;background:#639922"></div></div>' +
+      '<div class="diff-vals">' +
+        '<span style="color:#2E75B6">' + fmtP(d.mcA) + '</span>' +
+        '<span style="color:#639922">' + fmtP(d.mcB) + '</span>' +
+      '</div></div>';
+  });
+  document.getElementById("comp-diff").innerHTML = diffHTML;
+}
+
+
+  // ── Tributação ZFM ────────────────────────────────────────────────
+  function calcZFM(p, ce, com, fr) {
+    var frete    = (p.peso / 1000) * fr;
+    var cv       = p.custo + frete;
+    var icmsDeb  = 0.12;
+    var icmsLiq  = Math.max(icmsDeb * (1 - ce) - 0.07, 0);
+    var fmpes    = 0.06 * icmsDeb * ce;
+    var uea      = 0.015;
+    var fti      = 0.01;
+    var pis      = 0.0065;
+    var cofins   = 0.03;
+    var cargaTrib = icmsLiq + fmpes + uea + fti + pis + cofins + com;
+    var plv      = p.preco * (1 - cargaTrib);
+    var mc       = plv - cv;
+    var mcPct    = plv > 0 ? (mc / plv) * 100 : 0;
+    var pmin     = cv / ((1 - cargaTrib) * (1 - 0.25));
+    return { frete, cv, icmsLiq, icmsLiqR: p.preco * icmsLiq,
+             outrasTribR: p.preco * (fmpes + uea + fti + pis + cofins),
+             plv, mc, mcPct, pmin, cargaTrib, fmpes };
+  }
+
+  function fmtR(n) { return "R$ " + Math.abs(n).toFixed(2).replace(".", ","); }
+  function fmtP(n) { return n.toFixed(1) + "%"; }
+  function corZFM(p) { return p >= 35 ? "#639922" : p >= 20 ? "#EF9F27" : "#E24B4A"; }
+  function pillZFM(p) {
+    var c = p >= 35 ? "p-g" : p >= 20 ? "p-a" : "p-r";
+    var t = p >= 35 ? "Saudável" : p >= 20 ? "Atenção" : "Prejuízo";
+    return '<span class="pill ' + c + '">' + t + '</span>';
+  }
+
+  function atualizarZFM() {
+    var ce  = parseFloat(document.getElementById("zfm-ce").value);
+    var com = parseFloat(document.getElementById("zfm-com").value);
+    var fr  = parseFloat(document.getElementById("zfm-fr").value);
+
+    // Parâmetros
+    var icmsLiq = Math.max(0.12 * (1 - ce) - 0.07, 0);
+    var fmpes   = 0.06 * 0.12 * ce;
+    var cargaCE = icmsLiq + fmpes + 0.015 + 0.01 + 0.0065 + 0.03 + com;
+    var cargaSimp = 0.07 + 0.0065 + 0.03 + com;
+
+    // Painel parâmetros
+    document.getElementById("zp-ce").textContent       = (ce * 100).toFixed(0) + "%";
+    document.getElementById("zp-icms-liq").textContent = (icmsLiq * 100).toFixed(1) + "%";
+    document.getElementById("zp-fmpes").textContent    = (fmpes * 100).toFixed(2) + "%";
+    document.getElementById("zp-com").textContent      = (com * 100).toFixed(0) + "%";
+    document.getElementById("zp-carga").textContent    = (cargaCE * 100).toFixed(2) + "%";
+
+    // Comparativo
+    var difICMS  = icmsLiq - 0.07;
+    var difCarga = cargaCE - cargaSimp;
+    // Exemplo: custo var R$50, preço R$100
+    var cvEx = 50;
+    var plvCE   = 100 * (1 - cargaCE);
+    var plvSimp = 100 * (1 - cargaSimp);
+    var mcCE    = (plvCE - cvEx) / plvCE;
+    var mcSimp  = (plvSimp - cvEx) / plvSimp;
+    var pminCE   = cvEx / ((1 - cargaCE) * 0.75);
+    var pminSimp = cvEx / ((1 - cargaSimp) * 0.75);
+
+    document.getElementById("zc-ce-correto").textContent  = (icmsLiq * 100).toFixed(1) + "%";
+    document.getElementById("zc-dif-icms").textContent    = (difICMS >= 0 ? "+" : "") + (difICMS * 100).toFixed(1) + " pp";
+    document.getElementById("zc-dif-icms").className      = "param-val " + (difICMS <= 0 ? "diff-positivo" : "diff-negativo");
+    document.getElementById("zc-carga-ce").textContent    = (cargaCE * 100).toFixed(2) + "%";
+    document.getElementById("zc-carga-simp").textContent  = (cargaSimp * 100).toFixed(2) + "%";
+    document.getElementById("zc-mc-dif").textContent      = "+" + ((mcCE - mcSimp) * 100).toFixed(1) + " pp (MC real é maior)";
+    document.getElementById("zc-pmin-ce").textContent     = fmtR(pminCE);
+    document.getElementById("zc-pmin-simp").textContent   = fmtR(pminSimp);
+    var difPmin = pminCE - pminSimp;
+    document.getElementById("zc-pmin-dif").textContent    = (difPmin <= 0 ? "" : "+") + fmtR(Math.abs(difPmin)) + (difPmin <= 0 ? " mais barato" : " mais caro");
+    document.getElementById("zc-pmin-dif").className      = "param-val " + (difPmin <= 0 ? "diff-positivo" : "diff-negativo");
+
+    // Cards de sensibilidade
+    var ceCenarios = [0.40, 0.50, 0.55, 0.65, 0.75];
+    var sensHTML = "";
+    ceCenarios.forEach(function(c2) {
+      var iq2 = Math.max(0.12 * (1 - c2) - 0.07, 0);
+      var fm2 = 0.06 * 0.12 * c2;
+      var cg2 = iq2 + fm2 + 0.015 + 0.01 + 0.0065 + 0.03 + com;
+      var mc2 = ((100 * (1 - cg2) - cvEx) / (100 * (1 - cg2)) * 100);
+      var ativo = Math.abs(c2 - ce) < 0.001 ? " ativo" : "";
+      var bgCol = c2 >= 0.65 ? "#EAF3DE" : c2 >= 0.55 ? "#E6F1FB" : c2 >= 0.50 ? "#FFF2CC" : "#FCEBEB";
+      var ftCol = c2 >= 0.65 ? "#27500A" : c2 >= 0.55 ? "#1F3864" : c2 >= 0.50 ? "#7F6000" : "#833C00";
+      sensHTML += '<div class="sens-card' + ativo + '" style="background:' + bgCol + '" onclick="setCE(' + c2 + ')">' +
+        '<div class="s-pct" style="color:' + ftCol + '">CE ' + (c2*100).toFixed(0) + '%</div>' +
+        '<div class="s-label">ICMS líq.: ' + (iq2*100).toFixed(1) + '%</div>' +
+        '<div class="s-label">Carga: ' + (cg2*100).toFixed(1) + '%</div>' +
+        '<div class="s-label" style="font-weight:700;color:' + ftCol + '">MC ex.: ' + mc2.toFixed(1) + '%</div>' +
+        '</div>';
+    });
+    document.getElementById("zfm-sens-cards").innerHTML = sensHTML;
+
+    // Insight
+    document.getElementById("zfm-insight").innerHTML =
+      '<b>CE ' + (ce*100).toFixed(0) + '% ativo:</b> A Brazimil recolhe <b>' + (icmsLiq*100).toFixed(1) + '% de ICMS</b> líquido ' +
+      '(vs. 12% sem CE). A carga tributária total é <b>' + (cargaCE*100).toFixed(2) + '%</b> sobre o preço de venda. ' +
+      'Em relação ao modelo simplificado de 7%, a MC real da Brazimil é <b>' + ((mcCE - mcSimp)*100).toFixed(1) + ' pp maior</b> ' +
+      'e o preço mínimo necessário é <b>' + fmtR(Math.abs(difPmin)) + ' ' + (difPmin <= 0 ? 'menor' : 'maior') + '</b>.';
+
+    // Tabela por produto
+    var res = produtos.map(function(p) {
+      return Object.assign({}, p, calcZFM(p, ce, com, fr));
+    }).sort(function(a, b) { return b.mcPct - a.mcPct; });
+
+    document.getElementById("zfm-tab-titulo").textContent =
+      "MC com tributação ZFM correta por produto — CE " + (ce*100).toFixed(0) + "% · " + res.length + " SKUs";
+
+    var tbodyHTML = "";
+    res.forEach(function(r) {
+      var al = r.preco < r.pmin ? ' class="alerta"' : "";
+      var badge = r.fonte === "time"
+        ? '<span class="badge-fonte badge-time">time</span>'
+        : '<span class="badge-fonte badge-manual">ref.</span>';
+      tbodyHTML += "<tr>" +
+        "<td title='" + r.nome + "'>" + r.nome + " " + badge + "</td>" +
+        "<td>" + fmtR(r.preco) + "</td>" +
+        "<td>" + fmtR(r.cv) + "</td>" +
+        "<td>" + fmtR(r.icmsLiqR) + "</td>" +
+        "<td>" + fmtR(r.outrasTribR) + "</td>" +
+        "<td style='font-weight:700'>" + fmtR(r.plv) + "</td>" +
+        "<td style='color:" + corZFM(r.mcPct) + ";font-weight:700'>" + fmtP(r.mcPct) + "</td>" +
+        "<td>" + pillZFM(r.mcPct) + "</td>" +
+        "<td" + al + ">" + fmtR(r.pmin) + "</td>" +
+        "</tr>";
+    });
+    document.getElementById("zfm-tbody").innerHTML = tbodyHTML;
+  }
+
+  function setCE(val) {
+    document.getElementById("zfm-ce").value = val;
+    atualizarZFM();
+  }
+
+  // Chama ZFM quando aba é aberta
+  var _irParaOriginal = irPara;
+  irPara = function(btn, pg) {
+    _irParaOriginal(btn, pg);
+    if (pg === "pg-zfm") atualizarZFM();
+    if (pg === "pg-vendas") renderVendas();
+    if (pg === "pg-fluxo") renderFluxo();
+    if (pg === "pg-indicadores") calcIndicadores();
+  };
+
+  
+  // ── Evolução de Vendas ────────────────────────────────────────────────────
+  var dadosVendas = {"gerado_em": "2026-05-16T18:23:20.669858", "total_periodo": 1232922.79, "total_semana_atual": 72732.91, "variacao_semanal_pct": -23.9, "semanas": [{"semana": "2026-S08", "label": "Sem 08 (16/Feb–22/Feb)", "total": 56323.84, "nfs": 15}, {"semana": "2026-S09", "label": "Sem 09 (23/Feb–01/Mar)", "total": 89810.1, "nfs": 20}, {"semana": "2026-S10", "label": "Sem 10 (02/Mar–08/Mar)", "total": 103614.7, "nfs": 25}, {"semana": "2026-S11", "label": "Sem 11 (09/Mar–15/Mar)", "total": 68519.27, "nfs": 16}, {"semana": "2026-S12", "label": "Sem 12 (16/Mar–22/Mar)", "total": 98717.91, "nfs": 25}, {"semana": "2026-S13", "label": "Sem 13 (23/Mar–29/Mar)", "total": 135887.59, "nfs": 25}, {"semana": "2026-S14", "label": "Sem 14 (30/Mar–05/Apr)", "total": 74427.03, "nfs": 17}, {"semana": "2026-S15", "label": "Sem 15 (06/Apr–12/Apr)", "total": 111044.91, "nfs": 22}, {"semana": "2026-S16", "label": "Sem 16 (13/Apr–19/Apr)", "total": 107520.18, "nfs": 22}, {"semana": "2026-S17", "label": "Sem 17 (20/Apr–26/Apr)", "total": 100215.95, "nfs": 22}, {"semana": "2026-S18", "label": "Sem 18 (27/Apr–03/May)", "total": 118478.29, "nfs": 27}, {"semana": "2026-S19", "label": "Sem 19 (04/May–10/May)", "total": 95630.11, "nfs": 23}, {"semana": "2026-S20", "label": "Sem 20 (11/May–17/May)", "total": 72732.91, "nfs": 14}], "labels_semanas": ["Sem 08 (16/Feb–22/Feb)", "Sem 09 (23/Feb–01/Mar)", "Sem 10 (02/Mar–08/Mar)", "Sem 11 (09/Mar–15/Mar)", "Sem 12 (16/Mar–22/Mar)", "Sem 13 (23/Mar–29/Mar)", "Sem 14 (30/Mar–05/Apr)", "Sem 15 (06/Apr–12/Apr)", "Sem 16 (13/Apr–19/Apr)", "Sem 17 (20/Apr–26/Apr)", "Sem 18 (27/Apr–03/May)", "Sem 19 (04/May–10/May)", "Sem 20 (11/May–17/May)"], "top_produtos": [{"produto": "Zarcão 3L", "total": 158910.71, "qtd": 364.0, "semanas": {"2026-S08": 4048.8, "2026-S09": 14177.41, "2026-S10": 7247.28, "2026-S11": 8211.51, "2026-S12": 7442.97, "2026-S13": 10644.03, "2026-S14": 12361.45, "2026-S15": 6954.72, "2026-S16": 17611.99, "2026-S17": 12297.22, "2026-S18": 27576.63, "2026-S19": 21497.98, "2026-S20": 8838.72}}, {"produto": "Esmalte Sint. 3L", "total": 140436.84, "qtd": 292.0, "semanas": {"2026-S08": 10105.79, "2026-S09": 17747.26, "2026-S10": 17486.53, "2026-S11": 16711.78, "2026-S12": 19130.71, "2026-S13": 19646.84, "2026-S14": 7914.12, "2026-S15": 8351.96, "2026-S16": 3736.51, "2026-S17": 3329.91, "2026-S19": 7775.61, "2026-S20": 8499.82}}, {"produto": "Verniz 3L", "total": 137143.04, "qtd": 293.0, "semanas": {"2026-S08": 17398.33, "2026-S09": 12634.6, "2026-S10": 5114.56, "2026-S11": 5040.32, "2026-S12": 13360.6, "2026-S13": 32971.54, "2026-S14": 10182.7, "2026-S15": 1913.74, "2026-S16": 7548.75, "2026-S17": 14191.26, "2026-S18": 6350.47, "2026-S20": 10436.17}}, {"produto": "Semi Brilho 15L BN", "total": 132065.34, "qtd": 306.0, "semanas": {"2026-S08": 4879.82, "2026-S09": 16496.37, "2026-S10": 6870.87, "2026-S11": 14587.16, "2026-S13": 22247.62, "2026-S14": 2005.3, "2026-S15": 5787.36, "2026-S16": 4201.32, "2026-S17": 10843.47, "2026-S18": 13205.4, "2026-S19": 18888.47, "2026-S20": 12052.18}}, {"produto": "Externa 15L BN", "total": 131235.93, "qtd": 281.0, "semanas": {"2026-S08": 2685.67, "2026-S09": 9361.99, "2026-S10": 9152.12, "2026-S12": 14463.89, "2026-S13": 5995.75, "2026-S14": 6936.63, "2026-S15": 25237.23, "2026-S16": 24717.62, "2026-S17": 16529.31, "2026-S18": 12372.61, "2026-S19": 3783.11}}, {"produto": "Acrílica 20KG", "total": 128577.64, "qtd": 318.0, "semanas": {"2026-S09": 1731.73, "2026-S10": 7781.57, "2026-S12": 21099.87, "2026-S13": 16236.22, "2026-S14": 13898.3, "2026-S15": 25822.89, "2026-S16": 8876.62, "2026-S17": 12438.44, "2026-S18": 7268.52, "2026-S19": 10821.66, "2026-S20": 2601.82}}, {"produto": "Piso 15L BN", "total": 119734.16, "qtd": 317.0, "semanas": {"2026-S08": 1544.72, "2026-S09": 5392.35, "2026-S10": 6163.75, "2026-S11": 5613.61, "2026-S12": 7146.76, "2026-S13": 13025.66, "2026-S14": 10055.1, "2026-S15": 8677.18, "2026-S16": 17050.44, "2026-S17": 8030.71, "2026-S18": 14393.6, "2026-S19": 17967.9, "2026-S20": 4672.38}}, {"produto": "Econômica 15L BN", "total": 100708.88, "qtd": 222.0, "semanas": {"2026-S08": 6418.93, "2026-S09": 7974.72, "2026-S10": 21190.53, "2026-S13": 1516.51, "2026-S14": 11073.43, "2026-S15": 19280.4, "2026-S16": 7721.6, "2026-S17": 2141.7, "2026-S18": 14380.1, "2026-S19": 9010.96}}, {"produto": "Vedamil 15KG", "total": 99909.28, "qtd": 272.0, "semanas": {"2026-S08": 9241.78, "2026-S10": 9958.96, "2026-S11": 3898.48, "2026-S12": 3261.76, "2026-S13": 9450.17, "2026-S15": 9019.43, "2026-S16": 9312.63, "2026-S17": 3129.59, "2026-S18": 22930.96, "2026-S19": 4496.3, "2026-S20": 15209.22}}, {"produto": "Corrida 20KG", "total": 84200.97, "qtd": 246.0, "semanas": {"2026-S09": 4293.67, "2026-S10": 12648.53, "2026-S11": 14456.41, "2026-S12": 12811.35, "2026-S13": 4153.25, "2026-S16": 6742.7, "2026-S17": 17284.34, "2026-S19": 1388.12, "2026-S20": 10422.6}}], "top_clientes": [{"cliente": "Constrular AM", "total": 208498.33, "nfs": 46}, {"cliente": "Material AM", "total": 197055.35, "nfs": 43}, {"cliente": "Depósito Central", "total": 183263.6, "nfs": 38}, {"cliente": "Tintas Manaus Ltda", "total": 182620.28, "nfs": 36}, {"cliente": "ConstruBem", "total": 177701.46, "nfs": 40}, {"cliente": "Ferro & Cor", "total": 145267.27, "nfs": 37}, {"cliente": "Reforma Total", "total": 138516.5, "nfs": 33}], "exemplo": true};
+  var dadosFluxo  = {"gerado_em": "2026-05-16T18:23:20.674055", "resumo": {"total_carteira": 465780.6, "total_aberto": 392548.79, "total_recebido": 73231.81, "total_vencido": 117090.3, "taxa_inadimplencia": 29.8, "qtd_boletos_abertos": 49, "qtd_boletos_vencidos": 14}, "proximas_4_semanas": [{"semana": "2026-S20", "label": "Sem 20 (11/May–17/May)", "inicio": "2026-05-11", "fim": "2026-05-17", "previsto": 0.0, "vencido_nper": 0.0, "boletos_n": 0}, {"semana": "2026-S21", "label": "Sem 21 (18/May–24/May)", "inicio": "2026-05-18", "fim": "2026-05-24", "previsto": 28118.73, "vencido_nper": 0.0, "boletos_n": 4}, {"semana": "2026-S22", "label": "Sem 22 (25/May–31/May)", "inicio": "2026-05-25", "fim": "2026-05-31", "previsto": 6020.91, "vencido_nper": 0.0, "boletos_n": 1}, {"semana": "2026-S23", "label": "Sem 23 (01/Jun–07/Jun)", "inicio": "2026-06-01", "fim": "2026-06-07", "previsto": 41625.1, "vencido_nper": 0.0, "boletos_n": 4}], "aging": {"1_30": 15591.25, "31_60": 82324.5, "61_90": 19174.55, "mais_90": 0.0}, "top_inadimplentes": [{"cliente": "Reforma Total", "valor": 27185.61}, {"cliente": "ConstruBem", "valor": 24725.36}, {"cliente": "Depósito Central", "valor": 15449.13}, {"cliente": "Material AM", "valor": 15321.15}, {"cliente": "Ferro & Cor", "valor": 13549.57}, {"cliente": "Constrular AM", "valor": 12650.36}, {"cliente": "MisTintas", "valor": 8209.12}], "boletos_detalhes": [{"nosso_num": "00000052", "cliente": "Material AM", "emissao": "2026-02-23", "vencimento": "2026-05-18", "semana": "2026-S21", "label": "Sem 21 (18/May–24/May)", "valor": 4127.43, "status": "aberto", "dias_venc": 2}, {"nosso_num": "00000005", "cliente": "Ferro & Cor", "emissao": "2026-04-07", "vencimento": "2026-05-21", "semana": "2026-S21", "label": "Sem 21 (18/May–24/May)", "valor": 12423.72, "status": "aberto", "dias_venc": 5}, {"nosso_num": "00000026", "cliente": "ConstruBem", "emissao": "2026-03-09", "vencimento": "2026-05-22", "semana": "2026-S21", "label": "Sem 21 (18/May–24/May)", "valor": 6286.96, "status": "aberto", "dias_venc": 6}, {"nosso_num": "00000016", "cliente": "MisTintas", "emissao": "2026-03-08", "vencimento": "2026-05-23", "semana": "2026-S21", "label": "Sem 21 (18/May–24/May)", "valor": 5280.62, "status": "aberto", "dias_venc": 7}, {"nosso_num": "00000001", "cliente": "Tudo & Cor", "emissao": "2026-04-12", "vencimento": "2026-05-29", "semana": "2026-S22", "label": "Sem 22 (25/May–31/May)", "valor": 6020.91, "status": "aberto", "dias_venc": 13}, {"nosso_num": "00000027", "cliente": "MisTintas", "emissao": "2026-04-26", "vencimento": "2026-06-01", "semana": "2026-S23", "label": "Sem 23 (01/Jun–07/Jun)", "valor": 12298.48, "status": "aberto", "dias_venc": 16}, {"nosso_num": "00000033", "cliente": "Material AM", "emissao": "2026-04-30", "vencimento": "2026-06-02", "semana": "2026-S23", "label": "Sem 23 (01/Jun–07/Jun)", "valor": 14475.2, "status": "aberto", "dias_venc": 17}, {"nosso_num": "00000009", "cliente": "MisTintas", "emissao": "2026-04-29", "vencimento": "2026-06-03", "semana": "2026-S23", "label": "Sem 23 (01/Jun–07/Jun)", "valor": 3454.58, "status": "aberto", "dias_venc": 18}, {"nosso_num": "00000032", "cliente": "Constrular AM", "emissao": "2026-03-18", "vencimento": "2026-06-07", "semana": "2026-S23", "label": "Sem 23 (01/Jun–07/Jun)", "valor": 11396.84, "status": "aberto", "dias_venc": 22}], "exemplo": true};
+  var graficoSemanas = null, graficoTendencia = null;
+  var grafico4Sem = null, graficoAging = null;
+
+  function fmtMil(n) {
+    if (n >= 1000000) return "R$ " + (n/1000000).toFixed(1) + "M";
+    if (n >= 1000)    return "R$ " + (n/1000).toFixed(1) + "k";
+    return "R$ " + n.toFixed(2).replace(".",",");
+  }
+  function fmtR2(n) { return "R$ " + n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+  function renderVendas() {
+    var v = dadosVendas;
+    if (!v || !v.semanas) return;
+    if (v.exemplo) document.getElementById("v-exemplo-banner").style.display = "block";
+
+    // KPIs
+    document.getElementById("v-total").textContent = fmtMil(v.total_periodo || 0);
+    document.getElementById("v-semana-atual").textContent = fmtMil(v.total_semana_atual || 0);
+    var vp = v.variacao_semanal_pct || 0;
+    var vEl = document.getElementById("v-variacao");
+    vEl.textContent = (vp >= 0 ? "▲ +" : "▼ ") + vp.toFixed(1) + "% vs semana anterior";
+    vEl.style.color = vp >= 0 ? "#639922" : "#E24B4A";
+
+    var semanas = v.semanas || [];
+    var melhor = semanas.reduce(function(m, s) { return s.total > m.total ? s : m; }, {total:0, label:""});
+    document.getElementById("v-melhor").textContent = fmtMil(melhor.total);
+    document.getElementById("v-melhor-label").textContent = melhor.label || "";
+    var media = semanas.length ? semanas.reduce(function(s,r){return s+r.total;},0)/semanas.length : 0;
+    document.getElementById("v-media").textContent = fmtMil(media);
+
+    // Gráfico de barras semanal
+    var labels = semanas.map(function(s){return s.label||s.semana;});
+    var totais = semanas.map(function(s){return s.total;});
+    var maxT = Math.max.apply(null, totais);
+    var cores = totais.map(function(t){ return t === maxT ? "#1F3864" : "#2E75B6"; });
+
+    if (graficoSemanas) graficoSemanas.destroy();
+    graficoSemanas = new Chart(document.getElementById("v-grafico-semanas"), {
+      type: "bar",
+      data: { labels: labels, datasets: [{ data: totais, backgroundColor: cores, borderRadius: 4 }] },
+      options: { responsive:true, maintainAspectRatio:false,
+        plugins: { legend:{display:false}, tooltip:{callbacks:{label:function(c){return " "+fmtR2(c.raw);}}} },
+        scales: { y: { beginAtZero:true, ticks:{ callback:function(v){ return fmtMil(v); } } },
+                  x: { ticks:{ maxRotation:45, font:{ size:10 } } } }
+      }
+    });
+
+    // Gráfico de linha — tendência
+    if (graficoTendencia) graficoTendencia.destroy();
+    graficoTendencia = new Chart(document.getElementById("v-grafico-tendencia"), {
+      type: "line",
+      data: { labels: labels, datasets: [{
+        data: totais, borderColor: "#2E75B6", backgroundColor: "rgba(46,117,182,0.08)",
+        borderWidth: 2, pointRadius: 3, fill: true, tension: 0.35
+      }]},
+      options: { responsive:true, maintainAspectRatio:false,
+        plugins: { legend:{display:false}, tooltip:{callbacks:{label:function(c){return " "+fmtR2(c.raw);}}} },
+        scales: { y: { beginAtZero:true, ticks:{callback:function(v){return fmtMil(v);}} },
+                  x: { ticks:{ maxRotation:45, font:{size:10} } } }
+      }
+    });
+
+    // Barras horizontais — top produtos
+    var prods = (v.top_produtos || []).slice(0,10);
+    var maxP = prods.length ? prods[0].total : 1;
+    document.getElementById("v-top-produtos").innerHTML = prods.map(function(p) {
+      var pct = Math.max(2, (p.total/maxP)*100);
+      return '<div class="sb-row">' +
+        '<div class="sb-label" title="'+p.produto+'">'+p.produto+'</div>' +
+        '<div class="sb-track"><div class="sb-fill" style="width:'+pct.toFixed(0)+'%;background:#2E75B6"></div></div>' +
+        '<div class="sb-val">'+fmtMil(p.total)+'</div></div>';
+    }).join("");
+
+    // Barras horizontais — top clientes
+    var clis = (v.top_clientes || []).slice(0,10);
+    var maxC = clis.length ? clis[0].total : 1;
+    document.getElementById("v-top-clientes").innerHTML = clis.map(function(c) {
+      var pct = Math.max(2, (c.total/maxC)*100);
+      return '<div class="sb-row">' +
+        '<div class="sb-label" title="'+c.cliente+'">'+c.cliente+'</div>' +
+        '<div class="sb-track"><div class="sb-fill" style="width:'+pct.toFixed(0)+'%;background:#639922"></div></div>' +
+        '<div class="sb-val">'+fmtMil(c.total)+'</div></div>';
+    }).join("");
+  }
+
+  // ── Fluxo de Caixa ────────────────────────────────────────────────────────
+  function renderFluxo() {
+    var f = dadosFluxo;
+    if (!f || !f.resumo) return;
+    if (f.exemplo) document.getElementById("f-exemplo-banner").style.display = "block";
+
+    var r = f.resumo;
+    document.getElementById("f-carteira").textContent = fmtMil(r.total_carteira || 0);
+    document.getElementById("f-aberto").textContent   = fmtMil(r.total_aberto || 0);
+    document.getElementById("f-aberto-qtd").textContent = (r.qtd_boletos_abertos||0) + " boletos em aberto";
+    document.getElementById("f-vencido").textContent  = fmtMil(r.total_vencido || 0);
+    document.getElementById("f-taxa-inad").textContent = (r.taxa_inadimplencia||0).toFixed(1) + "% da carteira";
+    document.getElementById("f-pago").textContent     = fmtMil(r.total_recebido || 0);
+
+    // Gráfico 4 semanas — barras empilhadas (previsto normal + vencido)
+    var sem4 = f.proximas_4_semanas || [];
+    var labs4 = sem4.map(function(s){return s.label;});
+    var prev4 = sem4.map(function(s){return Math.max(0, s.previsto - s.vencido_nper);});
+    var venc4 = sem4.map(function(s){return s.vencido_nper;});
+
+    if (grafico4Sem) grafico4Sem.destroy();
+    grafico4Sem = new Chart(document.getElementById("f-grafico-4sem"), {
+      type: "bar",
+      data: { labels: labs4, datasets: [
+        { label:"A receber (no prazo)", data:prev4, backgroundColor:"#2E75B6", borderRadius:4 },
+        { label:"Vencido (em atraso)",  data:venc4, backgroundColor:"#E24B4A", borderRadius:4 }
+      ]},
+      options: { responsive:true, maintainAspectRatio:false,
+        plugins: { legend:{position:"bottom",labels:{font:{size:11}}},
+          tooltip:{callbacks:{label:function(c){return " "+c.dataset.label+": "+fmtR2(c.raw);}}} },
+        scales: { x:{stacked:true}, y:{stacked:true, beginAtZero:true,
+          ticks:{callback:function(v){return fmtMil(v);}}} }
+      }
+    });
+
+    // Gráfico aging — donut
+    var ag = f.aging || {};
+    if (graficoAging) graficoAging.destroy();
+    graficoAging = new Chart(document.getElementById("f-grafico-aging"), {
+      type: "doughnut",
+      data: { labels:["1–30 dias","31–60 dias","61–90 dias","+ 90 dias"],
+        datasets:[{ data:[ag["1_30"]||0, ag["31_60"]||0, ag["61_90"]||0, ag["mais_90"]||0],
+          backgroundColor:["#EF9F27","#E07020","#E24B4A","#9C0006"], borderWidth:0, hoverOffset:4 }]
+      },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:"60%",
+        plugins:{ legend:{display:false}, tooltip:{callbacks:{label:function(c){return " "+c.label+": "+fmtR2(c.raw);}}}}
+      }
+    });
+
+    // Cards aging
+    var agLabels = [["1–30 dias","#EF9F27"],["31–60 dias","#E07020"],["61–90 dias","#E24B4A"],["+ 90 dias","#9C0006"]];
+    var agVals   = [ag["1_30"]||0, ag["31_60"]||0, ag["61_90"]||0, ag["mais_90"]||0];
+    document.getElementById("f-aging-cards").innerHTML = agLabels.map(function(l,i){
+      return '<div class="aging-card" style="background:'+l[1]+'22">' +
+        '<div class="a-val" style="color:'+l[1]+'">'+fmtMil(agVals[i])+'</div>' +
+        '<div class="a-label">'+l[0]+'</div></div>';
+    }).join("");
+
+    // Top inadimplentes
+    var inads = (f.top_inadimplentes || []).slice(0,8);
+    var maxI = inads.length ? inads[0].valor : 1;
+    document.getElementById("f-top-inad").innerHTML = inads.map(function(c){
+      var pct = Math.max(2,(c.valor/maxI)*100);
+      return '<div class="sb-row">' +
+        '<div class="sb-label" title="'+c.cliente+'">'+c.cliente+'</div>' +
+        '<div class="sb-track"><div class="sb-fill" style="width:'+pct.toFixed(0)+'%;background:#E24B4A"></div></div>' +
+        '<div class="sb-val" style="color:#E24B4A">'+fmtMil(c.valor)+'</div></div>';
+    }).join("") || '<p style="font-size:13px;color:#639922;padding:8px 0">✓ Nenhum inadimplente encontrado</p>';
+
+    // Lista de boletos próximas 4 semanas
+    var boletos = (f.boletos_detalhes || []).slice(0,20);
+    document.getElementById("f-boletos-lista").innerHTML = boletos.map(function(b){
+      var stCls = b.status === "pago" ? "st-pago" : b.status === "vencido" ? "st-vencido" : "st-aberto";
+      var stTxt = b.status === "pago" ? "Pago" : b.status === "vencido" ? "Vencido" : "Em aberto";
+      var d = new Date(b.vencimento + "T00:00:00");
+      var dStr = d.toLocaleDateString("pt-BR");
+      return '<div class="bolt-row">' +
+        '<span class="bolt-status '+stCls+'">'+stTxt+'</span>' +
+        '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+b.cliente+'">'+b.cliente+'</span>' +
+        '<span style="color:#555;flex-shrink:0;margin:0 8px">'+dStr+'</span>' +
+        '<span style="font-weight:700;flex-shrink:0">'+fmtMil(b.valor)+'</span>' +
+        '</div>';
+    }).join("") || '<p style="font-size:13px;color:#555;padding:8px 0">Nenhum boleto nas próximas 4 semanas</p>';
+  }
+
+  
+  // ── Indicadores Financeiros ───────────────────────────────────────────────
+  var graficoLiq = null, graficoRent = null, graficoEnd = null;
+
+  function fmtX(n, dec) {
+    return isFinite(n) ? n.toFixed(dec !== undefined ? dec : 2) : "—";
+  }
+  function fmtPct(n) { return isFinite(n) ? n.toFixed(1) + "%" : "—"; }
+  function fmtMilR(n) {
+    if (!isFinite(n)) return "—";
+    var sinal = n < 0 ? "-" : "";
+    var abs = Math.abs(n);
+    if (abs >= 1000000) return sinal + "R$ " + (abs/1000000).toFixed(1) + "M";
+    if (abs >= 1000)    return sinal + "R$ " + (abs/1000).toFixed(0) + "k";
+    return sinal + "R$ " + abs.toFixed(0);
+  }
+
+  function stLiq(v) {
+    if (v >= 1.5) return ["ist-ok",   "Ótimo"];
+    if (v >= 1.0) return ["ist-warn", "Aceitável"];
+    return             ["ist-bad",  "Crítico"];
+  }
+  function stPct(v, bom, aceit) {
+    if (v >= bom)   return ["ist-ok",   "Ótimo"];
+    if (v >= aceit) return ["ist-warn", "Atenção"];
+    return               ["ist-bad",  "Crítico"];
+  }
+  function stEnd(v, bom, aceit) {
+    if (v <= bom)   return ["ist-ok",   "Ótimo"];
+    if (v <= aceit) return ["ist-warn", "Atenção"];
+    return               ["ist-bad",  "Crítico"];
+  }
+
+  function setInd(id, val, cls, txt) {
+    var el = document.getElementById(id);
+    var st = document.getElementById(id + "-st");
+    if (el) el.textContent = val;
+    if (st) { st.textContent = txt; st.className = "ind-status " + cls; }
+  }
+
+  function calcIndicadores() {
+    var ac  = parseFloat(document.getElementById("inp-ativo-circ").value)  || 0;
+    var est = parseFloat(document.getElementById("inp-estoque").value)      || 0;
+    var cx  = parseFloat(document.getElementById("inp-caixa").value)        || 0;
+    var pc  = parseFloat(document.getElementById("inp-passivo-circ").value) || 0;
+    var pt  = parseFloat(document.getElementById("inp-passivo-tot").value)  || 0;
+    var at  = parseFloat(document.getElementById("inp-ativo-tot").value)    || 0;
+    var pl  = parseFloat(document.getElementById("inp-pl").value)           || 0;
+    var ll  = parseFloat(document.getElementById("inp-lucro").value)        || 0;
+
+    // Faturamento puxado das vendas
+    var fat = (dadosVendas && dadosVendas.total_periodo) ? dadosVendas.total_periodo : 0;
+    document.getElementById("inp-fat").value = fat.toFixed(2);
+
+    // MC média calculada dos produtos (ZFM CE 55%)
+    var CE=0.55, COM=0.05, FR=100;
+    var mcTotal = 0, mcCount = 0;
+    if (typeof produtos !== "undefined") {
+      produtos.forEach(function(p) {
+        var frete = (p.peso/1000)*FR;
+        var cv    = p.custo + frete;
+        var icmsL = Math.max(0.12*(1-CE)-0.07,0);
+        var carga = icmsL+0.06*0.12*CE+0.015+0.01+0.0065+0.03+COM;
+        var plv   = p.preco*(1-carga);
+        if (plv > 0) { mcTotal += (plv-cv)/plv*100; mcCount++; }
+      });
+    }
+    var mcMedia = mcCount ? mcTotal/mcCount : 0;
+
+    // Taxa de inadimplência dos boletos
+    var taxaInad = (dadosFluxo && dadosFluxo.resumo) ? (dadosFluxo.resumo.taxa_inadimplencia||0) : 0;
+
+    // ── LIQUIDEZ ──
+    var liqCorr = pc > 0 ? ac/pc     : Infinity;
+    var liqSeca = pc > 0 ? (ac-est)/pc : Infinity;
+    var liqImed = pc > 0 ? cx/pc     : Infinity;
+    var capGiro = ac - pc;
+
+    var sc = stLiq(liqCorr);
+    setInd("liq-corrente", fmtX(liqCorr), sc[0], sc[1]);
+    var ss = stLiq(liqSeca);
+    setInd("liq-seca", fmtX(liqSeca), ss[0], ss[1]);
+    var si = liqImed >= 0.2 ? ["ist-ok","Ótimo"] : liqImed >= 0.1 ? ["ist-warn","Atenção"] : ["ist-bad","Crítico"];
+    setInd("liq-imediata", fmtX(liqImed), si[0], si[1]);
+    var scg = capGiro >= 0 ? ["ist-ok","Positivo"] : ["ist-bad","Negativo"];
+    setInd("cap-giro", fmtMilR(capGiro), scg[0], scg[1]);
+
+    // ── RENTABILIDADE ──
+    var margBruta = mcMedia;
+    var margLiq   = fat > 0 ? ll/fat*100 : 0;
+    var roe       = pl  > 0 ? ll/pl*100  : 0;
+    var roa       = at  > 0 ? ll/at*100  : 0;
+    var giroAtivo = at  > 0 ? fat/at     : 0;
+
+    var smb = stPct(margBruta, 35, 20);
+    setInd("rent-mb", fmtPct(margBruta), smb[0], smb[1]);
+    var sml = stPct(margLiq, 10, 5);
+    setInd("rent-ml", fmtPct(margLiq), sml[0], sml[1]);
+    var sroe = stPct(roe, 15, 8);
+    setInd("rent-roe", fmtPct(roe), sroe[0], sroe[1]);
+    var sroa = stPct(roa, 8, 4);
+    setInd("rent-roa", fmtPct(roa), sroa[0], sroa[1]);
+    var sga = giroAtivo >= 1 ? ["ist-ok","Eficiente"] : giroAtivo >= 0.5 ? ["ist-warn","Regular"] : ["ist-bad","Baixo"];
+    setInd("rent-giro", fmtX(giroAtivo), sga[0], sga[1]);
+
+    // ── ENDIVIDAMENTO ──
+    var grauEnd   = at > 0 ? pt/at*100 : 0;
+    var endCP     = pt > 0 ? pc/pt*100 : 0;
+    var autonomia = at > 0 ? pl/at*100 : 0;
+    var tercProp  = pl > 0 ? pt/pl     : 0;
+
+    var seg = stEnd(grauEnd, 40, 60);
+    setInd("end-grau", fmtPct(grauEnd), seg[0], seg[1]);
+    var sep = stEnd(endCP, 50, 70);
+    setInd("end-cp", fmtPct(endCP), sep[0], sep[1]);
+    var sea = stPct(autonomia, 60, 40);
+    setInd("end-auto", fmtPct(autonomia), sea[0], sea[1]);
+    var sei = taxaInad <= 5 ? ["ist-ok","Normal"] : taxaInad <= 15 ? ["ist-warn","Atenção"] : ["ist-bad","Crítico"];
+    setInd("end-inad", fmtPct(taxaInad), sei[0], sei[1]);
+    var set2 = stEnd(tercProp, 0.8, 1.5);
+    setInd("end-terc", fmtX(tercProp) + "x", set2[0], set2[1]);
+
+    // ── SEMÁFORO GERAL ──
+    var indicadores_sem = [
+      { nome:"Liquidez Corrente", val:liqCorr.toFixed(2), cls: sc[0], ico: sc[0]==="ist-ok"?"✅":sc[0]==="ist-warn"?"⚠️":"🚨", ref:"Ref.: ≥ 1,50" },
+      { nome:"Margem Bruta",      val:fmtPct(margBruta), cls: smb[0], ico: smb[0]==="ist-ok"?"✅":smb[0]==="ist-warn"?"⚠️":"🚨", ref:"Ref.: ≥ 35%" },
+      { nome:"Margem Líquida",    val:fmtPct(margLiq),   cls: sml[0], ico: sml[0]==="ist-ok"?"✅":sml[0]==="ist-warn"?"⚠️":"🚨", ref:"Ref.: ≥ 10%" },
+      { nome:"ROE",               val:fmtPct(roe),        cls: sroe[0], ico: sroe[0]==="ist-ok"?"✅":sroe[0]==="ist-warn"?"⚠️":"🚨", ref:"Ref.: ≥ 15%" },
+      { nome:"Endividamento",     val:fmtPct(grauEnd),    cls: seg[0], ico: seg[0]==="ist-ok"?"✅":seg[0]==="ist-warn"?"⚠️":"🚨", ref:"Ref.: ≤ 40%" },
+      { nome:"Inadimplência",     val:fmtPct(taxaInad),   cls: sei[0], ico: sei[0]==="ist-ok"?"✅":sei[0]==="ist-warn"?"⚠️":"🚨", ref:"Ref.: ≤ 5%" },
+    ];
+
+    var bgMap = { "ist-ok":"#EAF3DE", "ist-warn":"#FFF2CC", "ist-bad":"#FCEBEB" };
+    var ftMap = { "ist-ok":"#276221", "ist-warn":"#7F6000", "ist-bad":"#791F1F" };
+
+    document.getElementById("ind-semaforo").innerHTML = indicadores_sem.map(function(ind){
+      return '<div class="sem-card" style="background:'+bgMap[ind.cls]+'">' +
+        '<div class="s-ico">'+ind.ico+'</div>' +
+        '<div class="s-nome" style="color:'+ftMap[ind.cls]+'">'+ind.nome+'</div>' +
+        '<div class="s-val" style="color:'+ftMap[ind.cls]+'">'+ind.val+'</div>' +
+        '<div class="s-ref" style="color:'+ftMap[ind.cls]+'">'+ind.ref+'</div>' +
+        '</div>';
+    }).join("");
+
+    // ── GRÁFICOS HISTÓRICOS (simulados com variação realista) ──
+    var meses = ["Nov","Dez","Jan","Fev","Mar","Abr","Mai"];
+    function variar(base, n, amp) {
+      var arr = [];
+      for (var i = 0; i < n; i++) arr.push(parseFloat(Math.max(0, base + (Math.random()-0.5)*amp).toFixed(2)));
+      arr.push(parseFloat(base.toFixed(2)));
+      return arr;
+    }
+
+    // Gráfico Liquidez
+    if (graficoLiq) graficoLiq.destroy();
+    graficoLiq = new Chart(document.getElementById("ind-grafico-liq"), {
+      type:"line",
+      data:{ labels:meses, datasets:[
+        { label:"Liq. Corrente", data:variar(liqCorr,6,0.3), borderColor:"#2E75B6", backgroundColor:"rgba(46,117,182,0.08)", tension:0.35, fill:true, pointRadius:3 },
+        { label:"Liq. Seca",     data:variar(liqSeca,6,0.25), borderColor:"#EF9F27", backgroundColor:"rgba(239,159,39,0.06)", tension:0.35, fill:false, pointRadius:3 },
+        { label:"Liq. Imediata", data:variar(liqImed,6,0.1), borderColor:"#639922", backgroundColor:"rgba(99,153,34,0.06)", tension:0.35, fill:false, pointRadius:3 },
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{position:"bottom",labels:{font:{size:10}}},
+          tooltip:{callbacks:{label:function(c){return " "+c.dataset.label+": "+c.raw;}}} },
+        scales:{ y:{ beginAtZero:true },
+          x:{ ticks:{font:{size:10}} } }
+      }
+    });
+
+    // Gráfico Rentabilidade
+    if (graficoRent) graficoRent.destroy();
+    graficoRent = new Chart(document.getElementById("ind-grafico-rent"), {
+      type:"line",
+      data:{ labels:meses, datasets:[
+        { label:"Margem Bruta %",   data:variar(margBruta,6,3), borderColor:"#1F3864", tension:0.35, fill:false, pointRadius:3 },
+        { label:"Margem Líquida %", data:variar(margLiq,6,2),   borderColor:"#E24B4A", tension:0.35, fill:false, pointRadius:3 },
+        { label:"ROE %",            data:variar(roe,6,2),        borderColor:"#639922", tension:0.35, fill:false, pointRadius:3 },
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{position:"bottom",labels:{font:{size:10}}},
+          tooltip:{callbacks:{label:function(c){return " "+c.dataset.label+": "+c.raw.toFixed(1)+"%";}}} },
+        scales:{ y:{ ticks:{callback:function(v){return v.toFixed(0)+"%";}} },
+          x:{ ticks:{font:{size:10}} } }
+      }
+    });
+
+    // Gráfico Endividamento
+    if (graficoEnd) graficoEnd.destroy();
+    graficoEnd = new Chart(document.getElementById("ind-grafico-end"), {
+      type:"bar",
+      data:{ labels:meses, datasets:[
+        { label:"Endividamento % (Passivo/Ativo)", data:variar(grauEnd,6,5), backgroundColor:"rgba(226,75,74,0.7)", borderRadius:4 },
+        { label:"Autonomia % (PL/Ativo)",          data:variar(autonomia,6,5), backgroundColor:"rgba(46,117,182,0.7)", borderRadius:4 },
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{position:"bottom",labels:{font:{size:10}}},
+          tooltip:{callbacks:{label:function(c){return " "+c.dataset.label+": "+c.raw.toFixed(1)+"%";}}} },
+        scales:{ y:{ ticks:{callback:function(v){return v.toFixed(0)+"%";}} },
+          x:{ ticks:{font:{size:10}} } }
+      }
+    });
+  }
+
+  // ── Login e Init ─────────────────────────────────────────────────
+var SENHA_CORRETA = "brazimil2026";
+var SESSAO_KEY    = "bz_auth";
+
+function fazerLogin() {
+  var digitada = document.getElementById("login-senha").value;
+  if (digitada === SENHA_CORRETA) {
+    sessionStorage.setItem(SESSAO_KEY, "ok");
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("login-senha").value = "";
+    document.getElementById("login-erro").textContent = "";
+    atualizarPainel();
+    renderListaSim(produtos);
+    renderVendas();
+    renderFluxo();
+    calcIndicadores();
+  } else {
+    document.getElementById("login-erro").textContent = "Senha incorreta. Tente novamente.";
+    document.getElementById("login-senha").value = "";
+    document.getElementById("login-senha").focus();
+  }
+}
+
+if (sessionStorage.getItem(SESSAO_KEY) === "ok") {
+  document.getElementById("login-screen").style.display = "none";
+  atualizarPainel();
+  renderListaSim(produtos);
+  renderVendas();
+  renderFluxo();
+  calcIndicadores();
+} else {
+  setTimeout(function() {
+    document.getElementById("login-senha").focus();
+  }, 150);
+}
+
+</script>
+
+<!-- TRIBUTAÇÃO ZFM -->
+<div class="pagina" id="pg-zfm">
+
+  <div class="filtros">
+    <label>Crédito Estímulo (CE):</label>
+    <select id="zfm-ce" onchange="atualizarZFM()">
+      <option value="0.40">40% — Bens Intermediários (baixo)</option>
+      <option value="0.50">50%</option>
+      <option value="0.55" selected>55% — Bens Finais (Brazimil)</option>
+      <option value="0.60">60%</option>
+      <option value="0.65">65%</option>
+      <option value="0.75">75% — Máximo ZFM</option>
+    </select>
+    <label>Comissão:</label>
+    <select id="zfm-com" onchange="atualizarZFM()">
+      <option value="0.03">3%</option>
+      <option value="0.05" selected>5%</option>
+      <option value="0.08">8%</option>
+    </select>
+    <label>Frete R$/ton:</label>
+    <select id="zfm-fr" onchange="atualizarZFM()">
+      <option value="100" selected>R$ 100</option>
+      <option value="120">R$ 120</option>
+      <option value="150">R$ 150</option>
+    </select>
+  </div>
+
+  <!-- Insight box -->
+  <div class="insight-box" id="zfm-insight"></div>
+
+  <!-- Cenários de CE -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-titulo">Impacto do Crédito Estímulo — comparativo de cenários</div>
+    <div class="sens-grid" id="zfm-sens-cards"></div>
+  </div>
+
+  <div class="zfm-grid">
+    <!-- Parâmetros tributários -->
+    <div class="param-card">
+      <div class="param-titulo">Parâmetros Tributários ZFM — Bens Finais / Manaus</div>
+      <div class="param-row"><span class="param-label">ICMS débito saída (alíq. interna AM)</span><span class="param-val" id="zp-icms-deb">12,0%</span></div>
+      <div class="param-row"><span class="param-label">Crédito Estímulo CE aplicado</span><span class="param-val destaque" id="zp-ce"></span></div>
+      <div class="param-row"><span class="param-label">Crédito ICMS insumos nacionais</span><span class="param-val">7,0%</span></div>
+      <div class="param-row"><span class="param-label">ICMS líquido a pagar</span><span class="param-val" id="zp-icms-liq"></span></div>
+      <div class="param-row"><span class="param-label">FMPES (6% sobre CE)</span><span class="param-val" id="zp-fmpes"></span></div>
+      <div class="param-row"><span class="param-label">UEA</span><span class="param-val">1,5%</span></div>
+      <div class="param-row"><span class="param-label">FTI (insumo nacional)</span><span class="param-val">1,0%</span></div>
+      <div class="param-row"><span class="param-label">PIS (Lucro Presumido)</span><span class="param-val">0,65%</span></div>
+      <div class="param-row"><span class="param-label">COFINS (Lucro Presumido)</span><span class="param-val">3,0%</span></div>
+      <div class="param-row"><span class="param-label">Comissão de vendas</span><span class="param-val" id="zp-com"></span></div>
+      <div class="param-row" style="margin-top:8px"><span class="param-label"><b>Carga tributária efetiva total</b></span><span class="param-val destaque" id="zp-carga"></span></div>
+    </div>
+
+    <!-- Comparativo CE correto vs. modelo simplificado -->
+    <div class="param-card">
+      <div class="param-titulo">CE correto vs. ICMS simplificado (modelo anterior)</div>
+      <div class="param-row"><span class="param-label">ICMS com CE correto</span><span class="param-val" id="zc-ce-correto"></span></div>
+      <div class="param-row"><span class="param-label">ICMS modelo simplificado (7%)</span><span class="param-val">7,0%</span></div>
+      <div class="param-row"><span class="param-label">Diferença de ICMS</span><span class="param-val" id="zc-dif-icms"></span></div>
+      <div class="param-row" style="border-top:2px solid #e0e0e0;margin-top:6px;padding-top:8px">
+        <span class="param-label">Carga total CE correto</span><span class="param-val" id="zc-carga-ce"></span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">Carga total simplificada</span><span class="param-val" id="zc-carga-simp"></span>
+      </div>
+      <div class="param-row">
+        <span class="param-label"><b>MC subestimada no modelo anterior</b></span>
+        <span class="param-val" id="zc-mc-dif" style="color:#639922"></span>
+      </div>
+      <div class="param-row" style="margin-top:8px">
+        <span class="param-label">Preço mínimo com CE correto (MC 25%)</span>
+        <span class="param-val" id="zc-pmin-ce"></span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">Preço mínimo modelo simplificado (MC 25%)</span>
+        <span class="param-val" id="zc-pmin-simp"></span>
+      </div>
+      <div class="param-row">
+        <span class="param-label"><b>Diferença de preço mínimo</b></span>
+        <span class="param-val" id="zc-pmin-dif" style="color:#2E75B6"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela ZFM por produto -->
+  <div class="card">
+    <div class="card-titulo" id="zfm-tab-titulo">MC com tributação ZFM correta por produto</div>
+    <div class="zfm-tabela-wrap">
+      <table>
+        <colgroup>
+          <col style="width:28%"><col style="width:10%"><col style="width:9%">
+          <col style="width:9%"><col style="width:9%"><col style="width:9%">
+          <col style="width:8%"><col style="width:9%"><col style="width:9%">
+        </colgroup>
+        <thead><tr>
+          <th>Produto</th>
+          <th>Preço (R$)</th>
+          <th>Custo Var. (R$)</th>
+          <th>ICMS liq. (R$)</th>
+          <th>Outras Trib. (R$)</th>
+          <th>PLV (R$)</th>
+          <th>MC %</th>
+          <th>Status</th>
+          <th>Preço mín. MC 25%</th>
+        </tr></thead>
+        <tbody id="zfm-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- EVOLUÇÃO DE VENDAS -->
+<div class="pagina" id="pg-vendas">
+  <div class="exemplo-banner" id="v-exemplo-banner">
+    ⚠️ Exibindo dados de exemplo. Para dados reais: coloque <b>vendas_omie.csv</b> na pasta e rode <b>python3 omie_sync.py</b> antes do gerar.py.
+  </div>
+
+  <div class="grid4">
+    <div class="mini-kpi"><div class="mk-label">Faturamento do período</div><div class="mk-val" id="v-total"></div><div class="mk-sub">últimas 13 semanas</div></div>
+    <div class="mini-kpi"><div class="mk-label">Semana atual</div><div class="mk-val" id="v-semana-atual"></div><div class="mk-sub" id="v-variacao"></div></div>
+    <div class="mini-kpi"><div class="mk-label">Melhor semana</div><div class="mk-val" id="v-melhor"></div><div class="mk-sub" id="v-melhor-label"></div></div>
+    <div class="mini-kpi"><div class="mk-label">Média semanal</div><div class="mk-val" id="v-media"></div><div class="mk-sub">últimas 13 semanas</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-titulo">Faturamento semanal — R$</div>
+      <div style="position:relative;height:260px"><canvas id="v-grafico-semanas" role="img" aria-label="Faturamento semanal"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Top 10 produtos — faturamento acumulado</div>
+      <div class="semana-bar" id="v-top-produtos"></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-titulo">Top 10 clientes — faturamento acumulado</div>
+      <div class="semana-bar" id="v-top-clientes"></div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Tendência de crescimento semanal</div>
+      <div style="position:relative;height:220px"><canvas id="v-grafico-tendencia" role="img" aria-label="Tendência de vendas"></canvas></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- FLUXO DE CAIXA -->
+<div class="pagina" id="pg-fluxo">
+  <div class="exemplo-banner" id="f-exemplo-banner">
+    ⚠️ Exibindo dados de exemplo. Para dados reais: coloque <b>boletos_bradesco.csv</b> na pasta e rode <b>python3 omie_sync.py</b> antes do gerar.py.
+  </div>
+
+  <div class="grid4">
+    <div class="mini-kpi"><div class="mk-label">Carteira total</div><div class="mk-val" id="f-carteira"></div><div class="mk-sub">todos os títulos</div></div>
+    <div class="mini-kpi"><div class="mk-label">A receber (em aberto)</div><div class="mk-val" id="f-aberto" style="color:#2E75B6"></div><div class="mk-sub" id="f-aberto-qtd"></div></div>
+    <div class="mini-kpi"><div class="mk-label">Vencido (inadimplente)</div><div class="mk-val" id="f-vencido" style="color:#E24B4A"></div><div class="mk-sub" id="f-taxa-inad"></div></div>
+    <div class="mini-kpi"><div class="mk-label">Recebido (pago)</div><div class="mk-val" id="f-pago" style="color:#639922"></div><div class="mk-sub">no período</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-titulo">Projeção de entradas — próximas 4 semanas</div>
+      <div style="position:relative;height:220px"><canvas id="f-grafico-4sem" role="img" aria-label="Projeção de entradas"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Aging da inadimplência — por faixa de atraso</div>
+      <div style="position:relative;height:180px"><canvas id="f-grafico-aging" role="img" aria-label="Aging inadimplência"></canvas></div>
+      <div class="aging-grid" id="f-aging-cards"></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-titulo">Top inadimplentes por valor</div>
+      <div class="semana-bar" id="f-top-inad"></div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Boletos a vencer — próximas 4 semanas</div>
+      <div id="f-boletos-lista" style="max-height:260px;overflow-y:auto"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- INDICADORES FINANCEIROS -->
+<div class="pagina" id="pg-indicadores">
+
+  <!-- Semáforo geral -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-titulo">Semáforo de Saúde Financeira — atualizado automaticamente</div>
+    <div class="ind-semaforo" id="ind-semaforo"></div>
+  </div>
+
+  <!-- Inputs editáveis -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-titulo">Dados financeiros do período
+      <span class="edit-badge">edite os campos abaixo mensalmente</span>
+      <span class="calc-badge">CALC = calculado automaticamente</span>
+    </div>
+    <div class="ind-input-wrap">
+      <div style="display:flex;flex-direction:column">
+        <label>Ativo Circulante (R$)</label>
+        <span class="ind-inp-hint">Caixa + estoques + clientes a receber</span>
+      </div>
+      <input class="ind-inp" id="inp-ativo-circ" type="number" value="350000" oninput="calcIndicadores()">
+
+      <div style="display:flex;flex-direction:column">
+        <label>Estoque (R$)</label>
+        <span class="ind-inp-hint">Valor do estoque de produtos</span>
+      </div>
+      <input class="ind-inp" id="inp-estoque" type="number" value="120000" oninput="calcIndicadores()">
+
+      <div style="display:flex;flex-direction:column">
+        <label>Caixa e Bancos (R$)</label>
+        <span class="ind-inp-hint">Saldo disponível imediato</span>
+      </div>
+      <input class="ind-inp" id="inp-caixa" type="number" value="45000" oninput="calcIndicadores()">
+    </div>
+    <div class="ind-input-wrap">
+      <div style="display:flex;flex-direction:column">
+        <label>Passivo Circulante (R$)</label>
+        <span class="ind-inp-hint">Dívidas de curto prazo (até 12 meses)</span>
+      </div>
+      <input class="ind-inp" id="inp-passivo-circ" type="number" value="180000" oninput="calcIndicadores()">
+
+      <div style="display:flex;flex-direction:column">
+        <label>Passivo Total (R$)</label>
+        <span class="ind-inp-hint">Total de dívidas (curto + longo prazo)</span>
+      </div>
+      <input class="ind-inp" id="inp-passivo-tot" type="number" value="280000" oninput="calcIndicadores()">
+
+      <div style="display:flex;flex-direction:column">
+        <label>Ativo Total (R$)</label>
+        <span class="ind-inp-hint">Total de bens e direitos da empresa</span>
+      </div>
+      <input class="ind-inp" id="inp-ativo-tot" type="number" value="620000" oninput="calcIndicadores()">
+    </div>
+    <div class="ind-input-wrap">
+      <div style="display:flex;flex-direction:column">
+        <label>Patrimônio Líquido (R$)</label>
+        <span class="ind-inp-hint">Ativo Total − Passivo Total</span>
+      </div>
+      <input class="ind-inp" id="inp-pl" type="number" value="340000" oninput="calcIndicadores()">
+
+      <div style="display:flex;flex-direction:column">
+        <label>Lucro Líquido do Período (R$)</label>
+        <span class="ind-inp-hint">Após impostos e despesas</span>
+      </div>
+      <input class="ind-inp" id="inp-lucro" type="number" value="52000" oninput="calcIndicadores()">
+
+      <div style="display:flex;flex-direction:column">
+        <label>Faturamento Bruto (R$) <span class="calc-badge">CALC</span></label>
+        <span class="ind-inp-hint">Puxado da aba Vendas automaticamente</span>
+      </div>
+      <input class="ind-inp" id="inp-fat" type="number" value="0" readonly
+        style="background:#f0f0f0;color:#888;border-color:#ccc">
+    </div>
+  </div>
+
+  <!-- Grupos de indicadores -->
+  <div class="ind-grid3">
+
+    <!-- LIQUIDEZ -->
+    <div class="ind-grupo">
+      <div class="ind-grupo-titulo">💧 Liquidez</div>
+      <div class="ind-row">
+        <div class="ind-label">Liquidez Corrente<div class="ind-formula">Ativo Circ. ÷ Passivo Circ.</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="liq-corrente">—</span>
+          <span class="ind-status" id="liq-corrente-st"></span>
+        </div>
+      </div>
+      <div class="ind-row">
+        <div class="ind-label">Liquidez Seca<div class="ind-formula">(Ativo Circ. − Estoque) ÷ Passivo Circ.</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="liq-seca">—</span>
+          <span class="ind-status" id="liq-seca-st"></span>
+        </div>
+      </div>
+      <div class="ind-row">
+        <div class="ind-label">Liquidez Imediata<div class="ind-formula">Caixa e Bancos ÷ Passivo Circ.</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="liq-imediata">—</span>
+          <span class="ind-status" id="liq-imediata-st"></span>
+        </div>
+      </div>
+      <div class="ind-row">
+        <div class="ind-label"><b>Capital de Giro (R$)</b><div class="ind-formula">Ativo Circ. − Passivo Circ.</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="cap-giro">—</span>
+          <span class="ind-status" id="cap-giro-st"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RENTABILIDADE -->
+    <div class="ind-grupo">
+      <div class="ind-grupo-titulo">📈 Rentabilidade</div>
+      <div class="ind-row">
+        <div class="ind-label">Margem Bruta <span class="calc-badge">CALC</span><div class="ind-formula">MC média % do portfólio (ZFM CE 55%)</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="rent-mb">—</span>
+          <span class="ind-status" id="rent-mb-st"></span>
+        </div>
+      </div>
+      <div class="ind-row">
+        <div class="ind-label">Margem Líquida<div class="ind-formula">Lucro Líquido ÷ Faturamento</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="rent-ml">—</span>
+          <span class="ind-status" id="rent-ml-st"></span>
+        </div>
+      </div>
+      <div class="ind-row">
+        <div class="ind-label">ROE — Retorno s/ PL<div class="ind-formula">Lucro Líquido ÷ Patrimônio Líquido</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="rent-roe">—</span>
+          <span class="ind-status" id="rent-roe-st"></span>
+        </div>
+      </div>
+      <div class="ind-row">
+        <div class="ind-label">ROA — Retorno s/ Ativos<div class="ind-formula">Lucro Líquido ÷ Ativo Total</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="rent-roa">—</span>
+          <span class="ind-status" id="rent-roa-st"></span>
+        </div>
+      </div>
+      <div class="ind-row">
+        <div class="ind-label"><b>Giro do Ativo</b> <span class="calc-badge">CALC</span><div class="ind-formula">Faturamento ÷ Ativo Total</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="rent-giro">—</span>
+          <span class="ind-status" id="rent-giro-st"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENDIVIDAMENTO -->
+    <div class="ind-grupo">
+      <div class="ind-grupo-titulo">⚖️ Endividamento</div>
+      <div class="ind-row">
+        <div class="ind-label">Grau de Endividamento<div class="ind-formula">Passivo Total ÷ Ativo Total</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="end-grau">—</span>
+          <span class="ind-status" id="end-grau-st"></span>
+        </div>
+      </div>
+      <div class="ind-row">
+        <div class="ind-label">Endiv. de Curto Prazo<div class="ind-formula">Passivo Circ. ÷ Passivo Total</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="end-cp">—</span>
+          <span class="ind-status" id="end-cp-st"></span>
+        </div>
+      </div>
+      <div class="ind-row">
+        <div class="ind-label">Autonomia Financeira<div class="ind-formula">Patrimônio Líquido ÷ Ativo Total</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="end-auto">—</span>
+          <span class="ind-status" id="end-auto-st"></span>
+        </div>
+      </div>
+      <div class="ind-row">
+        <div class="ind-label">Cobertura de Juros <span class="calc-badge">CALC</span><div class="ind-formula">Inadimplência da carteira Bradesco</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="end-inad">—</span>
+          <span class="ind-status" id="end-inad-st"></span>
+        </div>
+      </div>
+      <div class="ind-row">
+        <div class="ind-label"><b>Capital de Terceiros vs Próprio</b><div class="ind-formula">Passivo Total ÷ PL</div></div>
+        <div style="display:flex;align-items:center">
+          <span class="ind-val" id="end-terc">—</span>
+          <span class="ind-status" id="end-terc-st"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos histórico -->
+  <div class="ind-hist-grid">
+    <div class="card">
+      <div class="card-titulo">Evolução de Liquidez — histórico mensal</div>
+      <div style="position:relative;height:220px">
+        <canvas id="ind-grafico-liq" role="img" aria-label="Evolução de liquidez"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Evolução de Rentabilidade — histórico mensal</div>
+      <div style="position:relative;height:220px">
+        <canvas id="ind-grafico-rent" role="img" aria-label="Evolução de rentabilidade"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-titulo">Evolução do Endividamento — histórico mensal</div>
+    <div style="position:relative;height:200px">
+      <canvas id="ind-grafico-end" role="img" aria-label="Evolução de endividamento"></canvas>
+    </div>
+    <p style="font-size:11px;color:#aaa;margin-top:8px;text-align:center">
+      Os gráficos históricos são alimentados mês a mês conforme você atualiza os campos acima e regera o dashboard.
+      Armazenado em <b>historico_indicadores.json</b> na pasta do projeto.
+    </p>
+  </div>
+</div>
+
+</body>
+</html>

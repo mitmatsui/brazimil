@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brazimil — Manual Completo do Sistema de Análise Econômica</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f2f5;color:#222}
+.capa{background:linear-gradient(135deg,#1F3864 0%,#2E75B6 100%);color:#fff;padding:64px 48px 52px;text-align:center}
+.capa .logo{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#BDD7EE;margin-bottom:16px}
+.capa h1{font-size:38px;font-weight:700;margin-bottom:8px;line-height:1.2}
+.capa .sub{font-size:16px;color:#BDD7EE;margin-bottom:40px;font-style:italic}
+.capa .meta{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.capa .mi{background:rgba(255,255,255,.12);border-radius:10px;padding:14px 22px;min-width:140px}
+.capa .mi .ml{font-size:10px;color:#BDD7EE;text-transform:uppercase;letter-spacing:.08em}
+.capa .mi .mv{font-size:17px;font-weight:700;margin-top:4px}
+.nav{background:#fff;border-bottom:2px solid #BDD7EE;position:sticky;top:0;z-index:100;padding:0 32px}
+.nav ul{display:flex;list-style:none;overflow-x:auto;gap:0}
+.nav ul li a{display:block;padding:14px 18px;font-size:12px;font-weight:700;color:#555;text-decoration:none;
+  text-transform:uppercase;letter-spacing:.05em;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
+.nav ul li a:hover{color:#1F3864;border-bottom-color:#BDD7EE}
+.container{max-width:1000px;margin:0 auto;padding:36px 24px 80px}
+.cap{background:#fff;border-radius:12px;border:1px solid #e0e0e0;padding:32px 36px;margin-bottom:28px}
+.cap-num{font-size:11px;font-weight:700;color:#2E75B6;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.cap h2{font-size:24px;font-weight:700;color:#1F3864;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #BDD7EE}
+.cap h3{font-size:16px;font-weight:700;color:#1F3864;margin:22px 0 10px}
+.cap h4{font-size:13px;font-weight:700;color:#2E75B6;margin:16px 0 7px;text-transform:uppercase;letter-spacing:.04em}
+.cap p{font-size:14px;line-height:1.75;color:#333;margin-bottom:12px}
+.cap ul,.cap ol{padding-left:22px;margin-bottom:12px}
+.cap li{font-size:14px;line-height:1.7;color:#333;margin-bottom:5px}
+.cap table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0 18px}
+.cap th{background:#2E75B6;color:#fff;font-weight:700;padding:10px 13px;text-align:left;font-size:12px}
+.cap td{padding:9px 13px;border-bottom:1px solid #f0f0f0;vertical-align:top;line-height:1.5}
+.cap tr:nth-child(even) td{background:#f7f7f7}
+.cap td code{font-family:'Courier New',monospace;font-size:12px;color:#0000AA;background:#f0f0f0;padding:1px 5px;border-radius:3px}
+.code-block{background:#1e1e2e;border-radius:10px;padding:18px 20px;margin:10px 0 16px;overflow-x:auto}
+.code-block code{font-family:'Courier New',monospace;font-size:13px;color:#cdd6f4;line-height:1.75;white-space:pre}
+.ci{font-family:'Courier New',monospace;font-size:12px;background:#f0f0f0;color:#0000AA;padding:1px 6px;border-radius:4px}
+.nota{border-left:4px solid #EF9F27;background:#FFF2CC;border-radius:0 10px 10px 0;padding:13px 18px;margin:14px 0;font-size:13px;color:#5a3800}
+.dica{border-left:4px solid #2E75B6;background:#E6F1FB;border-radius:0 10px 10px 0;padding:13px 18px;margin:14px 0;font-size:13px;color:#0C447C}
+.ok{border-left:4px solid #639922;background:#EAF3DE;border-radius:0 10px 10px 0;padding:13px 18px;margin:14px 0;font-size:13px;color:#27500A}
+.alerta{border-left:4px solid #E24B4A;background:#FCEBEB;border-radius:0 10px 10px 0;padding:13px 18px;margin:14px 0;font-size:13px;color:#791F1F}
+.nota b,.dica b,.ok b,.alerta b{font-weight:700}
+.fluxo{background:#fff;border-radius:10px;border:1px solid #e0e0e0;padding:20px 24px;margin:16px 0}
+.fluxo-step{display:flex;gap:16px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f5f5f5}
+.fluxo-step:last-child{border-bottom:none}
+.fluxo-num{width:32px;height:32px;border-radius:50%;background:#2E75B6;color:#fff;font-weight:700;
+  font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.fluxo-body .ft{font-size:14px;font-weight:700;color:#1F3864;margin-bottom:4px}
+.fluxo-body .fs{font-size:13px;color:#555;line-height:1.6}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;margin-left:6px;vertical-align:middle}
+.b-calc{background:#E6F1FB;color:#2E75B6}
+.b-edit{background:#FFF2CC;color:#7F6000}
+.b-auto{background:#EAF3DE;color:#276221}
+.abas-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:14px 0}
+.aba-card{background:#f7f7f7;border-radius:8px;border:1px solid #e0e0e0;padding:14px 16px}
+.aba-card .ac-num{font-size:10px;font-weight:700;color:#2E75B6;text-transform:uppercase;letter-spacing:.06em}
+.aba-card .ac-nome{font-size:14px;font-weight:700;color:#1F3864;margin:4px 0 6px}
+.aba-card .ac-desc{font-size:12px;color:#555;line-height:1.6}
+.ind-table{width:100%;border-collapse:collapse;margin:12px 0}
+.ind-table th{background:#1F3864;color:#fff;padding:9px 12px;font-size:11px;text-align:left}
+.ind-table td{padding:8px 12px;border-bottom:1px solid #f0f0f0;font-size:12px}
+.ind-table tr:nth-child(even) td{background:#f7f7f7}
+.tag-ok{background:#EAF3DE;color:#27500A;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700}
+.tag-warn{background:#FFF2CC;color:#7F6000;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700}
+.tag-bad{background:#FCEBEB;color:#791F1F;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700}
+.rodape{text-align:center;font-size:12px;color:#999;margin-top:48px;padding-top:24px;border-top:1px solid #e0e0e0}
+hr.sep{border:none;border-top:1px solid #e8e8e8;margin:24px 0}
+</style>
+</head>
+<body>
+
+<div class="capa">
+  <div class="logo">Brazimil Indústria de Tintas</div>
+  <h1>Manual Completo do Sistema<br>Brazimil — Análise Econômica</h1>
+  <div class="sub">Guia definitivo para operar, ajustar e evoluir o dashboard</div>
+  <div class="meta">
+    <div class="mi"><div class="ml">Versão</div><div class="mv">4.0</div></div>
+    <div class="mi"><div class="ml">Abas</div><div class="mv">7 módulos</div></div>
+    <div class="mi"><div class="ml">Tecnologia</div><div class="mv">Python + HTML</div></div>
+    <div class="mi"><div class="ml">Classificação</div><div class="mv">Uso Interno</div></div>
+  </div>
+</div>
+
+<nav class="nav">
+  <ul>
+    <li><a href="#cap1">1. Visão Geral</a></li>
+    <li><a href="#cap2">2. Arquivos</a></li>
+    <li><a href="#cap3">3. Fluxo Semanal</a></li>
+    <li><a href="#cap4">4. As 7 Abas</a></li>
+    <li><a href="#cap5">5. Indicadores</a></li>
+    <li><a href="#cap6">6. Vendas & Fluxo</a></li>
+    <li><a href="#cap7">7. Precificação ZFM</a></li>
+    <li><a href="#cap8">8. Ajustes Python</a></li>
+    <li><a href="#cap9">9. GitHub Pages</a></li>
+    <li><a href="#cap10">10. Erros</a></li>
+    <li><a href="#cap11">11. Referência</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+<!-- CAP 1 -->
+<div class="cap" id="cap1">
+  <div class="cap-num">Capítulo 1</div>
+  <h2>Visão Geral do Sistema</h2>
+  <p>O <b>Brazimil — Análise Econômica</b> é um sistema integrado de gestão desenvolvido especificamente para a Brazimil Indústria de Tintas. Ele centraliza precificação, tributação ZFM, evolução de vendas, fluxo de caixa e saúde financeira em um único painel acessível por qualquer navegador, com senha de acesso.</p>
+
+  <h3>O que o sistema entrega</h3>
+  <ul>
+    <li>Cálculo correto da Margem de Contribuição com CE 55% (ZFM Bens Finais)</li>
+    <li>Simulação de preços em tempo real para qualquer produto e qualquer região</li>
+    <li>Comparação de dois cenários comerciais lado a lado</li>
+    <li>Evolução semanal de vendas por produto e por cliente</li>
+    <li>Fluxo de caixa das próximas 4 semanas com aging de inadimplência</li>
+    <li>Indicadores financeiros de liquidez, rentabilidade e endividamento</li>
+    <li>Acesso online pelo cliente via GitHub Pages com senha</li>
+  </ul>
+
+  <h3>Tecnologias utilizadas</h3>
+  <table>
+    <thead><tr><th>Tecnologia</th><th>Para que serve</th><th>Onde fica</th></tr></thead>
+    <tbody>
+      <tr><td><b>Python 3</b></td><td>Lê os Excels, normaliza CSVs e gera o HTML final</td><td>gerar.py e omie_sync.py</td></tr>
+      <tr><td><b>openpyxl</b></td><td>Biblioteca Python para ler arquivos .xlsx</td><td>importada no gerar.py</td></tr>
+      <tr><td><b>HTML + CSS</b></td><td>Estrutura visual e estilo do dashboard</td><td>template.html</td></tr>
+      <tr><td><b>JavaScript</b></td><td>Cálculos em tempo real, filtros e interatividade</td><td>template.html (seção script)</td></tr>
+      <tr><td><b>Chart.js</b></td><td>Gráficos de barras, linhas, donut e radar</td><td>CDN no template.html</td></tr>
+      <tr><td><b>GitHub Pages</b></td><td>Hospedagem gratuita do dashboard online</td><td>repositório mitmatsui/brazimil</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CAP 2 -->
+<div class="cap" id="cap2">
+  <div class="cap-num">Capítulo 2</div>
+  <h2>Arquitetura dos Arquivos</h2>
+
+  <h3>Estrutura da pasta do projeto</h3>
+  <div class="code-block"><code>~/Documents/brazimil-dashboard/
+├── gerar.py                              ← Script principal — rode sempre após atualizar dados
+├── omie_sync.py                          ← Normaliza CSVs do Omie e Bradesco
+├── template.html                         ← Template do dashboard (HTML + JS puro)
+├── SIMULADOR TINTAS MIL BRAZIMIL 1.xlsx ← Fonte de custo e peso dos produtos
+├── Simulador_Brazimil_Analise_do_time_.xlsx ← Fonte de preços praticados (planilha do time)
+├── vendas_omie.csv                       ← Exportado do Omie (atualizado semanalmente)
+├── boletos_bradesco.csv                  ← Exportado do Bradesco Net Empresa
+├── vendas.json                           ← Gerado pelo omie_sync.py automaticamente
+├── fluxo_caixa.json                      ← Gerado pelo omie_sync.py automaticamente
+└── brazimil_analise_economica.html       ← Dashboard final (NUNCA edite diretamente)</code></div>
+
+  <div class="alerta"><b>Regra fundamental:</b> o arquivo <span class="ci">brazimil_analise_economica.html</span> é sempre gerado pelo <span class="ci">gerar.py</span>. Nunca edite-o diretamente — qualquer alteração manual será sobrescrita na próxima vez que você rodar o script.</div>
+
+  <h3>Função de cada arquivo</h3>
+  <table>
+    <thead><tr><th>Arquivo</th><th>Função</th><th>Quando editar</th></tr></thead>
+    <tbody>
+      <tr><td><code>gerar.py</code></td><td>Lê os dois Excels, cruza dados, injeta no template e gera o HTML final</td><td>Ao mudar preços, adicionar produtos ou categorias</td></tr>
+      <tr><td><code>omie_sync.py</code></td><td>Lê os CSVs do Omie e Bradesco e gera os JSONs de vendas e fluxo de caixa</td><td>Não precisa editar — roda automaticamente</td></tr>
+      <tr><td><code>template.html</code></td><td>Todo o visual e lógica do dashboard em HTML + JS puro</td><td>Para mudar layout, senha, regiões ou adicionar funcionalidades</td></tr>
+      <tr><td><code>vendas_omie.csv</code></td><td>Relatório de faturamento exportado do Omie</td><td>Substituído semanalmente pelo operador</td></tr>
+      <tr><td><code>boletos_bradesco.csv</code></td><td>Carteira de cobrança exportada do Bradesco Net Empresa</td><td>Substituído semanalmente pelo financeiro</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Os 3 placeholders que o Python injeta no HTML</h3>
+  <table>
+    <thead><tr><th>Placeholder</th><th>Substituído por</th></tr></thead>
+    <tbody>
+      <tr><td><code>__PRODUTOS_JSON__</code></td><td>Lista JSON completa de todos os produtos com custo, peso e preço</td></tr>
+      <tr><td><code>__VENDAS_JSON__</code></td><td>Dados de vendas semanais, top produtos e top clientes</td></tr>
+      <tr><td><code>__FLUXO_JSON__</code></td><td>Boletos, aging de inadimplência e projeção das 4 semanas</td></tr>
+      <tr><td><code>__DATA_HOJE__</code></td><td>Data e hora de geração do dashboard</td></tr>
+      <tr><td><code>__TOTAL__</code></td><td>Total de SKUs carregados</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CAP 3 -->
+<div class="cap" id="cap3">
+  <div class="cap-num">Capítulo 3</div>
+  <h2>Fluxo de Trabalho Semanal</h2>
+  <p>O sistema foi projetado para ser atualizado uma vez por semana com o mínimo de trabalho manual. O fluxo completo leva menos de 10 minutos.</p>
+
+  <div class="fluxo">
+    <div class="fluxo-step">
+      <div class="fluxo-num">1</div>
+      <div class="fluxo-body">
+        <div class="ft">Operador do Omie exporta o relatório de vendas</div>
+        <div class="fs">Omie → Relatórios → Vendas → Faturamento por Período → últimas 13 semanas → Exportar CSV<br>Salvar como: <span class="ci">vendas_omie.csv</span> na pasta do projeto</div>
+      </div>
+    </div>
+    <div class="fluxo-step">
+      <div class="fluxo-num">2</div>
+      <div class="fluxo-body">
+        <div class="ft">Financeiro exporta a carteira de boletos do Bradesco</div>
+        <div class="fs">Bradesco Net Empresa → Cobrança → Consulta de Títulos → Exportar<br>Salvar como: <span class="ci">boletos_bradesco.csv</span> na pasta do projeto</div>
+      </div>
+    </div>
+    <div class="fluxo-step">
+      <div class="fluxo-num">3</div>
+      <div class="fluxo-body">
+        <div class="ft">Rodar o omie_sync.py para normalizar os dados</div>
+        <div class="fs">
+          <div class="code-block" style="margin:6px 0"><code>cd ~/Documents/brazimil-dashboard
+python3 omie_sync.py</code></div>
+          Gera automaticamente: <span class="ci">vendas.json</span> e <span class="ci">fluxo_caixa.json</span>
+        </div>
+      </div>
+    </div>
+    <div class="fluxo-step">
+      <div class="fluxo-num">4</div>
+      <div class="fluxo-body">
+        <div class="ft">Atualizar os indicadores financeiros (se necessário)</div>
+        <div class="fs">Abra o dashboard, vá na aba <b>Indicadores Financeiros</b> e atualize os campos editáveis com os valores do mês: Ativo Circulante, Estoque, Passivo Circulante, Passivo Total, Ativo Total, Patrimônio Líquido e Lucro Líquido.</div>
+      </div>
+    </div>
+    <div class="fluxo-step">
+      <div class="fluxo-num">5</div>
+      <div class="fluxo-body">
+        <div class="ft">Rodar o gerar.py para gerar o dashboard final</div>
+        <div class="fs">
+          <div class="code-block" style="margin:6px 0"><code>python3 gerar.py
+open brazimil_analise_economica.html</code></div>
+        </div>
+      </div>
+    </div>
+    <div class="fluxo-step">
+      <div class="fluxo-num">6</div>
+      <div class="fluxo-body">
+        <div class="ft">Publicar online pelo GitHub Desktop</div>
+        <div class="fs">GitHub Desktop → alterações aparecem automaticamente → Summary: "Atualização semanal" → Commit to main → Push origin<br>Aguarde 2 minutos. O cliente já acessa pela URL do GitHub Pages.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ok"><b>✅ Atalho completo no Terminal:</b><br><br>
+  <span class="ci">python3 omie_sync.py && python3 gerar.py && open brazimil_analise_economica.html</span><br><br>
+  Este comando único roda os dois scripts em sequência e abre o dashboard no Chrome.</div>
+</div>
+
+<!-- CAP 4 -->
+<div class="cap" id="cap4">
+  <div class="cap-num">Capítulo 4</div>
+  <h2>As 7 Abas do Dashboard</h2>
+
+  <div class="abas-grid">
+    <div class="aba-card">
+      <div class="ac-num">Aba 1</div>
+      <div class="ac-nome">Painel Geral</div>
+      <div class="ac-desc">Visão completa do portfólio com drill-down por categoria → subcategoria → produto. KPIs de MC média, saudáveis, atenção e prejuízo. Gráfico donut de distribuição. Tabela ordenável por qualquer coluna. Filtros de região, comissão e frete.</div>
+    </div>
+    <div class="aba-card">
+      <div class="ac-num">Aba 2</div>
+      <div class="ac-nome">Simulador de Preço</div>
+      <div class="ac-desc">Selecione qualquer produto, use o slider ou digite o preço. Veja em tempo real: decomposição do custo (fábrica, frete, impostos, MC), demonstrativo linha a linha e alerta colorido indicando se o preço é saudável, em atenção ou insuficiente.</div>
+    </div>
+    <div class="aba-card">
+      <div class="ac-num">Aba 3</div>
+      <div class="ac-nome">Comparador de Cenários</div>
+      <div class="ac-desc">Cenário A vs Cenário B com filtros independentes (região, comissão, frete). KPIs de cada cenário lado a lado. Top 20 produtos com maior diferença de MC em barras paralelas azul vs verde.</div>
+    </div>
+    <div class="aba-card">
+      <div class="ac-num">Aba 4</div>
+      <div class="ac-nome">Tributação ZFM</div>
+      <div class="ac-desc">Crédito Estímulo ajustável de 40% a 75%. Cálculo correto: ICMS 12% × (1−CE) − crédito insumos. Painel com todos os tributos (FMPES, UEA, FTI, PIS, COFINS). Comparativo CE correto vs modelo simplificado de 7%. Tabela ZFM por produto.</div>
+    </div>
+    <div class="aba-card">
+      <div class="ac-num">Aba 5</div>
+      <div class="ac-nome">Evolução de Vendas</div>
+      <div class="ac-desc">Dados do Omie via CSV. Faturamento semanal das últimas 13 semanas em barras + linha de tendência. Top 10 produtos e top 10 clientes por faturamento. KPIs: total do período, semana atual, variação % e média semanal.</div>
+    </div>
+    <div class="aba-card">
+      <div class="ac-num">Aba 6</div>
+      <div class="ac-nome">Fluxo de Caixa</div>
+      <div class="ac-desc">Dados do Bradesco via CSV. Projeção das próximas 4 semanas em barras empilhadas (prazo + vencido). Aging de inadimplência em donut (1–30, 31–60, 61–90, +90 dias). Top 8 inadimplentes. Lista detalhada de boletos com status colorido.</div>
+    </div>
+    <div class="aba-card" style="grid-column:1/-1">
+      <div class="ac-num">Aba 7</div>
+      <div class="ac-nome">Indicadores Financeiros</div>
+      <div class="ac-desc">Semáforo geral com 6 indicadores-chave. Grupo de Liquidez (corrente, seca, imediata, capital de giro). Grupo de Rentabilidade (margem bruta CALC, margem líquida, ROE, ROA, giro do ativo CALC). Grupo de Endividamento (grau, curto prazo, autonomia, inadimplência CALC, capital de terceiros). Gráficos históricos mensais para os 3 grupos. Campos editáveis para dados do balanço.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CAP 5 -->
+<div class="cap" id="cap5">
+  <div class="cap-num">Capítulo 5</div>
+  <h2>Indicadores Financeiros — Guia Completo</h2>
+
+  <h3>5.1 Como usar a aba</h3>
+  <ol>
+    <li>Acesse a aba <b>Indicadores Financeiros</b> após o login</li>
+    <li>Atualize os campos em azul mensalmente com os dados do balanço da Brazimil</li>
+    <li>Os indicadores recalculam automaticamente ao digitar</li>
+    <li>Os campos marcados com <span class="badge b-calc">CALC</span> são calculados automaticamente dos dados já existentes no dashboard</li>
+    <li>Os campos marcados com <span class="badge b-edit">edite</span> precisam ser preenchidos manualmente</li>
+  </ol>
+
+  <h3>5.2 Grupo Liquidez — o que cada indicador significa</h3>
+  <table class="ind-table">
+    <thead><tr><th>Indicador</th><th>Fórmula</th><th>Interpretação</th><th>Referência Brazimil</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>Liquidez Corrente</b></td>
+        <td>Ativo Circ. ÷ Passivo Circ.</td>
+        <td>Capacidade de pagar dívidas de curto prazo com ativos de curto prazo</td>
+        <td><span class="tag-ok">≥ 1,50 = Ótimo</span> <span class="tag-warn">1,00–1,49 = Atenção</span> <span class="tag-bad">&lt;1,0 = Crítico</span></td>
+      </tr>
+      <tr>
+        <td><b>Liquidez Seca</b></td>
+        <td>(Ativo Circ. − Estoque) ÷ Passivo Circ.</td>
+        <td>Igual à corrente mas exclui o estoque — mais conservadora</td>
+        <td><span class="tag-ok">≥ 1,50</span> <span class="tag-warn">1,00–1,49</span> <span class="tag-bad">&lt;1,0</span></td>
+      </tr>
+      <tr>
+        <td><b>Liquidez Imediata</b></td>
+        <td>Caixa e Bancos ÷ Passivo Circ.</td>
+        <td>Quanto a empresa consegue pagar imediatamente sem vender nada</td>
+        <td><span class="tag-ok">≥ 0,20</span> <span class="tag-warn">0,10–0,19</span> <span class="tag-bad">&lt;0,10</span></td>
+      </tr>
+      <tr>
+        <td><b>Capital de Giro</b></td>
+        <td>Ativo Circ. − Passivo Circ.</td>
+        <td>Folga financeira para financiar as operações do dia a dia</td>
+        <td><span class="tag-ok">Positivo = Ótimo</span> <span class="tag-bad">Negativo = Crítico</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5.3 Grupo Rentabilidade</h3>
+  <table class="ind-table">
+    <thead><tr><th>Indicador</th><th>Fórmula</th><th>Interpretação</th><th>Referência</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>Margem Bruta <span class="badge b-calc">CALC</span></b></td>
+        <td>MC % média do portfólio (ZFM CE 55%)</td>
+        <td>Calculada automaticamente da aba Painel — já considera a tributação ZFM correta</td>
+        <td><span class="tag-ok">≥ 35%</span> <span class="tag-warn">20–35%</span> <span class="tag-bad">&lt;20%</span></td>
+      </tr>
+      <tr>
+        <td><b>Margem Líquida</b></td>
+        <td>Lucro Líquido ÷ Faturamento</td>
+        <td>O que sobra de cada R$ vendido após todos os custos e impostos</td>
+        <td><span class="tag-ok">≥ 10%</span> <span class="tag-warn">5–10%</span> <span class="tag-bad">&lt;5%</span></td>
+      </tr>
+      <tr>
+        <td><b>ROE</b></td>
+        <td>Lucro Líquido ÷ Patrimônio Líquido</td>
+        <td>Retorno que os sócios obtêm sobre o capital investido</td>
+        <td><span class="tag-ok">≥ 15%</span> <span class="tag-warn">8–15%</span> <span class="tag-bad">&lt;8%</span></td>
+      </tr>
+      <tr>
+        <td><b>ROA</b></td>
+        <td>Lucro Líquido ÷ Ativo Total</td>
+        <td>Eficiência no uso de todos os ativos da empresa</td>
+        <td><span class="tag-ok">≥ 8%</span> <span class="tag-warn">4–8%</span> <span class="tag-bad">&lt;4%</span></td>
+      </tr>
+      <tr>
+        <td><b>Giro do Ativo <span class="badge b-calc">CALC</span></b></td>
+        <td>Faturamento ÷ Ativo Total</td>
+        <td>Quantas vezes o ativo se transforma em receita — eficiência operacional</td>
+        <td><span class="tag-ok">≥ 1,0x</span> <span class="tag-warn">0,5–1,0x</span> <span class="tag-bad">&lt;0,5x</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5.4 Grupo Endividamento</h3>
+  <table class="ind-table">
+    <thead><tr><th>Indicador</th><th>Fórmula</th><th>Interpretação</th><th>Referência</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>Grau de Endividamento</b></td>
+        <td>Passivo Total ÷ Ativo Total</td>
+        <td>Proporção do ativo financiada por terceiros — quanto menor, melhor</td>
+        <td><span class="tag-ok">≤ 40%</span> <span class="tag-warn">40–60%</span> <span class="tag-bad">&gt;60%</span></td>
+      </tr>
+      <tr>
+        <td><b>Endiv. de Curto Prazo</b></td>
+        <td>Passivo Circ. ÷ Passivo Total</td>
+        <td>Concentração de dívidas com vencimento em até 12 meses — risco de liquidez</td>
+        <td><span class="tag-ok">≤ 50%</span> <span class="tag-warn">50–70%</span> <span class="tag-bad">&gt;70%</span></td>
+      </tr>
+      <tr>
+        <td><b>Autonomia Financeira</b></td>
+        <td>Patrimônio Líquido ÷ Ativo Total</td>
+        <td>Quanto do ativo é financiado com capital próprio — inverso do endividamento</td>
+        <td><span class="tag-ok">≥ 60%</span> <span class="tag-warn">40–60%</span> <span class="tag-bad">&lt;40%</span></td>
+      </tr>
+      <tr>
+        <td><b>Inadimplência <span class="badge b-calc">CALC</span></b></td>
+        <td>Vencido ÷ Carteira Total (Bradesco)</td>
+        <td>Percentual de boletos vencidos e não pagos — puxado do fluxo de caixa</td>
+        <td><span class="tag-ok">≤ 5%</span> <span class="tag-warn">5–15%</span> <span class="tag-bad">&gt;15%</span></td>
+      </tr>
+      <tr>
+        <td><b>Capital Terceiros/Próprio</b></td>
+        <td>Passivo Total ÷ Patrimônio Líquido</td>
+        <td>Para cada R$ próprio, quanto a empresa deve a terceiros</td>
+        <td><span class="tag-ok">≤ 0,8x</span> <span class="tag-warn">0,8–1,5x</span> <span class="tag-bad">&gt;1,5x</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="dica"><b>💡 Dica de uso mensal:</b> no primeiro dia útil de cada mês, abra o dashboard, vá em Indicadores Financeiros e atualize os 7 campos editáveis com os valores do balanço encerrado. Os gráficos históricos vão construindo o histórico mês a mês automaticamente durante a sessão.</div>
+</div>
+
+<!-- CAP 6 -->
+<div class="cap" id="cap6">
+  <div class="cap-num">Capítulo 6</div>
+  <h2>Evolução de Vendas e Fluxo de Caixa</h2>
+
+  <h3>6.1 Como exportar do Omie</h3>
+  <ol>
+    <li>Acesse o Omie com login da Brazimil</li>
+    <li>Menu: <b>Relatórios → Vendas → Faturamento por Período</b></li>
+    <li>Selecione as últimas <b>13 semanas</b> como período</li>
+    <li>Clique em <b>Exportar → CSV</b> (separador ponto-e-vírgula)</li>
+    <li>Salve como <span class="ci">vendas_omie.csv</span> na pasta <span class="ci">brazimil-dashboard</span></li>
+  </ol>
+  <div class="nota"><b>Colunas esperadas do Omie:</b> Data Emissão; Nº NF; Cliente; Produto; Qtd; Valor Unit; Valor Total. O <span class="ci">omie_sync.py</span> detecta automaticamente o separador e faz mapeamento flexível das colunas — pequenas variações no nome não causam erro.</div>
+
+  <h3>6.2 Como exportar do Bradesco Net Empresa</h3>
+  <ol>
+    <li>Acesse o <b>Bradesco Net Empresa</b> (não o app — usar o navegador)</li>
+    <li>Menu: <b>Cobrança → Consulta de Títulos</b></li>
+    <li>Selecione todos os títulos (em aberto, vencidos e pagos recentes)</li>
+    <li>Clique em <b>Exportar → CSV</b></li>
+    <li>Salve como <span class="ci">boletos_bradesco.csv</span> na pasta do projeto</li>
+  </ol>
+  <div class="nota"><b>Colunas esperadas do Bradesco:</b> Nosso Nº; Cliente; Emissão; Vencimento; Valor; Status. O sistema detecta automaticamente "Pago", "Liquidado", "Vencido", "Em Aberto" e os classifica corretamente.</div>
+
+  <h3>6.3 Modo exemplo automático</h3>
+  <p>Se os CSVs não existirem na pasta, o <span class="ci">omie_sync.py</span> gera dados de exemplo realistas automaticamente para o dashboard funcionar visualmente. Um banner amarelo aparece no topo das abas avisando que são dados de exemplo. Substitua os CSVs pelos reais quando disponíveis.</p>
+
+  <h3>6.4 O que o omie_sync.py processa</h3>
+  <table>
+    <thead><tr><th>Dado</th><th>Fonte</th><th>Output</th></tr></thead>
+    <tbody>
+      <tr><td>Faturamento semanal (13 semanas)</td><td>vendas_omie.csv</td><td>vendas.json → aba Evolução de Vendas</td></tr>
+      <tr><td>Top 10 produtos por valor</td><td>vendas_omie.csv</td><td>vendas.json → barras horizontais</td></tr>
+      <tr><td>Top 10 clientes por valor</td><td>vendas_omie.csv</td><td>vendas.json → barras horizontais</td></tr>
+      <tr><td>Variação % semana atual vs anterior</td><td>vendas_omie.csv</td><td>vendas.json → KPI semana atual</td></tr>
+      <tr><td>Projeção 4 semanas (aberto + vencido)</td><td>boletos_bradesco.csv</td><td>fluxo_caixa.json → gráfico barras</td></tr>
+      <tr><td>Aging por faixa (1–30, 31–60, 61–90, +90)</td><td>boletos_bradesco.csv</td><td>fluxo_caixa.json → donut + cards</td></tr>
+      <tr><td>Top 8 inadimplentes</td><td>boletos_bradesco.csv</td><td>fluxo_caixa.json → barras vermelhas</td></tr>
+      <tr><td>Lista detalhada de boletos futuros</td><td>boletos_bradesco.csv</td><td>fluxo_caixa.json → lista com status</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CAP 7 -->
+<div class="cap" id="cap7">
+  <div class="cap-num">Capítulo 7</div>
+  <h2>Precificação e Tributação ZFM</h2>
+
+  <h3>7.1 A fórmula correta para Bens Finais com CE 55%</h3>
+  <table>
+    <thead><tr><th>Componente</th><th>Fórmula</th><th>Valor com CE 55%</th></tr></thead>
+    <tbody>
+      <tr><td><b>ICMS débito saída</b></td><td>Alíquota interna AM</td><td>12,0%</td></tr>
+      <tr><td><b>Crédito Estímulo</b></td><td>CE × ICMS débito</td><td>55% × 12% = 6,6%</td></tr>
+      <tr><td><b>Crédito insumos nacionais</b></td><td>Alíquota local AM</td><td>7,0%</td></tr>
+      <tr><td><b>ICMS líquido a pagar</b></td><td>Máx(débito − crédito entrada, 0)</td><td>Máx(12%×45% − 7%, 0) = <b>5,4%</b></td></tr>
+      <tr><td><b>FMPES</b></td><td>6% × ICMS débito × CE</td><td>6% × 12% × 55% = 0,40%</td></tr>
+      <tr><td><b>UEA</b></td><td>Fixo sobre faturamento</td><td>1,50%</td></tr>
+      <tr><td><b>FTI (insumo nacional)</b></td><td>Fixo sobre faturamento</td><td>1,00%</td></tr>
+      <tr><td><b>PIS</b></td><td>Lucro Presumido — cumulativo</td><td>0,65%</td></tr>
+      <tr><td><b>COFINS</b></td><td>Lucro Presumido — cumulativo</td><td>3,00%</td></tr>
+      <tr><td><b>Comissão</b></td><td>Definida nos filtros</td><td>5,00% (padrão)</td></tr>
+      <tr><td><b>CARGA TOTAL</b></td><td>Soma de todos acima</td><td><b>~16,95%</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="ok"><b>✅ Diferença crítica:</b> a planilha anterior do time usava 7% de ICMS simples. Com CE 55% correto, o ICMS líquido é 5,4% — uma diferença de 1,6 pp que fazia a MC parecer 2 pp menor do que realmente é. O dashboard usa sempre a fórmula correta.</div>
+
+  <h3>7.2 Cálculo da Margem de Contribuição</h3>
+  <div class="code-block"><code>Frete       = (peso_kg / 1000) × R$/ton
+Custo Var.  = custo_fábrica + frete
+ICMS líq.   = Máx(0,12 × (1 − CE) − 0,07, 0)
+FMPES       = 0,06 × 0,12 × CE
+Carga total = ICMS_líq + FMPES + 0,015 + 0,01 + 0,0065 + 0,03 + comissão
+PLV         = preço × (1 − carga_total)
+MC (R$)     = PLV − Custo_Var
+MC (%)      = MC ÷ PLV × 100
+Preço mín.  = Custo_Var ÷ ((1 − carga_total) × (1 − MC_alvo))</code></div>
+
+  <h3>7.3 Classificação de status de MC</h3>
+  <table>
+    <thead><tr><th>Status</th><th>Critério</th><th>Cor</th><th>Ação recomendada</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag-ok">Saudável</span></td><td>MC% ≥ 35%</td><td>Verde</td><td>Produto bem precificado — manter</td></tr>
+      <tr><td><span class="tag-warn">Atenção</span></td><td>20% ≤ MC% &lt; 35%</td><td>Amarelo</td><td>Monitorar — avaliar reajuste na próxima revisão</td></tr>
+      <tr><td><span class="tag-bad">Crítico</span></td><td>0% ≤ MC% &lt; 20%</td><td>Vermelho claro</td><td>Reajuste necessário — verificar custo e preço</td></tr>
+      <tr><td><span class="tag-bad">Prejuízo</span></td><td>MC% &lt; 0%</td><td>Vermelho escuro</td><td>Ação imediata — preço abaixo do custo variável</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CAP 8 -->
+<div class="cap" id="cap8">
+  <div class="cap-num">Capítulo 8</div>
+  <h2>Ajustes via Python — Guia Prático</h2>
+
+  <h3>8.1 Mudar o preço de venda de um produto</h3>
+  <p>No <span class="ci">gerar.py</span>, localize o dicionário <span class="ci">tabela</span> e encontre o produto. O preço de venda é o quarto valor da tupla:</p>
+  <div class="code-block"><code><span style="color:#6c7086"># Formato: "NOME NO EXCEL": ("Categoria", "Subcategoria", "PRD_ou_None", preco)</span>
+<span style="color:#cba6f7">"BRAZIMIL EXTERNA 15L BALDE BRANCO NEVE"</span>: (<span style="color:#a6e3a1">"Tinta Base Água"</span>, <span style="color:#a6e3a1">"Externa"</span>, <span style="color:#cba6f7">None</span>, <span style="color:#f38ba8">99.90</span>),</code></div>
+  <p>Se o produto tem um código PRD vinculado à planilha do time, o preço é puxado automaticamente de lá e o fallback é ignorado.</p>
+
+  <h3>8.2 Adicionar um produto novo</h3>
+  <p><b>Passo 1 — na seção tabela do gerar.py:</b></p>
+  <div class="code-block"><code><span style="color:#cba6f7">"BRAZIMIL NOVA LINHA 3L BALDE BN"</span>: (<span style="color:#a6e3a1">"Tinta Base Água"</span>, <span style="color:#a6e3a1">"Nova Linha"</span>, <span style="color:#cba6f7">None</span>, <span style="color:#f38ba8">45.00</span>),</code></div>
+  <div class="alerta"><b>O nome entre aspas deve ser EXATAMENTE igual ao da aba 'Custo' do Excel</b> — incluindo acentos, vírgulas e espaços. Copie direto do Excel para evitar erros.</div>
+
+  <h3>8.3 Verificar por que um produto não aparece</h3>
+  <p>Adicione este bloco temporariamente no gerar.py logo antes do <span class="ci">print(f"Produtos:")</span>:</p>
+  <div class="code-block"><code><span style="color:#6c7086"># Depuração — remova depois de usar</span>
+<span style="color:#cba6f7">for</span> nome_excel, (cat, sub, cod, preco_fb) <span style="color:#cba6f7">in</span> tabela.items():
+    custo = dados_custo.get(nome_excel)
+    peso  = dados_peso.get(nome_excel)
+    <span style="color:#cba6f7">if not</span> custo <span style="color:#cba6f7">or not</span> peso:
+        <span style="color:#89b4fa">print</span>(<span style="color:#a6e3a1">f"  SEM DADO: {nome_excel[:55]}"</span>)</code></div>
+
+  <h3>8.4 Criar uma nova categoria</h3>
+  <p>Simplesmente use o nome novo na tabela. O dashboard cria o botão de filtro automaticamente:</p>
+  <div class="code-block"><code><span style="color:#cba6f7">"BRAZIMIL TEXTURA PREMIUM 18KG"</span>: (<span style="color:#a6e3a1">"Linha Premium"</span>, <span style="color:#a6e3a1">"Textura"</span>, <span style="color:#cba6f7">None</span>, <span style="color:#f38ba8">189.00</span>),</code></div>
+
+  <h3>8.5 Mudar a senha de acesso</h3>
+  <p>No <span class="ci">template.html</span>, localize com <span class="ci">Cmd+F</span>:</p>
+  <div class="code-block"><code><span style="color:#cba6f7">var</span> SENHA_CORRETA = <span style="color:#a6e3a1">"brazimil2026"</span>;</code></div>
+  <p>Mude para a nova senha, salve e rode <span class="ci">python3 gerar.py</span>.</p>
+
+  <h3>8.6 Adicionar nova região tributária</h3>
+  <p>No <span class="ci">template.html</span>, localize os 5 selects de região (um por aba) e adicione:</p>
+  <div class="code-block"><code>&lt;option value=<span style="color:#a6e3a1">"0.18"</span>&gt;Bahia (18%)&lt;/option&gt;</code></div>
+  <p>O value deve ser a carga total em decimal (ICMS + PIS + COFINS).</p>
+
+  <h3>8.7 Mudar o piso de MC de 25% para outro valor</h3>
+  <p>No <span class="ci">template.html</span>, dentro das funções <span class="ci">calcZFM</span> e <span class="ci">calcMC</span>:</p>
+  <div class="code-block"><code><span style="color:#6c7086">// Mude 0.25 para o novo piso — ex: 0.30 para 30%</span>
+<span style="color:#cba6f7">var</span> pmin = cv / ((1 - cargaTrib) * (1 - <span style="color:#f38ba8">0.25</span>));</code></div>
+
+  <h3>8.8 Mapa completo de onde fica cada configuração</h3>
+  <table>
+    <thead><tr><th>O que mudar</th><th>Arquivo</th><th>Seção</th></tr></thead>
+    <tbody>
+      <tr><td>Preço de venda</td><td>gerar.py</td><td>tabela = { } — 4º valor da tupla</td></tr>
+      <tr><td>Adicionar produto</td><td>gerar.py</td><td>tabela = { }</td></tr>
+      <tr><td>Remover produto</td><td>gerar.py</td><td>Apagar linha na tabela</td></tr>
+      <tr><td>Categoria / subcategoria</td><td>gerar.py</td><td>1º e 2º valores da tupla</td></tr>
+      <tr><td>Senha de acesso</td><td>template.html</td><td>var SENHA_CORRETA = ...</td></tr>
+      <tr><td>CE padrão</td><td>template.html</td><td>select id='zfm-ce' → option selected</td></tr>
+      <tr><td>Comissão padrão</td><td>template.html</td><td>select id='p-comissao' → option selected</td></tr>
+      <tr><td>Opções de região</td><td>template.html</td><td>Todos os selects de região (5 abas)</td></tr>
+      <tr><td>Piso de MC</td><td>template.html</td><td>valor 0.25 nas funções calcZFM e calcMC</td></tr>
+      <tr><td>Nome do Excel de custos</td><td>gerar.py</td><td>load_workbook('NOME.xlsx')</td></tr>
+      <tr><td>Coluna lida do Excel</td><td>gerar.py</td><td>row[N] onde N=0 é coluna A</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CAP 9 -->
+<div class="cap" id="cap9">
+  <div class="cap-num">Capítulo 9</div>
+  <h2>Publicar no GitHub Pages</h2>
+
+  <h3>9.1 Usando o GitHub Desktop (recomendado)</h3>
+  <ol>
+    <li>Abra o <b>GitHub Desktop</b></li>
+    <li>Selecione o repositório <b>brazimil</b> no menu à esquerda</li>
+    <li>As alterações no <span class="ci">brazimil_analise_economica.html</span> aparecem automaticamente na lista</li>
+    <li>No campo <b>Summary</b> (canto inferior esquerdo), escreva uma descrição: <span class="ci">Atualização semanal — semana 23</span></li>
+    <li>Clique em <b>Commit to main</b></li>
+    <li>Clique em <b>Push origin</b> (botão azul no topo)</li>
+    <li>Aguarde 2 minutos</li>
+  </ol>
+
+  <h3>9.2 URL de acesso para o cliente</h3>
+  <div class="code-block"><code>https://mitmatsui.github.io/brazimil/brazimil_analise_economica.html</code></div>
+
+  <div class="nota"><b>⚠️ Repositório deve ser Public:</b> no plano gratuito do GitHub, o Pages só funciona com repositórios públicos. Como o dashboard tem senha, o conteúdo fica protegido pelo login mesmo com o código-fonte visível.</div>
+
+  <h3>9.3 Usando o Terminal (alternativa)</h3>
+  <div class="code-block"><code>cd ~/Documents/brazimil-dashboard
+git add brazimil_analise_economica.html
+git commit -m "Atualização semanal - $(date +%d/%m/%Y)"
+git push</code></div>
+
+  <h3>9.4 Verificar que o Pages está ativo</h3>
+  <ol>
+    <li>Acesse github.com/mitmatsui/brazimil</li>
+    <li>Clique em <b>Settings → Pages</b></li>
+    <li>Confirme: Source = <b>main</b>, Folder = <b>/ (root)</b></li>
+    <li>O status deve mostrar "Your site is published at..."</li>
+  </ol>
+</div>
+
+<!-- CAP 10 -->
+<div class="cap" id="cap10">
+  <div class="cap-num">Capítulo 10</div>
+  <h2>Solução de Problemas</h2>
+
+  <table>
+    <thead><tr><th>Problema</th><th>Causa provável</th><th>Solução</th></tr></thead>
+    <tbody>
+      <tr><td><b>FileNotFoundError ao rodar gerar.py</b></td><td>Excel não está na pasta</td><td>Rode <code>ls *.xlsx</code> para verificar. Copie o arquivo para <code>brazimil-dashboard</code></td></tr>
+      <tr><td><b>Senha incorreta no dashboard</b></td><td>template.html antigo na pasta</td><td>Rode: <code>grep "SENHA_CORRETA" template.html</code> — confira a senha atual</td></tr>
+      <tr><td><b>Dashboard abre em branco</b></td><td>Erro de JavaScript</td><td>Pressione <code>Cmd+Option+J</code> no Chrome → veja o erro em vermelho</td></tr>
+      <tr><td><b>Produto não aparece no dashboard</b></td><td>Nome diferente do Excel</td><td>Use o bloco de depuração do cap. 8.3 — copie o nome direto do Excel</td></tr>
+      <tr><td><b>SyntaxError ao rodar gerar.py</b></td><td>Erro de digitação no Python</td><td>Veja o número da linha no erro — vírgulas e aspas são as causas mais comuns</td></tr>
+      <tr><td><b>Aba Vendas mostra banner de exemplo</b></td><td>vendas_omie.csv não encontrado</td><td>Exporte do Omie e salve como <code>vendas_omie.csv</code> na pasta. Rode omie_sync.py</td></tr>
+      <tr><td><b>Aba Fluxo mostra banner de exemplo</b></td><td>boletos_bradesco.csv não encontrado</td><td>Exporte do Bradesco Net Empresa e salve como <code>boletos_bradesco.csv</code></td></tr>
+      <tr><td><b>git push: Authentication failed</b></td><td>Token expirado ou incorreto</td><td>GitHub → Settings → Developer settings → Personal access tokens → gere novo</td></tr>
+      <tr><td><b>GitHub Pages não abre</b></td><td>Repositório privado</td><td>Settings → Danger Zone → Change visibility → Public</td></tr>
+      <tr><td><b>Indicadores financeiros não calculam</b></td><td>Campos zerados ou em branco</td><td>Preencha todos os 7 campos editáveis — nenhum pode ficar como zero</td></tr>
+      <tr><td><b>omie_sync.py: erro de encoding</b></td><td>CSV com caracteres especiais</td><td>Abra o CSV no Excel, salve como "CSV UTF-8 (delimitado por vírgula)" e rode novamente</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CAP 11 -->
+<div class="cap" id="cap11">
+  <div class="cap-num">Capítulo 11</div>
+  <h2>Referência Rápida</h2>
+
+  <h3>Comandos Terminal essenciais</h3>
+  <table>
+    <thead><tr><th>Comando</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr><td><code>python3 omie_sync.py</code></td><td>Normaliza CSVs e gera vendas.json e fluxo_caixa.json</td></tr>
+      <tr><td><code>python3 gerar.py</code></td><td>Gera o brazimil_analise_economica.html</td></tr>
+      <tr><td><code>open brazimil_analise_economica.html</code></td><td>Abre o dashboard no Chrome/Safari</td></tr>
+      <tr><td><code>python3 exportar_excel.py</code></td><td>Gera o relatório Excel com 4 abas formatadas</td></tr>
+      <tr><td><code>python3 omie_sync.py && python3 gerar.py && open brazimil_analise_economica.html</code></td><td>Executa tudo em sequência com um único comando</td></tr>
+      <tr><td><code>ls *.xlsx</code></td><td>Lista os arquivos Excel na pasta</td></tr>
+      <tr><td><code>ls *.csv</code></td><td>Lista os CSVs disponíveis na pasta</td></tr>
+      <tr><td><code>grep "SENHA_CORRETA" template.html</code></td><td>Mostra a senha atual configurada</td></tr>
+      <tr><td><code>git status</code></td><td>Ver quais arquivos foram alterados</td></tr>
+      <tr><td><code>git add brazimil_analise_economica.html && git commit -m "update" && git push</code></td><td>Publica o dashboard online em um comando</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Glossário rápido</h3>
+  <table>
+    <thead><tr><th>Termo</th><th>Significado</th></tr></thead>
+    <tbody>
+      <tr><td><b>CE — Crédito Estímulo</b></td><td>Benefício fiscal ZFM que reduz o ICMS a pagar. Brazimil (Bens Finais): 55%</td></tr>
+      <tr><td><b>PLV — Preço Líquido de Venda</b></td><td>Preço de venda menos impostos e comissão — o que entra no caixa</td></tr>
+      <tr><td><b>MC — Margem de Contribuição</b></td><td>PLV menos custo variável — contribui para cobrir custos fixos e gerar lucro</td></tr>
+      <tr><td><b>FMPES</b></td><td>Fundo de Micro e Pequenas Empresas — 6% sobre o CE do ICMS</td></tr>
+      <tr><td><b>UEA</b></td><td>Universidade Estadual do Amazonas — 1,5% sobre faturamento</td></tr>
+      <tr><td><b>FTI</b></td><td>Fundo de Transferência de Tecnologia Industrial — 1% (insumo nacional)</td></tr>
+      <tr><td><b>ROE</b></td><td>Return on Equity — retorno sobre o Patrimônio Líquido</td></tr>
+      <tr><td><b>ROA</b></td><td>Return on Assets — retorno sobre o Ativo Total</td></tr>
+      <tr><td><b>Aging</b></td><td>Classificação de inadimplentes por faixa de atraso (dias vencidos)</td></tr>
+      <tr><td><b>SKU</b></td><td>Unidade de manutenção de estoque — cada variação de produto (tamanho, cor)</td></tr>
+      <tr><td><b>Drill-down</b></td><td>Navegação do geral para o específico clicando nas barras do gráfico</td></tr>
+      <tr><td><b>Placeholder</b></td><td>Marcador no template que o Python substitui pelos dados reais</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="rodape">
+  Brazimil — Análise Econômica · Manual Completo Versão 4.0 · Uso Interno · Consultoria Econômica
+</div>
+
+</div>
+</body>
+</html>

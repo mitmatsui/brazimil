@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brazimil — Guia Operacional: Como Alimentar o Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f2f5;color:#222}
+
+/* ── Capa ── */
+.capa{background:linear-gradient(135deg,#1F3864 0%,#2E75B6 100%);
+  color:#fff;padding:56px 48px 48px;text-align:center}
+.capa .logo{font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:#BDD7EE;margin-bottom:14px}
+.capa h1{font-size:34px;font-weight:700;margin-bottom:8px;line-height:1.25}
+.capa .sub{font-size:15px;color:#BDD7EE;margin-bottom:36px;font-style:italic}
+.capa .meta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.capa .mi{background:rgba(255,255,255,.12);border-radius:10px;padding:12px 20px}
+.capa .ml{font-size:10px;color:#BDD7EE;text-transform:uppercase;letter-spacing:.08em}
+.capa .mv{font-size:16px;font-weight:700;margin-top:3px}
+
+/* ── Navegação ── */
+.nav{background:#fff;border-bottom:2px solid #BDD7EE;
+  position:sticky;top:0;z-index:100;padding:0 28px;overflow-x:auto}
+.nav ul{display:flex;list-style:none;gap:0;min-width:max-content}
+.nav ul li a{display:block;padding:13px 16px;font-size:11px;font-weight:700;
+  color:#555;text-decoration:none;text-transform:uppercase;letter-spacing:.05em;
+  border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
+.nav ul li a:hover{color:#1F3864;border-bottom-color:#BDD7EE}
+
+/* ── Container ── */
+.container{max-width:980px;margin:0 auto;padding:32px 20px 80px}
+
+/* ── Resumo visual ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
+.resumo-card{background:#fff;border-radius:12px;border:1px solid #e0e0e0;
+  padding:18px 20px;border-top:4px solid #2E75B6}
+.resumo-card.excel{border-top-color:#1F7A3C}
+.resumo-card.csv{border-top-color:#EF9F27}
+.resumo-card.manual{border-top-color:#8B5CF6}
+.resumo-card.auto{border-top-color:#2E75B6}
+.rc-ico{font-size:28px;margin-bottom:8px}
+.rc-tipo{font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:4px}
+.rc-tipo.excel{color:#1F7A3C}
+.rc-tipo.csv{color:#EF9F27}
+.rc-tipo.manual{color:#8B5CF6}
+.rc-tipo.auto{color:#2E75B6}
+.rc-nome{font-size:15px;font-weight:700;color:#1F3864;margin-bottom:6px}
+.rc-desc{font-size:12px;color:#555;line-height:1.6}
+
+/* ── Seções de aba ── */
+.aba-secao{background:#fff;border-radius:12px;border:1px solid #e0e0e0;
+  margin-bottom:28px;overflow:hidden}
+.aba-header{padding:22px 28px 18px;border-bottom:1px solid #f0f0f0;
+  display:flex;align-items:center;gap:16px}
+.aba-num{width:40px;height:40px;border-radius:10px;display:flex;
+  align-items:center;justify-content:center;font-size:16px;
+  font-weight:700;color:#fff;flex-shrink:0}
+.aba-info .aba-titulo{font-size:18px;font-weight:700;color:#1F3864;margin-bottom:2px}
+.aba-info .aba-subtitulo{font-size:12px;color:#888}
+.aba-body{padding:24px 28px}
+
+/* ── Badges de fonte ── */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;
+  font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:14px}
+.badge-excel {background:#E8F5E9;color:#1F7A3C;border:1px solid #A5D6A7}
+.badge-csv   {background:#FFF8E1;color:#F57F17;border:1px solid #FFE082}
+.badge-manual{background:#EDE7F6;color:#5B21B6;border:1px solid #C4B5FD}
+.badge-auto  {background:#E3F2FD;color:#1565C0;border:1px solid #90CAF9}
+
+/* ── Passos ── */
+.passos{margin:0}
+.passo{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #f5f5f5}
+.passo:last-child{border-bottom:none}
+.passo-num{width:30px;height:30px;border-radius:50%;background:#2E75B6;
+  color:#fff;font-weight:700;font-size:13px;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.passo-body .pt{font-size:14px;font-weight:700;color:#1F3864;margin-bottom:4px}
+.passo-body .ps{font-size:13px;color:#555;line-height:1.65}
+.passo-body .ps code{font-family:'Courier New',monospace;font-size:12px;
+  background:#f0f0f0;color:#0000AA;padding:1px 6px;border-radius:3px}
+
+/* ── Caixas informativas ── */
+.info-box{border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.65}
+.ib-ok    {background:#EAF3DE;border-left:4px solid #639922;color:#27500A}
+.ib-warn  {background:#FFF2CC;border-left:4px solid #EF9F27;color:#7F6000}
+.ib-dica  {background:#E6F1FB;border-left:4px solid #2E75B6;color:#1565C0}
+.ib-alert {background:#FCEBEB;border-left:4px solid #E24B4A;color:#791F1F}
+.info-box b{font-weight:700}
+
+/* ── Tabela de colunas ── */
+.col-table{width:100%;border-collapse:collapse;font-size:12px;margin:12px 0}
+.col-table th{background:#1F3864;color:#fff;padding:9px 12px;
+  font-size:11px;text-align:left;font-weight:700}
+.col-table td{padding:8px 12px;border-bottom:1px solid #f0f0f0;vertical-align:top}
+.col-table tr:nth-child(even) td{background:#f7f7f7}
+.col-obrig{background:#FCEBEB;color:#791F1F;font-size:10px;font-weight:700;
+  padding:1px 7px;border-radius:10px}
+.col-opt  {background:#EAF3DE;color:#27500A;font-size:10px;font-weight:700;
+  padding:1px 7px;border-radius:10px}
+
+/* ── Diagrama de fluxo ── */
+.fluxo-linha{display:flex;align-items:center;gap:8px;margin:16px 0;flex-wrap:wrap}
+.fl-item{background:#fff;border:2px solid #2E75B6;border-radius:8px;
+  padding:8px 14px;font-size:12px;font-weight:700;color:#1F3864;text-align:center}
+.fl-item.verde{border-color:#639922;color:#27500A}
+.fl-item.laranja{border-color:#EF9F27;color:#7F6000}
+.fl-item.roxo{border-color:#8B5CF6;color:#5B21B6}
+.fl-seta{font-size:18px;color:#aaa;flex-shrink:0}
+
+/* ── Checklist ── */
+.checklist{background:#f7f7f7;border-radius:10px;padding:16px 20px;margin:14px 0}
+.checklist h4{font-size:12px;font-weight:700;color:#1F3864;
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.check-item{display:flex;align-items:flex-start;gap:10px;
+  padding:6px 0;border-bottom:1px solid #eee;font-size:13px;color:#333}
+.check-item:last-child{border-bottom:none}
+.check-ico{font-size:15px;flex-shrink:0;margin-top:1px}
+
+/* ── Rodapé ── */
+.rodape{text-align:center;font-size:12px;color:#999;
+  margin-top:48px;padding-top:24px;border-top:1px solid #e0e0e0}
+
+/* ── Responsivo ── */
+@media(max-width:700px){
+  .resumo-grid{grid-template-columns:1fr}
+  .capa h1{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- CAPA -->
+<div class="capa">
+  <div class="logo">Brazimil Indústria de Tintas</div>
+  <h1>Guia Operacional<br>Como Alimentar o Dashboard</h1>
+  <div class="sub">O que entra em cada aba, de onde vem e como atualizar</div>
+  <div class="meta">
+    <div class="mi"><div class="ml">Sistema</div><div class="mv">Análise Econômica</div></div>
+    <div class="mi"><div class="ml">Abas</div><div class="mv">7 módulos</div></div>
+    <div class="mi"><div class="ml">Fontes</div><div class="mv">Excel · CSV · Manual</div></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <ul>
+    <li><a href="#resumo">Visão Geral</a></li>
+    <li><a href="#aba1">Aba 1 — Painel</a></li>
+    <li><a href="#aba2">Aba 2 — Simulador</a></li>
+    <li><a href="#aba3">Aba 3 — Comparador</a></li>
+    <li><a href="#aba4">Aba 4 — ZFM</a></li>
+    <li><a href="#aba5">Aba 5 — Vendas</a></li>
+    <li><a href="#aba6">Aba 6 — Fluxo de Caixa</a></li>
+    <li><a href="#aba7">Aba 7 — Indicadores</a></li>
+    <li><a href="#rotina">Rotina Semanal</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+<!-- RESUMO VISUAL -->
+<div id="resumo" style="margin-bottom:24px">
+  <h2 style="font-size:18px;font-weight:700;color:#1F3864;margin-bottom:16px">
+    Visão Geral — Fonte de Dados por Aba
+  </h2>
+
+  <div class="resumo-grid">
+    <div class="resumo-card excel">
+      <div class="rc-ico">📊</div>
+      <div class="rc-tipo excel">Via Excel</div>
+      <div class="rc-nome">Abas 1, 2, 3 e 4</div>
+      <div class="rc-desc">Painel, Simulador, Comparador e Tributação ZFM. Os dados vêm dos dois arquivos Excel da pasta. O Python lê automaticamente ao rodar <code style="font-family:monospace;font-size:11px;background:#f0f0f0;padding:1px 4px;border-radius:3px">gerar.py</code>.</div>
+    </div>
+    <div class="resumo-card csv">
+      <div class="rc-ico">📄</div>
+      <div class="rc-tipo csv">Via CSV</div>
+      <div class="rc-nome">Abas 5 e 6</div>
+      <div class="rc-desc">Evolução de Vendas (CSV do Omie) e Fluxo de Caixa (CSV do Bradesco). Exportar semanalmente e rodar <code style="font-family:monospace;font-size:11px;background:#f0f0f0;padding:1px 4px;border-radius:3px">omie_sync.py</code>.</div>
+    </div>
+    <div class="resumo-card manual">
+      <div class="rc-ico">✏️</div>
+      <div class="rc-tipo manual">Digitação Manual</div>
+      <div class="rc-nome">Aba 7</div>
+      <div class="rc-desc">Indicadores Financeiros. Campos do balanço digitados diretamente no dashboard uma vez por mês. Parte dos indicadores é calculada automaticamente.</div>
+    </div>
+  </div>
+
+  <!-- Diagrama geral -->
+  <div style="background:#fff;border-radius:12px;border:1px solid #e0e0e0;padding:20px 24px;margin-bottom:8px">
+    <div style="font-size:12px;font-weight:700;color:#1F3864;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px">
+      Diagrama de fluxo de dados
+    </div>
+    <div class="fluxo-linha">
+      <div class="fl-item verde">SIMULADOR TINTAS<br><small>MIL BRAZIMIL 1.xlsx</small></div>
+      <div class="fl-seta">+</div>
+      <div class="fl-item verde">Simulador Brazimil<br><small>Analise do time.xlsx</small></div>
+      <div class="fl-seta">→</div>
+      <div class="fl-item">gerar.py</div>
+      <div class="fl-seta">→</div>
+      <div class="fl-item" style="border-color:#1F3864;background:#1F3864;color:#fff">Abas 1 · 2 · 3 · 4</div>
+    </div>
+    <div class="fluxo-linha">
+      <div class="fl-item laranja">vendas_omie.csv<br><small>exportado do Omie</small></div>
+      <div class="fl-seta">+</div>
+      <div class="fl-item laranja">boletos_bradesco.csv<br><small>exportado do Bradesco</small></div>
+      <div class="fl-seta">→</div>
+      <div class="fl-item laranja">omie_sync.py</div>
+      <div class="fl-seta">→</div>
+      <div class="fl-item laranja" style="background:#EF9F27;color:#fff;border-color:#EF9F27">Abas 5 · 6</div>
+    </div>
+    <div class="fluxo-linha">
+      <div class="fl-item roxo">Balanço da empresa<br><small>digitado no dashboard</small></div>
+      <div class="fl-seta">→</div>
+      <div class="fl-item roxo" style="background:#8B5CF6;color:#fff;border-color:#8B5CF6">Aba 7</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABA 1 — PAINEL GERAL -->
+<div class="aba-secao" id="aba1">
+  <div class="aba-header">
+    <div class="aba-num" style="background:#1F3864">1</div>
+    <div class="aba-info">
+      <div class="aba-titulo">Painel Geral</div>
+      <div class="aba-subtitulo">Visão completa do portfólio de precificação com drill-down por categoria</div>
+    </div>
+  </div>
+  <div class="aba-body">
+
+    <span class="badge badge-excel">📊 Fonte: Excel — automático via gerar.py</span>
+
+    <p style="font-size:14px;color:#333;margin-bottom:16px;line-height:1.7">
+      Esta aba é 100% automática. Você não precisa digitar nada nela. Tudo que aparece aqui — preços, custos, margens, status, categorias — vem diretamente dos dois arquivos Excel que já estão na pasta do projeto.
+    </p>
+
+    <div class="passos">
+      <div class="passo">
+        <div class="passo-num">1</div>
+        <div class="passo-body">
+          <div class="pt">Arquivo 1 — Custos e pesos (atualizado pela fábrica)</div>
+          <div class="ps">
+            Arquivo: <code>SIMULADOR TINTAS MIL BRAZIMIL 1.xlsx</code><br>
+            O Python lê duas abas deste arquivo:<br>
+            • Aba <code>Custo</code> — Coluna A = nome do produto, Coluna B = custo de fábrica em R$<br>
+            • Aba <code>Peso</code> — Coluna A = nome do produto, Coluna B = peso bruto em kg<br>
+            <br>
+            <b>Quando atualizar:</b> sempre que a fábrica revisar custos de matéria-prima ou embalagem. Salve o arquivo na pasta e rode <code>python3 gerar.py</code>.
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">2</div>
+        <div class="passo-body">
+          <div class="pt">Arquivo 2 — Preços praticados (planilha do time)</div>
+          <div class="ps">
+            Arquivo: <code>Simulador_Brazimil_Analise_do_time_.xlsx</code><br>
+            O Python lê a aba <code>Tabela de Produtos</code> e pega a coluna <code>PREÇO FINAL</code> (coluna U) para os produtos que têm código PRD mapeado.<br>
+            <br>
+            <b>Quando atualizar:</b> quando a equipe comercial aprovar reajuste de preços na planilha do time. Salve e rode <code>python3 gerar.py</code>.
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">3</div>
+        <div class="passo-body">
+          <div class="pt">Rodar o gerar.py para gerar o dashboard atualizado</div>
+          <div class="ps">
+            No Terminal:<br>
+            <code>cd ~/Documents/brazimil-dashboard</code><br>
+            <code>python3 gerar.py</code><br>
+            <code>open brazimil_analise_economica.html</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box ib-dica">
+      <b>💡 Os filtros de Região, Comissão e Frete não precisam de atualização de dados.</b> Eles já estão embutidos no dashboard e calculam em tempo real ao serem alterados pelo usuário.
+    </div>
+
+    <div class="checklist">
+      <h4>✅ Checklist para atualizar o Painel Geral</h4>
+      <div class="check-item"><span class="check-ico">📂</span>Excel de custos está na pasta brazimil-dashboard?</div>
+      <div class="check-item"><span class="check-ico">📂</span>Excel do time está na pasta brazimil-dashboard?</div>
+      <div class="check-item"><span class="check-ico">💾</span>Os dois Excels foram salvos após as alterações?</div>
+      <div class="check-item"><span class="check-ico">▶️</span>Rodou <code style="font-family:monospace;font-size:11px;background:#f0f0f0;padding:1px 4px">python3 gerar.py</code> no Terminal?</div>
+      <div class="check-item"><span class="check-ico">🌐</span>Publicou no GitHub Pages pelo GitHub Desktop?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABA 2 — SIMULADOR -->
+<div class="aba-secao" id="aba2">
+  <div class="aba-header">
+    <div class="aba-num" style="background:#2E75B6">2</div>
+    <div class="aba-info">
+      <div class="aba-titulo">Simulador de Preço</div>
+      <div class="aba-subtitulo">Teste qualquer preço antes de aprovar uma negociação</div>
+    </div>
+  </div>
+  <div class="aba-body">
+
+    <span class="badge badge-excel">📊 Fonte: Excel — automático via gerar.py</span>
+    <span class="badge badge-auto" style="margin-left:8px">⚙️ Cálculos em tempo real no navegador</span>
+
+    <p style="font-size:14px;color:#333;margin-bottom:16px;line-height:1.7">
+      Esta aba usa os mesmos dados do Painel Geral (produtos do Excel). A diferença é que o usuário digita um preço de venda hipotético e o dashboard calcula tudo instantaneamente — sem precisar atualizar nenhum arquivo.
+    </p>
+
+    <div style="font-size:14px;font-weight:700;color:#1F3864;margin-bottom:10px">Como usar no dia a dia:</div>
+    <div class="passos">
+      <div class="passo">
+        <div class="passo-num">1</div>
+        <div class="passo-body">
+          <div class="pt">Configure os filtros no topo</div>
+          <div class="ps">Selecione a <b>Região</b> do cliente (Manaus CIF, Interior AM, Interestadual, Paraíba), a <b>Comissão</b> do representante e o <b>Frete</b> em R$/ton. Estes são os únicos inputs que você gerencia aqui.</div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">2</div>
+        <div class="passo-body">
+          <div class="pt">Selecione o produto na lista à esquerda</div>
+          <div class="ps">Use a caixa de busca e clique no produto desejado. Ele ficará destacado em azul. O custo e o peso são puxados automaticamente do Excel.</div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">3</div>
+        <div class="passo-body">
+          <div class="pt">Use o slider ou digite o preço</div>
+          <div class="ps">Arraste o slider ou digite o preço no campo à direita. A barra de composição de custo e o demonstrativo completo atualizam instantaneamente. O alerta no rodapé indica: <b style="color:#27500A">Verde = aprovado</b>, <b style="color:#7F6000">Amarelo = atenção</b>, <b style="color:#791F1F">Vermelho = preço insuficiente</b>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box ib-ok">
+      <b>✅ Não precisa atualizar dados para usar o Simulador.</b> Se o Painel Geral está atualizado, o Simulador já está atualizado automaticamente — usa os mesmos produtos.
+    </div>
+  </div>
+</div>
+
+<!-- ABA 3 — COMPARADOR -->
+<div class="aba-secao" id="aba3">
+  <div class="aba-header">
+    <div class="aba-num" style="background:#639922">3</div>
+    <div class="aba-info">
+      <div class="aba-titulo">Comparador de Cenários</div>
+      <div class="aba-subtitulo">Cenário A vs Cenário B — impacto de região, comissão e frete</div>
+    </div>
+  </div>
+  <div class="aba-body">
+
+    <span class="badge badge-excel">📊 Fonte: Excel — automático via gerar.py</span>
+    <span class="badge badge-auto" style="margin-left:8px">⚙️ Cálculos em tempo real no navegador</span>
+
+    <p style="font-size:14px;color:#333;margin-bottom:16px;line-height:1.7">
+      Funciona como o Simulador — usa os dados do Excel mas não precisa de atualização própria. O usuário configura dois cenários diferentes e o dashboard compara todos os produtos simultaneamente.
+    </p>
+
+    <div style="font-size:14px;font-weight:700;color:#1F3864;margin-bottom:10px">Como usar — exemplo prático:</div>
+    <div class="passos">
+      <div class="passo">
+        <div class="passo-num">1</div>
+        <div class="passo-body">
+          <div class="pt">Cenário A — situação atual de referência</div>
+          <div class="ps">Configure: Manaus CIF (7%) · Comissão 5% · Frete R$100/ton</div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">2</div>
+        <div class="passo-body">
+          <div class="pt">Cenário B — nova oportunidade sendo avaliada</div>
+          <div class="ps">Configure: Interestadual (15,65%) · Comissão 8% · Frete R$150/ton<br>O painel inferior mostra os 20 produtos com maior diferença de MC entre os dois cenários.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box ib-dica">
+      <b>💡 Use antes de fechar um novo contrato.</b> Configure o cenário com as condições propostas pelo cliente (região, comissão do representante, custo de frete estimado) e veja instantaneamente quais produtos ainda têm margem viável naquele mercado.
+    </div>
+  </div>
+</div>
+
+<!-- ABA 4 — TRIBUTAÇÃO ZFM -->
+<div class="aba-secao" id="aba4">
+  <div class="aba-header">
+    <div class="aba-num" style="background:#0C447C">4</div>
+    <div class="aba-info">
+      <div class="aba-titulo">Tributação ZFM</div>
+      <div class="aba-subtitulo">Crédito Estímulo CE 55% — análise completa da tributação para Bens Finais</div>
+    </div>
+  </div>
+  <div class="aba-body">
+
+    <span class="badge badge-excel">📊 Fonte: Excel — automático via gerar.py</span>
+    <span class="badge badge-auto" style="margin-left:8px">⚙️ CE ajustável em tempo real</span>
+
+    <p style="font-size:14px;color:#333;margin-bottom:16px;line-height:1.7">
+      Esta aba é totalmente automática. Não precisa de atualização de dados — recalcula tudo em tempo real quando o usuário ajusta o nível de CE no filtro. O único caso de manutenção é se <b>a Brazimil tiver uma mudança no percentual de CE concedido pelo Governo do Amazonas</b>.
+    </p>
+
+    <div style="font-size:14px;font-weight:700;color:#1F3864;margin-bottom:10px">Quando (e como) atualizar o CE:</div>
+    <div class="passos">
+      <div class="passo">
+        <div class="passo-num">1</div>
+        <div class="passo-body">
+          <div class="pt">Se o CE mudar (ex: de 55% para 60%)</div>
+          <div class="ps">
+            Abra o <code>template.html</code> no VS Code.<br>
+            Use <code>Cmd+F</code> e busque: <code>zfm-ce</code><br>
+            Localize a linha do select e mude o <code>selected</code> para o novo percentual:<br>
+            <code>&lt;option value="0.60" selected&gt;60% — novo CE Bens Finais&lt;/option&gt;</code><br>
+            Salve com <code>Cmd+S</code> e rode <code>python3 gerar.py</code>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box ib-warn">
+      <b>⚠️ Atenção ao CE padrão:</b> o CE 55% está configurado como padrão no dashboard. Se o Governo do AM alterar esse percentual via decreto, atualize o template.html conforme acima e comunique ao time que o parâmetro foi atualizado.
+    </div>
+  </div>
+</div>
+
+<!-- ABA 5 — EVOLUÇÃO DE VENDAS -->
+<div class="aba-secao" id="aba5">
+  <div class="aba-header">
+    <div class="aba-num" style="background:#EF9F27">5</div>
+    <div class="aba-info">
+      <div class="aba-titulo">Evolução de Vendas</div>
+      <div class="aba-subtitulo">Faturamento semanal das últimas 13 semanas — dados do Omie</div>
+    </div>
+  </div>
+  <div class="aba-body">
+
+    <span class="badge badge-csv">📄 Fonte: CSV exportado do Omie — atualizado semanalmente</span>
+
+    <p style="font-size:14px;color:#333;margin-bottom:16px;line-height:1.7">
+      Esta aba depende do <b>operador do Omie exportar um relatório em CSV uma vez por semana</b>. O processo é simples e leva menos de 2 minutos. O arquivo gerado é salvo na pasta do projeto e o Python processa automaticamente.
+    </p>
+
+    <div style="font-size:15px;font-weight:700;color:#EF9F27;margin-bottom:12px">
+      📄 Como exportar do Omie — passo a passo
+    </div>
+    <div class="passos">
+      <div class="passo">
+        <div class="passo-num">1</div>
+        <div class="passo-body">
+          <div class="pt">Acesse o Omie com o login da Brazimil</div>
+          <div class="ps">Use o navegador do computador (não o app celular). Faça login normalmente na conta da Brazimil.</div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">2</div>
+        <div class="passo-body">
+          <div class="pt">Navegue até o relatório de faturamento</div>
+          <div class="ps">
+            Menu principal → <b>Relatórios</b> → <b>Vendas</b> → <b>Faturamento por Período</b><br>
+            (Em alguns planos do Omie o caminho pode ser: Faturamento → Notas Fiscais → Exportar)
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">3</div>
+        <div class="passo-body">
+          <div class="pt">Configure o período e exporte</div>
+          <div class="ps">
+            Período: selecione as <b>últimas 13 semanas</b> (aproximadamente 3 meses)<br>
+            Formato de exportação: <b>CSV</b> (separador ponto-e-vírgula)<br>
+            Clique em <b>Exportar</b> ou <b>Baixar</b>
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">4</div>
+        <div class="passo-body">
+          <div class="pt">Salve o arquivo com o nome correto na pasta do projeto</div>
+          <div class="ps">
+            Renomeie o arquivo baixado para exatamente: <code>vendas_omie.csv</code><br>
+            Mova para a pasta: <code>~/Documents/brazimil-dashboard/</code><br>
+            <b>Substitua o arquivo anterior</b> — não precisa manter histórico, o sistema acumula automaticamente.
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">5</div>
+        <div class="passo-body">
+          <div class="pt">Rode o omie_sync.py para processar</div>
+          <div class="ps">
+            No Terminal:<br>
+            <code>cd ~/Documents/brazimil-dashboard</code><br>
+            <code>python3 omie_sync.py</code><br>
+            O script mostra quantos registros foram processados e o faturamento total do período.
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">6</div>
+        <div class="passo-body">
+          <div class="pt">Rode o gerar.py para gerar o dashboard atualizado</div>
+          <div class="ps">
+            <code>python3 gerar.py</code><br>
+            <code>open brazimil_analise_economica.html</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:14px;font-weight:700;color:#1F3864;margin:18px 0 10px">
+      Colunas que o Omie deve exportar
+    </div>
+    <table class="col-table">
+      <thead><tr><th>Coluna do CSV</th><th>O que é</th><th>Obrigatório?</th></tr></thead>
+      <tbody>
+        <tr><td><code>Data Emissão</code></td><td>Data da emissão da nota fiscal (dd/mm/aaaa)</td><td><span class="col-obrig">Obrigatório</span></td></tr>
+        <tr><td><code>Cliente</code> ou <code>Razão Social</code></td><td>Nome do cliente comprador</td><td><span class="col-obrig">Obrigatório</span></td></tr>
+        <tr><td><code>Produto</code> ou <code>Descrição</code></td><td>Nome do produto vendido</td><td><span class="col-obrig">Obrigatório</span></td></tr>
+        <tr><td><code>Valor Total</code></td><td>Valor total do item na nota (R$)</td><td><span class="col-obrig">Obrigatório</span></td></tr>
+        <tr><td><code>Nº NF</code></td><td>Número da nota fiscal</td><td><span class="col-opt">Opcional</span></td></tr>
+        <tr><td><code>Qtd</code> ou <code>Quantidade</code></td><td>Quantidade vendida do item</td><td><span class="col-opt">Opcional</span></td></tr>
+        <tr><td><code>Valor Unit</code></td><td>Preço unitário do item</td><td><span class="col-opt">Opcional</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box ib-ok">
+      <b>✅ O sistema é flexível com os nomes das colunas.</b> O <code>omie_sync.py</code> faz uma busca inteligente — se a coluna se chama "Razão Social" em vez de "Cliente", ele encontra automaticamente. Pequenas variações no nome não causam erro.
+    </div>
+
+    <div class="info-box ib-warn">
+      <b>⚠️ Se o arquivo não existir:</b> o dashboard mostra dados de exemplo com um banner amarelo avisando. A aba funciona normalmente — só os dados serão fictícios até o CSV real ser colocado na pasta.
+    </div>
+
+    <div class="checklist">
+      <h4>✅ Checklist semanal — Aba Vendas</h4>
+      <div class="check-item"><span class="check-ico">📤</span>Operador exportou o relatório do Omie (últimas 13 semanas)?</div>
+      <div class="check-item"><span class="check-ico">💾</span>Salvou como <code style="font-family:monospace;font-size:11px">vendas_omie.csv</code> na pasta brazimil-dashboard?</div>
+      <div class="check-item"><span class="check-ico">▶️</span>Rodou <code style="font-family:monospace;font-size:11px">python3 omie_sync.py</code>?</div>
+      <div class="check-item"><span class="check-ico">▶️</span>Rodou <code style="font-family:monospace;font-size:11px">python3 gerar.py</code>?</div>
+      <div class="check-item"><span class="check-ico">🌐</span>Publicou no GitHub Pages?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABA 6 — FLUXO DE CAIXA -->
+<div class="aba-secao" id="aba6">
+  <div class="aba-header">
+    <div class="aba-num" style="background:#E24B4A">6</div>
+    <div class="aba-info">
+      <div class="aba-titulo">Fluxo de Caixa</div>
+      <div class="aba-subtitulo">Boletos a vencer, inadimplência e projeção das próximas 4 semanas — dados do Bradesco</div>
+    </div>
+  </div>
+  <div class="aba-body">
+
+    <span class="badge badge-csv">📄 Fonte: CSV exportado do Bradesco Net Empresa — atualizado semanalmente</span>
+
+    <p style="font-size:14px;color:#333;margin-bottom:16px;line-height:1.7">
+      Esta aba depende do <b>setor financeiro exportar a carteira de cobrança do Bradesco Net Empresa uma vez por semana</b>. O arquivo contém todos os boletos emitidos — em aberto, vencidos e pagos — permitindo ao dashboard calcular o fluxo de entradas e a inadimplência.
+    </p>
+
+    <div style="font-size:15px;font-weight:700;color:#E24B4A;margin-bottom:12px">
+      🏦 Como exportar do Bradesco Net Empresa — passo a passo
+    </div>
+    <div class="passos">
+      <div class="passo">
+        <div class="passo-num">1</div>
+        <div class="passo-body">
+          <div class="pt">Acesse o Bradesco Net Empresa pelo computador</div>
+          <div class="ps">
+            Acesse: <code>netempresa.bradesco.com.br</code><br>
+            Use o <b>computador</b> — o app do celular não tem a opção de exportar CSV.<br>
+            Faça login com as credenciais PJ da Brazimil.
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">2</div>
+        <div class="passo-body">
+          <div class="pt">Acesse a carteira de cobrança</div>
+          <div class="ps">
+            Menu: <b>Cobrança</b> → <b>Consulta de Títulos</b><br>
+            (Em algumas versões do sistema: <b>Cobranças</b> → <b>Gerenciar Cobranças</b> → <b>Consultar</b>)
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">3</div>
+        <div class="passo-body">
+          <div class="pt">Configure os filtros de consulta</div>
+          <div class="ps">
+            Período de vencimento: <b>últimos 90 dias até próximos 90 dias</b> (180 dias no total)<br>
+            Status: <b>Todos</b> (Em aberto + Vencidos + Pagos)<br>
+            Isso garante que o dashboard veja tanto o histórico de inadimplência quanto a projeção futura.
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">4</div>
+        <div class="passo-body">
+          <div class="pt">Exporte o arquivo</div>
+          <div class="ps">
+            Clique em <b>Exportar</b> → selecione formato <b>CSV</b> ou <b>Excel/XLS</b><br>
+            Se o banco exportar em XLS, abra no Excel e salve como CSV (separado por ponto-e-vírgula)<br>
+            Renomeie para: <code>boletos_bradesco.csv</code><br>
+            Mova para a pasta: <code>~/Documents/brazimil-dashboard/</code>
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">5</div>
+        <div class="passo-body">
+          <div class="pt">Rode o omie_sync.py para processar</div>
+          <div class="ps">
+            <code>python3 omie_sync.py</code><br>
+            O script mostra: total da carteira, inadimplência em % e R$, e quantos boletos foram processados.
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">6</div>
+        <div class="passo-body">
+          <div class="pt">Rode o gerar.py e publique</div>
+          <div class="ps">
+            <code>python3 gerar.py</code><br>
+            <code>open brazimil_analise_economica.html</code><br>
+            Publique pelo GitHub Desktop se necessário.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:14px;font-weight:700;color:#1F3864;margin:18px 0 10px">
+      Colunas que o Bradesco deve exportar
+    </div>
+    <table class="col-table">
+      <thead><tr><th>Coluna do CSV</th><th>O que é</th><th>Obrigatório?</th></tr></thead>
+      <tbody>
+        <tr><td><code>Vencimento</code> ou <code>Data Vencimento</code></td><td>Data de vencimento do boleto (dd/mm/aaaa)</td><td><span class="col-obrig">Obrigatório</span></td></tr>
+        <tr><td><code>Valor</code> ou <code>Valor Documento</code></td><td>Valor do boleto em R$</td><td><span class="col-obrig">Obrigatório</span></td></tr>
+        <tr><td><code>Status</code> ou <code>Situação</code></td><td>Em aberto / Pago / Vencido / Baixado</td><td><span class="col-obrig">Obrigatório</span></td></tr>
+        <tr><td><code>Cliente</code> ou <code>Sacado</code></td><td>Nome do cliente / pagador do boleto</td><td><span class="col-obrig">Obrigatório</span></td></tr>
+        <tr><td><code>Nosso Nº</code></td><td>Identificador do boleto no banco</td><td><span class="col-opt">Opcional</span></td></tr>
+        <tr><td><code>Emissão</code></td><td>Data de emissão do boleto</td><td><span class="col-opt">Opcional</span></td></tr>
+        <tr><td><code>Seu Nº</code> ou <code>Documento</code></td><td>Número do documento interno</td><td><span class="col-opt">Opcional</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box ib-dica">
+      <b>💡 O sistema identifica o status automaticamente.</b> Palavras como "PAGO", "LIQUIDADO", "BAIXADO" → status pago. "VENCIDO", "ATRASADO" → status vencido. "A VENCER", "EM ABERTO" → status aberto. Funciona independente de maiúsculas/minúsculas.
+    </div>
+
+    <div class="info-box ib-alert">
+      <b>🚨 Período importante:</b> exporte sempre incluindo títulos <b>vencidos dos últimos 90 dias</b>. Se exportar só os títulos futuros, o dashboard não consegue calcular o aging de inadimplência nem mostrar os top inadimplentes.
+    </div>
+
+    <div class="checklist">
+      <h4>✅ Checklist semanal — Aba Fluxo de Caixa</h4>
+      <div class="check-item"><span class="check-ico">🏦</span>Financeiro exportou a carteira de cobrança do Bradesco Net Empresa?</div>
+      <div class="check-item"><span class="check-ico">📅</span>O período exportado inclui 90 dias passados + 90 dias futuros?</div>
+      <div class="check-item"><span class="check-ico">💾</span>Salvou como <code style="font-family:monospace;font-size:11px">boletos_bradesco.csv</code> na pasta brazimil-dashboard?</div>
+      <div class="check-item"><span class="check-ico">▶️</span>Rodou <code style="font-family:monospace;font-size:11px">python3 omie_sync.py</code>?</div>
+      <div class="check-item"><span class="check-ico">▶️</span>Rodou <code style="font-family:monospace;font-size:11px">python3 gerar.py</code>?</div>
+      <div class="check-item"><span class="check-ico">🌐</span>Publicou no GitHub Pages?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABA 7 — INDICADORES FINANCEIROS -->
+<div class="aba-secao" id="aba7">
+  <div class="aba-header">
+    <div class="aba-num" style="background:#8B5CF6">7</div>
+    <div class="aba-info">
+      <div class="aba-titulo">Indicadores Financeiros</div>
+      <div class="aba-subtitulo">Saúde financeira da Brazimil — dados do balanço inseridos manualmente uma vez por mês</div>
+    </div>
+  </div>
+  <div class="aba-body">
+
+    <span class="badge badge-manual">✏️ Digitação manual mensal — campos no próprio dashboard</span>
+    <span class="badge badge-auto" style="margin-left:8px">⚙️ Parte calculada automaticamente dos outros dados</span>
+
+    <p style="font-size:14px;color:#333;margin-bottom:16px;line-height:1.7">
+      Esta aba tem dois tipos de dados: os que você digita diretamente no dashboard (campos do balanço) e os que são calculados automaticamente a partir dos dados já existentes no sistema. A atualização é mensal — no primeiro dia útil de cada mês.
+    </p>
+
+    <div style="font-size:15px;font-weight:700;color:#8B5CF6;margin-bottom:12px">
+      ✏️ Campos que você digita manualmente (mensalmente)
+    </div>
+
+    <table class="col-table">
+      <thead><tr><th>Campo no Dashboard</th><th>O que digitar</th><th>Onde encontrar</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>Ativo Circulante (R$)</b></td>
+          <td>Soma de: caixa + bancos + contas a receber + estoques + outros ativos de curto prazo</td>
+          <td>Balanço Patrimonial — Ativo Circulante Total</td>
+        </tr>
+        <tr>
+          <td><b>Estoque (R$)</b></td>
+          <td>Valor do estoque de produtos acabados + matérias-primas em estoque</td>
+          <td>Balanço Patrimonial ou relatório de estoque do sistema</td>
+        </tr>
+        <tr>
+          <td><b>Caixa e Bancos (R$)</b></td>
+          <td>Saldo disponível imediato: caixa físico + saldo em conta corrente + aplicações de liquidez diária</td>
+          <td>Extrato bancário do Bradesco + caixa físico</td>
+        </tr>
+        <tr>
+          <td><b>Passivo Circulante (R$)</b></td>
+          <td>Total de dívidas e obrigações com vencimento em até 12 meses: fornecedores + impostos a pagar + salários + empréstimos curto prazo</td>
+          <td>Balanço Patrimonial — Passivo Circulante Total</td>
+        </tr>
+        <tr>
+          <td><b>Passivo Total (R$)</b></td>
+          <td>Todas as dívidas: circulante + não circulante (longo prazo). Não inclui o Patrimônio Líquido.</td>
+          <td>Balanço Patrimonial — Total do Passivo</td>
+        </tr>
+        <tr>
+          <td><b>Ativo Total (R$)</b></td>
+          <td>Todos os bens e direitos da empresa: circulante + não circulante (máquinas, imóveis, marcas)</td>
+          <td>Balanço Patrimonial — Total do Ativo</td>
+        </tr>
+        <tr>
+          <td><b>Patrimônio Líquido (R$)</b></td>
+          <td>Capital próprio dos sócios = Ativo Total − Passivo Total</td>
+          <td>Balanço Patrimonial — Patrimônio Líquido</td>
+        </tr>
+        <tr>
+          <td><b>Lucro Líquido (R$)</b></td>
+          <td>Resultado líquido do período após impostos (IR, CSLL) e todas as despesas</td>
+          <td>DRE — Demonstrativo de Resultado do Exercício</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="font-size:15px;font-weight:700;color:#2E75B6;margin:20px 0 10px">
+      ⚙️ Campos calculados automaticamente (não precisa digitar)
+    </div>
+
+    <table class="col-table">
+      <thead><tr><th>Campo</th><th>De onde vem</th><th>O que representa</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>Faturamento Bruto <span class="badge badge-auto" style="font-size:9px;padding:1px 5px">CALC</span></b></td>
+          <td>Puxado da aba Evolução de Vendas (vendas.json)</td>
+          <td>Total faturado nas últimas 13 semanas — atualiza quando o CSV do Omie é processado</td>
+        </tr>
+        <tr>
+          <td><b>Margem Bruta <span class="badge badge-auto" style="font-size:9px;padding:1px 5px">CALC</span></b></td>
+          <td>Calculada da MC média do portfólio (Painel Geral)</td>
+          <td>MC % média com tributação ZFM correta CE 55%</td>
+        </tr>
+        <tr>
+          <td><b>Giro do Ativo <span class="badge badge-auto" style="font-size:9px;padding:1px 5px">CALC</span></b></td>
+          <td>Faturamento ÷ Ativo Total</td>
+          <td>Calculado automaticamente quando você preenche Ativo Total</td>
+        </tr>
+        <tr>
+          <td><b>Taxa de Inadimplência <span class="badge badge-auto" style="font-size:9px;padding:1px 5px">CALC</span></b></td>
+          <td>Puxado do Fluxo de Caixa (fluxo_caixa.json)</td>
+          <td>% de boletos vencidos sobre a carteira total — atualiza com o CSV do Bradesco</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="font-size:14px;font-weight:700;color:#1F3864;margin:20px 0 10px">
+      Como atualizar mensalmente — passo a passo
+    </div>
+    <div class="passos">
+      <div class="passo">
+        <div class="passo-num">1</div>
+        <div class="passo-body">
+          <div class="pt">No primeiro dia útil do mês, abra o dashboard</div>
+          <div class="ps">Acesse <code>brazimil_analise_economica.html</code> no Chrome e faça login com a senha.</div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">2</div>
+        <div class="passo-body">
+          <div class="pt">Vá para a aba Indicadores Financeiros</div>
+          <div class="ps">Clique na última aba do menu superior.</div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">3</div>
+        <div class="passo-body">
+          <div class="pt">Preencha os 7 campos com os valores do balanço encerrado</div>
+          <div class="ps">
+            Peça ao contador ou ao setor financeiro os valores do <b>Balanço Patrimonial</b> e da <b>DRE</b> do mês anterior.<br>
+            Digite cada valor no campo correspondente — os indicadores recalculam instantaneamente ao digitar.<br>
+            <b>Não precisa salvar nem recarregar</b> — o dashboard calcula em tempo real.
+          </div>
+        </div>
+      </div>
+      <div class="passo">
+        <div class="passo-num">4</div>
+        <div class="passo-body">
+          <div class="pt">Analise o semáforo e os indicadores</div>
+          <div class="ps">
+            O semáforo no topo da aba mostra em verde, amarelo ou vermelho os 6 indicadores-chave.<br>
+            Veja quais grupos precisam de atenção e discuta com a diretoria as ações necessárias.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box ib-warn">
+      <b>⚠️ Os indicadores digitados existem apenas durante a sessão atual.</b> Ao fechar o navegador, os campos voltam aos valores padrão. Para registrar o histórico mensal de forma permanente, anote os valores em uma planilha auxiliar ou implemente o <code>historico_indicadores.json</code> (evolução futura do sistema).
+    </div>
+
+    <div class="checklist">
+      <h4>✅ Checklist mensal — Aba Indicadores Financeiros</h4>
+      <div class="check-item"><span class="check-ico">📋</span>Balanço Patrimonial do mês anterior disponível com o contador?</div>
+      <div class="check-item"><span class="check-ico">📋</span>DRE (Demonstrativo de Resultado) do mês anterior disponível?</div>
+      <div class="check-item"><span class="check-ico">✏️</span>8 campos preenchidos na aba Indicadores: Ativo Circ., Estoque, Caixa, Passivo Circ., Passivo Total, Ativo Total, PL e Lucro Líquido?</div>
+      <div class="check-item"><span class="check-ico">🔴</span>Semáforo analisado — algum indicador em vermelho precisa de ação imediata?</div>
+      <div class="check-item"><span class="check-ico">📊</span>Valores anotados em planilha auxiliar para histórico mensal?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ROTINA SEMANAL CONSOLIDADA -->
+<div class="aba-secao" id="rotina">
+  <div class="aba-header">
+    <div class="aba-num" style="background:#1F3864">📅</div>
+    <div class="aba-info">
+      <div class="aba-titulo">Rotina Consolidada de Atualização</div>
+      <div class="aba-subtitulo">Quem faz o quê, quando e como</div>
+    </div>
+  </div>
+  <div class="aba-body">
+
+    <table class="col-table">
+      <thead>
+        <tr>
+          <th>Frequência</th>
+          <th>Responsável</th>
+          <th>O que fazer</th>
+          <th>Abas que atualiza</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Toda segunda-feira</b></td>
+          <td>Operador do Omie</td>
+          <td>Exportar relatório de faturamento das últimas 13 semanas → salvar como <code>vendas_omie.csv</code></td>
+          <td>Aba 5 — Vendas</td>
+        </tr>
+        <tr>
+          <td><b>Toda segunda-feira</b></td>
+          <td>Setor financeiro</td>
+          <td>Exportar carteira de cobrança do Bradesco Net Empresa → salvar como <code>boletos_bradesco.csv</code></td>
+          <td>Aba 6 — Fluxo de Caixa</td>
+        </tr>
+        <tr>
+          <td><b>Toda segunda-feira</b></td>
+          <td>Consultor / responsável pelo dashboard</td>
+          <td>Rodar <code>omie_sync.py</code> + <code>gerar.py</code> → publicar pelo GitHub Desktop</td>
+          <td>Abas 5 e 6</td>
+        </tr>
+        <tr>
+          <td><b>Quando custos mudarem</b></td>
+          <td>Fábrica / gestão de custos</td>
+          <td>Atualizar o Excel de custos → rodar <code>gerar.py</code></td>
+          <td>Abas 1, 2, 3 e 4</td>
+        </tr>
+        <tr>
+          <td><b>Quando preços mudarem</b></td>
+          <td>Equipe comercial</td>
+          <td>Atualizar planilha do time → rodar <code>gerar.py</code></td>
+          <td>Abas 1, 2, 3 e 4</td>
+        </tr>
+        <tr>
+          <td><b>1º dia útil do mês</b></td>
+          <td>Consultor / direção</td>
+          <td>Abrir dashboard → aba Indicadores → preencher 8 campos do balanço</td>
+          <td>Aba 7 — Indicadores</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box ib-ok">
+      <b>✅ Comando completo de atualização semanal (uma linha só):</b><br><br>
+      <code style="font-family:'Courier New',monospace;font-size:13px;display:block;margin-top:8px;background:#1e1e2e;color:#a6e3a1;padding:12px 16px;border-radius:8px">
+        python3 omie_sync.py && python3 gerar.py && open brazimil_analise_economica.html
+      </code>
+      <br>
+      Este único comando normaliza os dados, gera o dashboard e já abre no Chrome para você conferir antes de publicar.
+    </div>
+
+  </div>
+</div>
+
+<div class="rodape">
+  Brazimil — Análise Econômica · Guia Operacional · Uso Interno · Consultoria Econômica
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brazimil — Laudo Técnico de Precificação</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f2f5;color:#222}
+
+.capa{background:linear-gradient(135deg,#7f1d1d 0%,#991b1b 50%,#1F3864 100%);
+  color:#fff;padding:56px 48px 48px;text-align:center}
+.capa .logo{font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:#fca5a5;margin-bottom:14px}
+.capa h1{font-size:32px;font-weight:700;margin-bottom:8px;line-height:1.25}
+.capa .sub{font-size:15px;color:#fca5a5;margin-bottom:36px;font-style:italic}
+.capa .meta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.capa .mi{background:rgba(255,255,255,.12);border-radius:10px;padding:12px 20px}
+.capa .ml{font-size:10px;color:#fca5a5;text-transform:uppercase;letter-spacing:.08em}
+.capa .mv{font-size:16px;font-weight:700;margin-top:3px}
+
+.nav{background:#fff;border-bottom:2px solid #e0e0e0;
+  position:sticky;top:0;z-index:100;overflow-x:auto}
+.nav ul{display:flex;list-style:none;min-width:max-content;padding:0 24px}
+.nav ul li a{display:block;padding:13px 16px;font-size:11px;font-weight:700;
+  color:#555;text-decoration:none;text-transform:uppercase;letter-spacing:.05em;
+  border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
+.nav ul li a:hover{color:#991b1b;border-bottom-color:#991b1b}
+
+.container{max-width:980px;margin:0 auto;padding:32px 20px 80px}
+
+/* Cards de alerta */
+.alerta-critico{background:#FCEBEB;border:1px solid #E24B4A;border-left:6px solid #9C0006;
+  border-radius:10px;padding:20px 24px;margin-bottom:20px}
+.alerta-critico h3{color:#9C0006;font-size:16px;font-weight:700;margin-bottom:8px}
+.alerta-atencao{background:#FFF2CC;border:1px solid #EF9F27;border-left:6px solid #EF9F27;
+  border-radius:10px;padding:20px 24px;margin-bottom:20px}
+.alerta-atencao h3{color:#7F6000;font-size:16px;font-weight:700;margin-bottom:8px}
+.alerta-ok{background:#EAF3DE;border:1px solid #639922;border-left:6px solid #639922;
+  border-radius:10px;padding:20px 24px;margin-bottom:20px}
+.alerta-ok h3{color:#27500A;font-size:16px;font-weight:700;margin-bottom:8px}
+.alerta-info{background:#E6F1FB;border:1px solid #2E75B6;border-left:6px solid #2E75B6;
+  border-radius:10px;padding:20px 24px;margin-bottom:20px}
+.alerta-info h3{color:#1F3864;font-size:16px;font-weight:700;margin-bottom:8px}
+
+/* Seções */
+.secao{background:#fff;border-radius:12px;border:1px solid #e0e0e0;
+  margin-bottom:28px;overflow:hidden}
+.secao-header{padding:20px 26px 16px;border-bottom:1px solid #f0f0f0;
+  display:flex;align-items:center;gap:14px}
+.secao-num{width:38px;height:38px;border-radius:10px;display:flex;
+  align-items:center;justify-content:center;font-size:15px;
+  font-weight:700;color:#fff;flex-shrink:0}
+.secao-info .st{font-size:17px;font-weight:700;color:#1F3864;margin-bottom:2px}
+.secao-info .ss{font-size:12px;color:#888}
+.secao-body{padding:24px 26px}
+
+.secao-body h3{font-size:15px;font-weight:700;color:#1F3864;margin:20px 0 10px}
+.secao-body h4{font-size:13px;font-weight:700;color:#2E75B6;margin:16px 0 8px;
+  text-transform:uppercase;letter-spacing:.04em}
+.secao-body p{font-size:14px;color:#333;line-height:1.75;margin-bottom:12px}
+.secao-body ul,.secao-body ol{padding-left:22px;margin-bottom:12px}
+.secao-body li{font-size:14px;color:#333;line-height:1.7;margin-bottom:5px}
+
+/* Tabelas */
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0 18px}
+th{background:#1F3864;color:#fff;font-weight:700;padding:10px 13px;
+  text-align:left;font-size:12px}
+td{padding:9px 13px;border-bottom:1px solid #f0f0f0;vertical-align:top}
+tr:hover td{background:#f7f7f7}
+.td-r{text-align:right}
+.td-c{text-align:center}
+.mc-ok  {color:#27500A;font-weight:700}
+.mc-warn{color:#7F6000;font-weight:700}
+.mc-bad {color:#791F1F;font-weight:700}
+.tag-ok  {background:#EAF3DE;color:#27500A;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.tag-warn{background:#FFF2CC;color:#7F6000;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.tag-bad {background:#FCEBEB;color:#791F1F;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.tag-ok2 {background:#EAF3DE;color:#27500A;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px}
+
+/* Comparativo */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.comp-card{border-radius:10px;padding:18px 20px}
+.comp-card.antes{background:#FCEBEB;border:1px solid #E24B4A}
+.comp-card.depois{background:#EAF3DE;border:1px solid #639922}
+.comp-card h4{font-size:13px;font-weight:700;margin-bottom:10px}
+.comp-card.antes h4{color:#791F1F}
+.comp-card.depois h4{color:#27500A}
+.comp-linha{display:flex;justify-content:space-between;font-size:13px;
+  padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+.comp-linha:last-child{border-bottom:none;font-weight:700}
+
+/* KPIs */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.kpi{border-radius:8px;padding:14px 16px;text-align:center}
+.kpi .kv{font-size:26px;font-weight:700}
+.kpi .kl{font-size:11px;margin-top:3px;opacity:.8;text-transform:uppercase;letter-spacing:.04em}
+
+.rodape{text-align:center;font-size:12px;color:#999;
+  margin-top:48px;padding-top:24px;border-top:1px solid #e0e0e0}
+
+.ci{font-family:'Courier New',monospace;font-size:12px;background:#f0f0f0;
+  color:#0000AA;padding:1px 6px;border-radius:3px}
+.formula{background:#1e1e2e;border-radius:8px;padding:14px 18px;
+  font-family:'Courier New',monospace;font-size:13px;color:#cdd6f4;
+  line-height:1.75;margin:10px 0 14px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+<body>
+
+<div class="capa">
+  <div class="logo">Consultoria Econômica · Uso Restrito</div>
+  <h1>Laudo Técnico de Precificação</h1>
+  <div class="sub">Análise profunda do sistema de precificação — Brazimil Indústria de Tintas</div>
+  <div class="meta">
+    <div class="mi"><div class="ml">Produtos analisados</div><div class="mv">118 SKUs</div></div>
+    <div class="mi"><div class="ml">Problemas críticos</div><div class="mv">7 encontrados</div></div>
+    <div class="mi"><div class="ml">Em prejuízo real</div><div class="mv">4 produtos</div></div>
+    <div class="mi"><div class="ml">Oportunidades</div><div class="mv">5 identificadas</div></div>
+  </div>
+</div>
+
+<nav class="nav">
+  <ul>
+    <li><a href="#resumo">Resumo Executivo</a></li>
+    <li><a href="#p1">Problema 1 — Tributação</a></li>
+    <li><a href="#p2">Problema 2 — Prejuízo Real</a></li>
+    <li><a href="#p3">Problema 3 — Preço Uniforme</a></li>
+    <li><a href="#p4">Problema 4 — Custeio Incompleto</a></li>
+    <li><a href="#p5">Problema 5 — Fichas Faltando</a></li>
+    <li><a href="#p6">Problema 6 — Mark-up Fixo</a></li>
+    <li><a href="#p7">Problema 7 — Dashboard</a></li>
+    <li><a href="#oportunidades">Oportunidades</a></li>
+    <li><a href="#plano">Plano de Ação</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+<!-- RESUMO EXECUTIVO -->
+<div class="secao" id="resumo">
+  <div class="secao-header">
+    <div class="secao-num" style="background:#1F3864">📋</div>
+    <div class="secao-info">
+      <div class="st">Resumo Executivo</div>
+      <div class="ss">Diagnóstico geral do sistema de precificação — 118 SKUs analisados</div>
+    </div>
+  </div>
+  <div class="secao-body">
+
+    <div class="kpi-grid">
+      <div class="kpi" style="background:#FCEBEB">
+        <div class="kv" style="color:#9C0006">4</div>
+        <div class="kl" style="color:#9C0006">SKUs em prejuízo real</div>
+      </div>
+      <div class="kpi" style="background:#FFF2CC">
+        <div class="kv" style="color:#7F6000">31</div>
+        <div class="kl" style="color:#7F6000">SKUs com MC &lt; 20%</div>
+      </div>
+      <div class="kpi" style="background:#E6F1FB">
+        <div class="kv" style="color:#1F3864">54</div>
+        <div class="kl" style="color:#1F3864">SKUs com MC 20–35%</div>
+      </div>
+      <div class="kpi" style="background:#EAF3DE">
+        <div class="kv" style="color:#27500A">33</div>
+        <div class="kl" style="color:#27500A">SKUs com MC ≥ 35%</div>
+      </div>
+    </div>
+
+    <div class="alerta-critico">
+      <h3>🚨 Situação Crítica Identificada</h3>
+      <p style="color:#333">A análise profunda revelou que <strong>4 produtos da linha Látex Standard 15L estão sendo vendidos com MC negativa</strong> — ou seja, a cada venda, a Brazimil perde dinheiro. O pior caso tem MC de −15,9%. Isso não é percebido facilmente porque o modelo de custeio atual usa uma tributação simplificada que <em>mascara</em> parte dos custos reais.</p>
+      <p style="color:#333;margin-top:8px">Simultaneamente, foram identificados <strong>7 problemas estruturais</strong> no sistema de precificação — alguns corrigíveis imediatamente, outros que exigem revisão de processos. Também foram mapeadas <strong>5 oportunidades de melhoria</strong> que podem elevar a rentabilidade média do portfólio em 3 a 5 pontos percentuais.</p>
+    </div>
+
+    <p>Este laudo apresenta cada problema com sua causa raiz, o impacto mensurável, e a correção recomendada — em ordem de prioridade.</p>
+  </div>
+</div>
+
+<!-- PROBLEMA 1 — TRIBUTAÇÃO -->
+<div class="secao" id="p1">
+  <div class="secao-header">
+    <div class="secao-num" style="background:#9C0006">1</div>
+    <div class="secao-info">
+      <div class="st">Problema 1 — Tributação Simplificada Incorreta</div>
+      <div class="ss">CRÍTICO · Afeta 100% dos produtos · Impacto: ~4,1 pp de carga a mais</div>
+    </div>
+  </div>
+  <div class="secao-body">
+
+    <h3>O que foi encontrado</h3>
+    <p>A planilha do time usa <strong>ICMS de 7% simples</strong> somado a PIS (0,65%) e COFINS (3%), totalizando uma carga tributária de <strong>15,65%</strong> sobre o preço de venda. Este modelo <em>não considera</em> o Crédito Estímulo (CE) de 55% — o principal benefício fiscal da ZFM para Bens Finais — nem as contribuições FMPES, UEA e FTI.</p>
+
+    <div class="comp-grid">
+      <div class="comp-card antes">
+        <h4>❌ Modelo atual (planilha do time)</h4>
+        <div class="comp-linha"><span>ICMS simplificado</span><span>7,00%</span></div>
+        <div class="comp-linha"><span>PIS</span><span>0,65%</span></div>
+        <div class="comp-linha"><span>COFINS</span><span>3,00%</span></div>
+        <div class="comp-linha"><span>Comissão</span><span>5,00%</span></div>
+        <div class="comp-linha"><span>FMPES / UEA / FTI</span><span style="color:#9C0006">Não incluído</span></div>
+        <div class="comp-linha"><span><b>Carga total</b></span><span><b>15,65%</b></span></div>
+      </div>
+      <div class="comp-card depois">
+        <h4>✅ Modelo correto ZFM — CE 55%</h4>
+        <div class="comp-linha"><span>ICMS débito (12% × 45%)</span><span>5,40%</span></div>
+        <div class="comp-linha"><span>Crédito insumos nacionais (7%)</span><span style="color:#27500A">− 7,00% → ICMS líq. = 0%</span></div>
+        <div class="comp-linha"><span>FMPES (6% × 12% × 55%)</span><span>0,40%</span></div>
+        <div class="comp-linha"><span>UEA</span><span>1,50%</span></div>
+        <div class="comp-linha"><span>FTI (insumo nacional)</span><span>1,00%</span></div>
+        <div class="comp-linha"><span>PIS + COFINS</span><span>3,65%</span></div>
+        <div class="comp-linha"><span>Comissão</span><span>5,00%</span></div>
+        <div class="comp-linha"><span><b>Carga total</b></span><span><b>11,55%</b></span></div>
+      </div>
+    </div>
+
+    <h3>Impacto mensurável</h3>
+    <p>A diferença de carga tributária é de <strong>4,10 pontos percentuais</strong> em favor da Brazimil. Isso significa que:</p>
+    <ul>
+      <li>A MC real de cada produto é <strong>~2 a 3 pp maior</strong> do que a planilha do time indica</li>
+      <li>O preço mínimo necessário é <strong>menor</strong> do que o calculado — a Brazimil pode ser mais competitiva</li>
+      <li>Produtos que aparecem como "Crítico" na planilha podem ser "Atenção" na realidade</li>
+      <li>Porém, 4 produtos que aparecem com MC positiva têm na verdade MC negativa quando o CE é calculado corretamente junto com FMPES/UEA/FTI</li>
+    </ul>
+
+    <div class="alerta-atencao">
+      <h3>⚠️ Paradoxo do CE 55%</h3>
+      <p style="color:#333">Com CE 55%, o ICMS débito cai para 5,40% (12% × 45%). Como o crédito de insumos nacionais é de 7%, o ICMS líquido a pagar é tecnicamente zero (5,40% − 7,00% = −1,60%). Porém, o FMPES (0,40%), UEA (1,50%) e FTI (1,00%) são calculados <em>sobre o CE</em> — somam 2,90% que a planilha atual não inclui. O resultado líquido é que a carga ZFM correta (11,55%) é menor que o modelo simplificado (15,65%), mas <strong>a composição é completamente diferente</strong>.</p>
+    </div>
+
+    <h3>Correção necessária</h3>
+    <div class="formula">Carga ZFM correta = ICMS_líq + FMPES + UEA + FTI + PIS + COFINS + Comissão
+                     = 0% + 0,40% + 1,50% + 1,00% + 0,65% + 3,00% + 5,00%
+                     = 11,55% sobre o preço de venda</div>
+    <p><strong>Ação:</strong> atualizar a aba "Impostos" da planilha do time e a célula de cálculo de impostos na Formação de Preço de Venda para usar a fórmula ZFM correta. O dashboard já usa o modelo correto.</p>
+  </div>
+</div>
+
+<!-- PROBLEMA 2 — PRODUTOS EM PREJUÍZO -->
+<div class="secao" id="p2">
+  <div class="secao-header">
+    <div class="secao-num" style="background:#9C0006">2</div>
+    <div class="secao-info">
+      <div class="st">Problema 2 — 4 Produtos Vendidos com Prejuízo Real</div>
+      <div class="ss">CRÍTICO · Ação imediata necessária · Perda a cada venda realizada</div>
+    </div>
+  </div>
+  <div class="secao-body">
+
+    <h3>Os produtos em prejuízo</h3>
+    <p>A linha <strong>Látex Standard INT/EXT Fosco 15L</strong> nas cores de maior pigmentação apresenta custo variável superior ao preço de venda praticado de R$ 60,00:</p>
+
+    <table>
+      <thead><tr>
+        <th>Produto</th>
+        <th class="td-r">Preço Atual</th>
+        <th class="td-r">Custo Var.</th>
+        <th class="td-r">MC Atual</th>
+        <th class="td-r">Preço Mín. (MC 25%)</th>
+        <th class="td-r">Ajuste Necessário</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>Látex Standard 15L Verde Folha</td>
+          <td class="td-r">R$ 60,00</td>
+          <td class="td-r">~R$ 69,20</td>
+          <td class="td-r mc-bad">−15,9%</td>
+          <td class="td-r">R$ 93,92</td>
+          <td class="td-r mc-bad"><b>+R$ 33,92</b></td>
+        </tr>
+        <tr>
+          <td>Látex Standard 15L Azul Oceano</td>
+          <td class="td-r">R$ 60,00</td>
+          <td class="td-r">~R$ 66,83</td>
+          <td class="td-r mc-bad">−12,3%</td>
+          <td class="td-r">R$ 90,76</td>
+          <td class="td-r mc-bad"><b>+R$ 30,76</b></td>
+        </tr>
+        <tr>
+          <td>Látex Standard 15L Vermelho</td>
+          <td class="td-r">R$ 60,00</td>
+          <td class="td-r">~R$ 64,60</td>
+          <td class="td-r mc-bad">−9,6%</td>
+          <td class="td-r">R$ 88,27</td>
+          <td class="td-r mc-bad"><b>+R$ 28,27</b></td>
+        </tr>
+        <tr>
+          <td>Látex Standard 15L Azul Celeste</td>
+          <td class="td-r">R$ 60,00</td>
+          <td class="td-r">~R$ 59,60</td>
+          <td class="td-r mc-bad">−3,9%</td>
+          <td class="td-r">R$ 83,07</td>
+          <td class="td-r mc-bad"><b>+R$ 23,07</b></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Causa raiz</h3>
+    <p>O problema tem duas causas combinadas: (1) o custo de pigmento para cores intensas (verde escuro, azul, vermelho) é significativamente maior que para cores neutras, mas o preço praticado é uniforme para toda a linha; e (2) o preço de R$ 60,00 para o balde 15L está posicionado abaixo do custo de produção para as cores de maior pigmentação.</p>
+
+    <div class="alerta-critico">
+      <h3>🚨 Impacto financeiro estimado</h3>
+      <p style="color:#333">Se a Brazimil vende em média 50 unidades/mês de cada cor crítica, o prejuízo mensal estimado é de <strong>R$ 4.500 a R$ 8.000 por mês</strong> apenas nestes 4 SKUs. Anualizado: entre <strong>R$ 54.000 e R$ 96.000 de destruição de valor</strong>.</p>
+    </div>
+
+    <h3>Ação recomendada</h3>
+    <ol>
+      <li><strong>Imediato:</strong> suspender ou limitar as vendas das 4 cores em prejuízo até reajuste de preço</li>
+      <li><strong>Curto prazo:</strong> criar uma tabela de preços diferenciada por nível de pigmentação (branco/neutro, pastéis, cores médias, cores intensas)</li>
+      <li><strong>Médio prazo:</strong> revisar a política de preço da linha Standard 15L considerando a estrutura real de custo por cor</li>
+    </ol>
+  </div>
+</div>
+
+<!-- PROBLEMA 3 — PREÇO UNIFORME -->
+<div class="secao" id="p3">
+  <div class="secao-header">
+    <div class="secao-num" style="background:#EF9F27;color:#fff">3</div>
+    <div class="secao-info">
+      <div class="st">Problema 3 — Preço Uniforme para Custos Diferenciados</div>
+      <div class="ss">ESTRUTURAL · Afeta linhas inteiras · Gera subsídio cruzado entre cores</div>
+    </div>
+  </div>
+  <div class="secao-body">
+
+    <h3>O que foi identificado</h3>
+    <p>A análise revelou um padrão sistemático: <strong>a Brazimil pratica o mesmo preço para todas as cores de uma mesma linha e embalagem</strong>, mas o custo de matéria-prima varia significativamente entre cores. O exemplo mais evidente é o Látex Econômico 3L:</p>
+
+    <table>
+      <thead><tr>
+        <th>Cor</th>
+        <th class="td-r">Custo MP</th>
+        <th class="td-r">Preço Praticado</th>
+        <th class="td-r">MC (modelo time)</th>
+        <th class="td-r">Variação vs BN</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Branco Neve (referência)</td><td class="td-r">R$ 3,63</td><td class="td-r">R$ 17,99</td><td class="td-r mc-ok">43,5%</td><td class="td-r">—</td></tr>
+        <tr><td>Branco Gelo</td><td class="td-r">R$ 4,77</td><td class="td-r">R$ 17,99</td><td class="td-r mc-warn">37,2%</td><td class="td-r mc-bad">−6,3 pp</td></tr>
+        <tr><td>Areia / Palha</td><td class="td-r">R$ 4,92–5,19</td><td class="td-r">R$ 17,99</td><td class="td-r mc-warn">34,9–36,4%</td><td class="td-r mc-bad">−7,1 pp</td></tr>
+        <tr><td>Verde Primavera</td><td class="td-r">R$ 5,76</td><td class="td-r">R$ 17,99</td><td class="td-r mc-warn">31,7%</td><td class="td-r mc-bad">−11,8 pp</td></tr>
+        <tr><td>Verde Folha</td><td class="td-r">R$ 6,87</td><td class="td-r">R$ 17,99</td><td class="td-r mc-warn">25,5%</td><td class="td-r mc-bad">−18,0 pp</td></tr>
+        <tr><td>Azul Oceano</td><td class="td-r">R$ 6,03</td><td class="td-r">R$ 17,99</td><td class="td-r mc-warn">30,2%</td><td class="td-r mc-bad">−13,3 pp</td></tr>
+      </tbody>
+    </table>
+
+    <p>A diferença de MC entre o Branco Neve (43,5%) e o Verde Folha (25,5%) é de <strong>18 pp</strong> — tudo com o mesmo preço de venda. Isso significa que o Branco Neve <em>subsidia</em> as cores escuras.</p>
+
+    <h3>Por que isso acontece</h3>
+    <p>A política de preço uniforme por linha é comum no mercado de tintas porque simplifica a tabela comercial. Mas ela só funciona quando o custo de pigmento não varia muito. Na Brazimil, a diferença chega a 89% entre a cor mais barata e a mais cara dentro da mesma linha.</p>
+
+    <h3>Correção recomendada</h3>
+    <p>Criar <strong>3 faixas de preço por linha</strong> em vez de preço único:</p>
+    <table>
+      <thead><tr><th>Faixa</th><th>Cores</th><th>Preço sugerido</th><th>MC estimada</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag-ok2">Faixa 1 — Neutros</span></td><td>Branco Neve, Branco Gelo, Marfim, Pérola</td><td>Preço atual</td><td class="mc-ok">40–44%</td></tr>
+        <tr><td><span class="tag-warn">Faixa 2 — Pastéis</span></td><td>Areia, Palha, Rosa, Amarelo</td><td>+5 a 8% sobre Faixa 1</td><td class="mc-warn">35–39%</td></tr>
+        <tr><td><span class="tag-bad">Faixa 3 — Intensas</span></td><td>Verdes, Azuis, Vermelhos</td><td>+12 a 18% sobre Faixa 1</td><td class="mc-warn">33–38%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PROBLEMA 4 — CUSTEIO INCOMPLETO -->
+<div class="secao" id="p4">
+  <div class="secao-header">
+    <div class="secao-num" style="background:#EF9F27;color:#fff">4</div>
+    <div class="secao-info">
+      <div class="st">Problema 4 — Custeio de Produção Incompleto</div>
+      <div class="ss">ESTRUTURAL · Custos de manutenção, EPIs e utilidades ausentes</div>
+    </div>
+  </div>
+  <div class="secao-body">
+
+    <h3>O que foi encontrado na planilha de Custos de Produção</h3>
+    <p>A aba "Custos de Produção" tem a estrutura correta mas está <strong>parcialmente preenchida</strong>. Os itens cadastrados são:</p>
+    <ul>
+      <li>Filme Stretch: R$ 677,25/mês ✅</li>
+      <li>Gás para empilhadeira: R$ 999,60/mês ✅</li>
+    </ul>
+    <p>Os seguintes itens estão <strong>listados mas sem valor</strong>:</p>
+    <ul>
+      <li>Material de Limpeza Industrial — zero</li>
+      <li>Luvas e EPIs descartáveis — zero</li>
+      <li>Embalagens intermediárias (bombonas) — zero</li>
+      <li>Solventes de limpeza de máquinas — zero</li>
+      <li>Filtros industriais — zero</li>
+      <li>Óleos lubrificantes e graxas — zero</li>
+      <li>Peças de reposição de rotina — zero</li>
+    </ul>
+
+    <div class="alerta-atencao">
+      <h3>⚠️ Custo subestimado por omissão</h3>
+      <p style="color:#333">Para uma indústria de tintas com 3 auxiliares de produção, estima-se que os itens não cadastrados representem entre <strong>R$ 2.000 e R$ 5.000/mês</strong> adicionais. Distribuído pelos ~118 SKUs ativos, isso reduz a MC real em <strong>0,5 a 1,5 pp</strong> em cada produto.</p>
+    </div>
+
+    <h3>Correção necessária</h3>
+    <p>Levantar as notas fiscais de compra dos últimos 3 meses dos itens ausentes, calcular a média mensal e preencher a aba "Custos de Produção". Isso irá recalcular automaticamente o custo total e o preço mínimo sugerido em toda a planilha.</p>
+  </div>
+</div>
+
+<!-- PROBLEMA 5 — FICHAS FALTANDO -->
+<div class="secao" id="p5">
+  <div class="secao-header">
+    <div class="secao-num" style="background:#EF9F27;color:#fff">5</div>
+    <div class="secao-info">
+      <div class="st">Problema 5 — 16 Produtos sem Ficha de Produção</div>
+      <div class="ss">OPERACIONAL · Linha Semi Brilho 3L sem custo calculado</div>
+    </div>
+  </div>
+  <div class="secao-body">
+
+    <h3>Produtos com "Cadastrar Ficha de Produção"</h3>
+    <p>A análise identificou <strong>16 SKUs</strong> com a mensagem "Cadastrar Ficha de Produção" — sem custo de matéria-prima cadastrado. São todos da linha <strong>Látex Econômico INT/EXT Semi Brilho 3L</strong> (PRD00024 a PRD00038):</p>
+
+    <table>
+      <thead><tr><th>Código</th><th>Produto</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>PRD00024–PRD00038</td><td>Látex Econômico INT/EXT Semi Brilho 3L — 15 cores</td><td><span class="tag-bad">Sem ficha</span></td></tr>
+        <tr><td>PRD00005–PRD00006</td><td>Seladora para Madeira 0,75L e 3L Incolor</td><td><span class="tag-bad">Sem ficha</span></td></tr>
+      </tbody>
+    </table>
+
+    <p>Estes produtos aparecem com <strong>preço final = R$ 0</strong> na Tabela de Produtos — não são precificados corretamente e, se vendidos, não têm margem calculada nem preço mínimo definido.</p>
+
+    <h3>Ação necessária</h3>
+    <p>Cadastrar as fichas de produção para todos os 16 produtos. Como a formulação do Semi Brilho é similar ao Fosco da mesma linha, o custo de insumos pode ser estimado a partir das fichas existentes com um fator de ajuste pelo custo do agente de brilho adicional.</p>
+  </div>
+</div>
+
+<!-- PROBLEMA 6 — MARK-UP FIXO -->
+<div class="secao" id="p6">
+  <div class="secao-header">
+    <div class="secao-num" style="background:#2E75B6;color:#fff">6</div>
+    <div class="secao-info">
+      <div class="st">Problema 6 — Mark-up Fixo de 25% Para Todo o Portfólio</div>
+      <div class="ss">METODOLÓGICO · Ignora elasticidade e posicionamento de mercado</div>
+    </div>
+  </div>
+  <div class="secao-body">
+
+    <h3>O que foi identificado</h3>
+    <p>A aba "Formação de Preço de Venda" usa um <strong>mark-up fixo de 25%</strong> para todos os produtos — da massa corrida 1kg ao látex semi brilho 15L. Não há diferenciação por linha, canal de venda, posicionamento ou elasticidade de demanda.</p>
+
+    <h3>Por que isso é um problema</h3>
+    <ul>
+      <li><strong>Linha Econômica</strong> — concorre por preço, mark-up alto pode perder mercado para concorrentes</li>
+      <li><strong>Linha Premium / Semi Brilho</strong> — mercado aceita preço mais alto; mark-up uniforme deixa margem na mesa</li>
+      <li><strong>Complementos</strong> (Vedamil, Borracha Líquida) — produtos de necessidade específica com menor elasticidade; poderiam ter mark-up maior</li>
+      <li><strong>Cores intensas</strong> — custo maior, mark-up fixo gera margem insuficiente (como vimos no Problema 3)</li>
+    </ul>
+
+    <h3>Recomendação metodológica</h3>
+    <p>Adotar uma <strong>matriz de mark-up diferenciado</strong> por segmento:</p>
+    <table>
+      <thead><tr><th>Linha</th><th>Mark-up atual</th><th>Mark-up sugerido</th><th>Justificativa</th></tr></thead>
+      <tbody>
+        <tr><td>Econômica (all-white)</td><td class="td-c">25%</td><td class="td-c mc-warn">20–22%</td><td>Alta competição — priorizar volume</td></tr>
+        <tr><td>Externa / Semi Brilho</td><td class="td-c">25%</td><td class="td-c mc-ok">28–32%</td><td>Diferencial técnico justifica margem maior</td></tr>
+        <tr><td>Cores intensas</td><td class="td-c">25%</td><td class="td-c mc-ok">30–35%</td><td>Custo de pigmento maior, menor volume</td></tr>
+        <tr><td>Complementos</td><td class="td-c">25%</td><td class="td-c mc-ok">30–40%</td><td>Baixa elasticidade, necessidade específica</td></tr>
+        <tr><td>Linha Standard (15L)</td><td class="td-c">25%</td><td class="td-c mc-bad">Rever custo primeiro</td><td>Custo atual inviabiliza qualquer mark-up</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PROBLEMA 7 — DASHBOARD -->
+<div class="secao" id="p7">
+  <div class="secao-header">
+    <div class="secao-num" style="background:#2E75B6;color:#fff">7</div>
+    <div class="secao-info">
+      <div class="st">Problema 7 — Dashboard Cobre Apenas 65 dos 118 SKUs</div>
+      <div class="ss">OPERACIONAL · 53 produtos sem monitoramento visual</div>
+    </div>
+  </div>
+  <div class="secao-body">
+
+    <h3>O que foi encontrado</h3>
+    <p>O dashboard atual monitora <strong>65 SKUs</strong>, mas a planilha do time tem <strong>118 SKUs com preço</strong> (e outros 16 sem ficha). Os <strong>53 SKUs ausentes</strong> incluem toda a linha Látex Standard (os produtos em prejuízo!), toda a linha Látex Econômico Semi Brilho e vários produtos intermediários.</p>
+
+    <div class="alerta-critico">
+      <h3>🚨 Os 4 produtos em prejuízo NÃO estão no dashboard</h3>
+      <p style="color:#333">A linha Látex Standard INT/EXT 15L — que inclui os 4 SKUs com MC negativa — não está mapeada na tabela do <span class="ci">gerar.py</span>. Isso significa que o dashboard não alertou sobre esses produtos críticos. O diagnóstico foi feito apenas na análise direta da planilha do time.</p>
+    </div>
+
+    <h3>Por que isso acontece</h3>
+    <p>O arquivo <span class="ci">gerar.py</span> tem uma tabela manual de mapeamento de produtos. Quando um produto existe no Excel mas não está na tabela do Python, ele simplesmente é ignorado. Não há validação automática de quais produtos estão faltando.</p>
+
+    <h3>Correção necessária</h3>
+    <p>Expandir a tabela do <span class="ci">gerar.py</span> para incluir todos os 118 SKUs ativos — especialmente a linha Standard 15L. Também adicionar um aviso automático no Terminal quando o script detectar que existem produtos no Excel que não estão na tabela:</p>
+
+    <div class="formula">
+# Adicionar no gerar.py após ler a planilha do time:
+nomes_excel   = set(dados_custo.keys())
+nomes_tabela  = set(tabela.keys())
+nao_mapeados  = nomes_excel - nomes_tabela
+if nao_mapeados:
+    print(f"AVISO: {len(nao_mapeados)} produtos no Excel sem mapeamento:")
+    for n in sorted(nao_mapeados)[:10]:
+        print(f"  → {n}")</div>
+  </div>
+</div>
+
+<!-- OPORTUNIDADES -->
+<div class="secao" id="oportunidades">
+  <div class="secao-header">
+    <div class="secao-num" style="background:#27500A">✨</div>
+    <div class="secao-info">
+      <div class="st">Oportunidades de Melhoria Identificadas</div>
+      <div class="ss">5 oportunidades com potencial de elevar a rentabilidade em 3–5 pp</div>
+    </div>
+  </div>
+  <div class="secao-body">
+
+    <div class="alerta-ok">
+      <h3>✅ Oportunidade 1 — Explorar o Diferencial ZFM na Comunicação Comercial</h3>
+      <p style="color:#333">Com carga tributária de 11,55% vs ~20% de uma fábrica nacional fora da ZFM, a Brazimil tem espaço para <strong>praticar preços mais competitivos</strong> e ainda manter margens saudáveis. Este argumento não está sendo usado formalmente na tabela comercial — pode ser um diferencial explícito para distribuidores e construtoras.</p>
+    </div>
+
+    <div class="alerta-ok">
+      <h3>✅ Oportunidade 2 — Linha Premium Subprecificada</h3>
+      <p style="color:#333">O Semi Brilho 15L BN a R$ 170,00 tem MC de ~62% — a mais alta do portfólio. Isso indica que o mercado aceita pagar mais por este produto. Há espaço para <strong>elevar o preço da linha premium em 8 a 12%</strong> sem perder competitividade, aumentando a MC absoluta em R$ do produto mais vendido.</p>
+    </div>
+
+    <div class="alerta-ok">
+      <h3>✅ Oportunidade 3 — Complementos com Margem Subótima</h3>
+      <p style="color:#333">Vedamil, Borracha Líquida e Cimento Queimado são produtos de necessidade específica com baixa elasticidade de demanda. Atualmente com MC de 35–45%. Um reajuste de 5–8% nestes produtos geraria MC de 40–50% sem impacto relevante no volume, dada a natureza da demanda.</p>
+    </div>
+
+    <div class="alerta-ok">
+      <h3>✅ Oportunidade 4 — Criar Tabela por Canal</h3>
+      <p style="color:#333">A planilha do time tem uma aba "Tabela Simplificada" com colunas para "Lojista" e "Construtor" — mas os preços aparecem como #REF! (erro de referência). Estruturar uma <strong>tabela diferenciada por canal</strong> (varejo, atacado, construtor, governo) com descontos progressivos e margem mínima garantida por canal.</p>
+    </div>
+
+    <div class="alerta-ok">
+      <h3>✅ Oportunidade 5 — Revisão Periódica Automatizada</h3>
+      <p style="color:#333">Atualmente a revisão de preços é ad hoc. Implementar um <strong>calendário trimestral de revisão</strong> usando o dashboard: toda vez que uma nova tabela de preços for aprovada, o gerar.py é rodado e a diferença de MC vs período anterior é calculada automaticamente. O Python pode gerar um relatório de "o que mudou" entre as versões.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- PLANO DE AÇÃO -->
+<div class="secao" id="plano">
+  <div class="secao-header">
+    <div class="secao-num" style="background:#1F3864">🗓️</div>
+    <div class="secao-info">
+      <div class="st">Plano de Ação Prioritizado</div>
+      <div class="ss">Ordem de execução por impacto e urgência</div>
+    </div>
+  </div>
+  <div class="secao-body">
+
+    <table>
+      <thead><tr>
+        <th>Prioridade</th>
+        <th>Ação</th>
+        <th>Responsável</th>
+        <th>Prazo</th>
+        <th>Impacto estimado</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag-bad">🚨 P1</span></td>
+          <td>Suspender ou reajustar os 4 produtos da linha Standard 15L em prejuízo</td>
+          <td>Diretoria + Comercial</td>
+          <td>Imediato</td>
+          <td>Elimina perda de R$ 4–8k/mês</td>
+        </tr>
+        <tr>
+          <td><span class="tag-bad">🚨 P2</span></td>
+          <td>Mapear todos os 118 SKUs ativos no dashboard (incluir linha Standard)</td>
+          <td>Consultor Python</td>
+          <td>1 semana</td>
+          <td>Visibilidade completa do portfólio</td>
+        </tr>
+        <tr>
+          <td><span class="tag-warn">⚠️ P3</span></td>
+          <td>Corrigir a tributação na planilha do time para usar ZFM CE 55% correto</td>
+          <td>Consultor + Time</td>
+          <td>2 semanas</td>
+          <td>Precisão em 100% dos preços mínimos</td>
+        </tr>
+        <tr>
+          <td><span class="tag-warn">⚠️ P4</span></td>
+          <td>Cadastrar fichas de produção dos 16 SKUs sem ficha (Semi Brilho + Seladora)</td>
+          <td>Produção + Time</td>
+          <td>2–3 semanas</td>
+          <td>Precificação correta de 16 SKUs</td>
+        </tr>
+        <tr>
+          <td><span class="tag-warn">⚠️ P5</span></td>
+          <td>Preencher custos ausentes na aba Custos de Produção (EPIs, manutenção)</td>
+          <td>Produção + Financeiro</td>
+          <td>3 semanas</td>
+          <td>Custeio mais preciso em todos os SKUs</td>
+        </tr>
+        <tr>
+          <td><span class="tag-warn">⚠️ P6</span></td>
+          <td>Criar 3 faixas de preço por pigmentação para as linhas Econômica e Standard</td>
+          <td>Comercial + Diretoria</td>
+          <td>1 mês</td>
+          <td>Elimina subsídio cruzado entre cores</td>
+        </tr>
+        <tr>
+          <td style="color:#2E75B6;font-weight:700">💡 P7</td>
+          <td>Corrigir a aba "Tabela Simplificada" (erros #REF!) e criar tabela por canal</td>
+          <td>Time comercial</td>
+          <td>1–2 meses</td>
+          <td>Ferramenta comercial por segmento</td>
+        </tr>
+        <tr>
+          <td style="color:#2E75B6;font-weight:700">💡 P8</td>
+          <td>Revisar mark-up por categoria (20–40% diferenciado vs 25% fixo atual)</td>
+          <td>Consultor + Diretoria</td>
+          <td>2 meses</td>
+          <td>+3 a 5 pp de MC média no portfólio</td>
+        </tr>
+        <tr>
+          <td style="color:#27500A;font-weight:700">✨ P9</td>
+          <td>Implementar revisão trimestral automatizada com relatório de variação de MC</td>
+          <td>Consultor Python</td>
+          <td>3 meses</td>
+          <td>Gestão ativa e sistemática de preços</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alerta-info">
+      <h3>💡 Nota metodológica final</h3>
+      <p style="color:#333">Os problemas identificados neste laudo não são exclusividade da Brazimil — são padrões comuns em indústrias de manufatura de pequeno e médio porte que crescem sem formalizar o processo de custeio e precificação. O ponto positivo é que a Brazimil já tem a estrutura certa na planilha do time — faltam dados completos e alguns ajustes metodológicos. Com as correções deste plano, o sistema estará adequado para suportar decisões comerciais com segurança técnica.</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="rodape">
+  Brazimil Indústria de Tintas · Laudo Técnico de Precificação · Consultoria Econômica · Uso Restrito
+</div>
+
+</div>
+</body>
+</html>
