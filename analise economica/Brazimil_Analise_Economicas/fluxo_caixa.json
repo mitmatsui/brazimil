@@ -1,0 +1,199 @@
+{
+  "gerado_em": "2026-05-20T21:48:41.986493",
+  "resumo": {
+    "total_carteira": 465780.6,
+    "total_aberto": 392548.79,
+    "total_recebido": 73231.81,
+    "total_vencido": 117090.3,
+    "taxa_inadimplencia": 29.8,
+    "qtd_boletos_abertos": 49,
+    "qtd_boletos_vencidos": 14
+  },
+  "proximas_4_semanas": [
+    {
+      "semana": "2026-S21",
+      "label": "Sem 21 (18/May–24/May)",
+      "inicio": "2026-05-18",
+      "fim": "2026-05-24",
+      "previsto": 4127.43,
+      "vencido_nper": 0.0,
+      "boletos_n": 1
+    },
+    {
+      "semana": "2026-S22",
+      "label": "Sem 22 (25/May–31/May)",
+      "inicio": "2026-05-25",
+      "fim": "2026-05-31",
+      "previsto": 23991.3,
+      "vencido_nper": 0.0,
+      "boletos_n": 3
+    },
+    {
+      "semana": "2026-S23",
+      "label": "Sem 23 (01/Jun–07/Jun)",
+      "inicio": "2026-06-01",
+      "fim": "2026-06-07",
+      "previsto": 36249.17,
+      "vencido_nper": 0.0,
+      "boletos_n": 4
+    },
+    {
+      "semana": "2026-S24",
+      "label": "Sem 24 (08/Jun–14/Jun)",
+      "inicio": "2026-06-08",
+      "fim": "2026-06-14",
+      "previsto": 25426.67,
+      "vencido_nper": 0.0,
+      "boletos_n": 2
+    }
+  ],
+  "aging": {
+    "1_30": 15591.25,
+    "31_60": 82324.5,
+    "61_90": 19174.55,
+    "mais_90": 0.0
+  },
+  "top_inadimplentes": [
+    {
+      "cliente": "Reforma Total",
+      "valor": 27185.61
+    },
+    {
+      "cliente": "ConstruBem",
+      "valor": 24725.36
+    },
+    {
+      "cliente": "Depósito Central",
+      "valor": 15449.13
+    },
+    {
+      "cliente": "Material AM",
+      "valor": 15321.15
+    },
+    {
+      "cliente": "Ferro & Cor",
+      "valor": 13549.57
+    },
+    {
+      "cliente": "Constrular AM",
+      "valor": 12650.36
+    },
+    {
+      "cliente": "MisTintas",
+      "valor": 8209.12
+    }
+  ],
+  "boletos_detalhes": [
+    {
+      "nosso_num": "00000052",
+      "cliente": "Material AM",
+      "emissao": "2026-02-27",
+      "vencimento": "2026-05-22",
+      "semana": "2026-S21",
+      "label": "Sem 21 (18/May–24/May)",
+      "valor": 4127.43,
+      "status": "aberto",
+      "dias_venc": 2
+    },
+    {
+      "nosso_num": "00000005",
+      "cliente": "Ferro & Cor",
+      "emissao": "2026-04-11",
+      "vencimento": "2026-05-25",
+      "semana": "2026-S22",
+      "label": "Sem 22 (25/May–31/May)",
+      "valor": 12423.72,
+      "status": "aberto",
+      "dias_venc": 5
+    },
+    {
+      "nosso_num": "00000026",
+      "cliente": "ConstruBem",
+      "emissao": "2026-03-13",
+      "vencimento": "2026-05-26",
+      "semana": "2026-S22",
+      "label": "Sem 22 (25/May–31/May)",
+      "valor": 6286.96,
+      "status": "aberto",
+      "dias_venc": 6
+    },
+    {
+      "nosso_num": "00000016",
+      "cliente": "MisTintas",
+      "emissao": "2026-03-12",
+      "vencimento": "2026-05-27",
+      "semana": "2026-S22",
+      "label": "Sem 22 (25/May–31/May)",
+      "valor": 5280.62,
+      "status": "aberto",
+      "dias_venc": 7
+    },
+    {
+      "nosso_num": "00000001",
+      "cliente": "Tudo & Cor",
+      "emissao": "2026-04-16",
+      "vencimento": "2026-06-02",
+      "semana": "2026-S23",
+      "label": "Sem 23 (01/Jun–07/Jun)",
+      "valor": 6020.91,
+      "status": "aberto",
+      "dias_venc": 13
+    },
+    {
+      "nosso_num": "00000027",
+      "cliente": "MisTintas",
+      "emissao": "2026-04-30",
+      "vencimento": "2026-06-05",
+      "semana": "2026-S23",
+      "label": "Sem 23 (01/Jun–07/Jun)",
+      "valor": 12298.48,
+      "status": "aberto",
+      "dias_venc": 16
+    },
+    {
+      "nosso_num": "00000033",
+      "cliente": "Material AM",
+      "emissao": "2026-05-04",
+      "vencimento": "2026-06-06",
+      "semana": "2026-S23",
+      "label": "Sem 23 (01/Jun–07/Jun)",
+      "valor": 14475.2,
+      "status": "aberto",
+      "dias_venc": 17
+    },
+    {
+      "nosso_num": "00000009",
+      "cliente": "MisTintas",
+      "emissao": "2026-05-03",
+      "vencimento": "2026-06-07",
+      "semana": "2026-S23",
+      "label": "Sem 23 (01/Jun–07/Jun)",
+      "valor": 3454.58,
+      "status": "aberto",
+      "dias_venc": 18
+    },
+    {
+      "nosso_num": "00000032",
+      "cliente": "Constrular AM",
+      "emissao": "2026-03-22",
+      "vencimento": "2026-06-11",
+      "semana": "2026-S24",
+      "label": "Sem 24 (08/Jun–14/Jun)",
+      "valor": 11396.84,
+      "status": "aberto",
+      "dias_venc": 22
+    },
+    {
+      "nosso_num": "00000044",
+      "cliente": "Material AM",
+      "emissao": "2026-03-26",
+      "vencimento": "2026-06-12",
+      "semana": "2026-S24",
+      "label": "Sem 24 (08/Jun–14/Jun)",
+      "valor": 14029.83,
+      "status": "aberto",
+      "dias_venc": 23
+    }
+  ],
+  "exemplo": true
+}
