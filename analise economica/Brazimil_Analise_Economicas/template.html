@@ -402,7 +402,7 @@
   <button class="aba" onclick="irPara(this,'pg-zfm')">Tributação ZFM</button>
   <button class="aba" onclick="irPara(this,'pg-vendas')">Evolução de Vendas</button>
   <button class="aba" onclick="irPara(this,'pg-fluxo')">Fluxo de Caixa</button>
-  <button class="aba" onclick="irPara(this,'pg-indicadores')">Valuation & PE</button>
+  <button class="aba" onclick="irPara(this,'pg-indicadores')">Análise de Retorno</button>
 </div>
 
 <!-- PAINEL GERAL -->
@@ -1332,7 +1332,7 @@ function atualizarComp() {
     // Ganho 1: redução inadimplência
     var pddAtual = valBase.fat_anual * (inadAtual/100);
     var pddMeta  = valBase.fat_anual * (inadMeta/100);
-    var ganhoInad = (pddAtual - pddMeta) * 0.7 * mult; // EBITDA impacto × múltiplo
+    var ganhoInad = (pddAtual - pddMeta) * (1 - 0.10) * mult; // PDD recuperada líquida de IR (10%) × múltiplo
 
     // Ganho 2: aumento de margem
     var ganhoMC = valBase.fat_anual * (mcGanho/100) * mult;
@@ -1394,67 +1394,107 @@ function atualizarComp() {
   function calcIndicadoresCompletos() {
     if (!valBase) return;
 
-    var inv    = parseFloat(document.getElementById("ti-inv").value)    || 800000;
-    var cresc  = parseFloat(document.getElementById("ti-cresc").value)  || 8;
-    var wacc   = parseFloat(document.getElementById("ti-wacc").value)   || 15;
-    var capOp  = parseFloat(document.getElementById("ti-cap-op").value) || 620000;
+    var inv      = parseFloat(document.getElementById("ti-inv").value)      || 800000;
+    var cresc    = parseFloat(document.getElementById("ti-cresc").value)    || 8;
+    var wacc     = parseFloat(document.getElementById("ti-wacc").value)     || 15;
+    var capOp    = parseFloat(document.getElementById("ti-cap-op").value)   || 620000;
+    var g        = parseFloat(document.getElementById("ti-g").value)        || 3.5;
+    var irAliq   = parseFloat(document.getElementById("ti-ir").value)       || 15;
+    var capex    = parseFloat(document.getElementById("ti-capex").value)    || 80000;
+    var da       = parseFloat(document.getElementById("ti-da").value)       || 40000;
+    var dsoMeta  = parseFloat(document.getElementById("ti-dso-meta").value) || 30;
+    var dsoAtual = valBase.dso_dias || 9.4;
+
+    // Exibe DSO atual no hint
+    var dsoEl = document.getElementById("ti-dso-atual");
+    if (dsoEl) dsoEl.textContent = dsoAtual.toFixed(1);
+    var ndm=document.getElementById('nota-dso-meta'); if(ndm) ndm.textContent=dsoMeta;
+
+    // Validação: g deve ser < WACC
+    if (g >= wacc) g = wacc - 1;
 
     var fatBase    = valBase.fat_anual;
     var mcPct      = valBase.mc_media / 100;
     var cfAnual    = valBase.cf_mensal * 12;
     var ebitdaBase = valBase.ebitda_anual;
+    var ir         = irAliq / 100;
 
-    // ── Projeção 5 anos ──────────────────────────────────────────────────
-    var fluxos = [-inv]; // Ano 0 = investimento negativo
+    // NWC base: Contas a Receber = fat_anual * (dsoAtual/360)
+    var nwcBase = fatBase * (dsoAtual / 360);
+
+    // ── Projeção 5 anos — FCFF Completo ──────────────────────────────────
+    // FCFF = EBITDA×(1-T) + D&A - Capex - ΔNWC
+    var fluxos = [-inv];
     var rows   = [];
-    var vplAcum = -inv;
-    var pbDescontado = null;
-    var meses  = 0;
+    var fatAnt = fatBase;
+    var vplAcumCorreto = -inv;
+    var pbDescMeses = null;
 
-    // Payback simples (mensal)
-    var fclMedMensal = (ebitdaBase * 0.7) / 12;
-    var pbSimples = fclMedMensal > 0 ? inv / fclMedMensal : 9999;
+    // Payback simples usando FCFF médio estimado ano 1
+    var fat1     = fatBase * (1 + cresc/100);
+    var ebitda1  = fat1 * mcPct - cfAnual;
+    var nopat1   = ebitda1 * (1 - ir);
+    var nwc1     = fat1 * (dsoMeta / 360);
+    var dnwc1    = nwc1 - nwcBase;
+    var fcff1    = nopat1 + da - capex - dnwc1;
+    var pbSimples = fcff1 > 0 ? (inv / (fcff1/12)) : 9999;
+
+    var vtAno5 = 0; // Valor Terminal — calculado no Ano 5
 
     for (var ano = 1; ano <= 5; ano++) {
       var fat    = fatBase * Math.pow(1 + cresc/100, ano);
-      var cv     = fat * (1 - mcPct);
       var mcTot  = fat * mcPct;
       var ebitda = mcTot - cfAnual;
-      var fcl    = ebitda * 0.7; // FCFF estimado (70% do EBITDA)
-      var fclD   = fcl / Math.pow(1 + wacc/100, ano);
-      vplAcum   += fclD;
-      fluxos.push(fcl);
 
-      // Payback descontado — mês a mês simplificado
-      if (pbDescontado === null) {
-        var fclMensal = fcl / 12;
-        var fclDMens  = fclD / 12;
-        for (var m = 1; m <= 12; m++) {
-          meses++;
-          vplAcum += fclDMens - fclMensal; // recalcula incrementalmente
-          // verificação simplificada
-        }
-        if (vplAcum >= 0) pbDescontado = meses;
+      // NOPAT = EBITDA × (1 − T)
+      var nopat  = ebitda * (1 - ir);
+
+      // Capex cresce com a receita (intensidade de capital constante)
+      var capexAno = capex * Math.pow(1 + cresc/100, ano - 1);
+
+      // D&A cresce mais lentamente (ativos depreciados ficam para trás)
+      var daAno = da * Math.pow(1 + (cresc/100) * 0.5, ano - 1);
+
+      // ΔNWC = variação do capital de giro baseada no DSO meta
+      // NWC = Receita × (DSO/360) — DSO converge do atual para a meta ao longo dos 5 anos
+      var dsoAno = dsoAtual + (dsoMeta - dsoAtual) * (ano / 5);
+      var nwcAno = fat * (dsoAno / 360);
+      var nwcAnt = fatAnt * ((dsoAno - (dsoMeta - dsoAtual) / 5) / 360);
+      var dnwc   = nwcAno - nwcAnt;
+
+      // FCFF completo
+      var fcff   = nopat + daAno - capexAno - dnwc;
+      var fcffD  = fcff / Math.pow(1 + wacc/100, ano);
+
+      // Valor Terminal no último ano (Gordon Growth Model com g separado)
+      var vt = 0;
+      if (ano === 5) {
+        var fcffN1 = fcff * (1 + g/100); // FCFFn+1
+        vt = fcffN1 / ((wacc/100) - (g/100));
+        vtAno5 = vt / Math.pow(1 + wacc/100, 5);
       }
 
-      // Tabela
-      rows.push({ano:"Ano "+ano, fat:fat, cv:cv, mc:mcTot,
-        cf:cfAnual, ebitda:ebitda, fcl:fcl, fcld:fclD,
-        vplAcum: vplAcum > 0 ? vplAcum : vplAcum});
+      vplAcumCorreto += fcffD;
+      fluxos.push(fcff);
+      if (pbDescMeses === null && vplAcumCorreto >= 0) pbDescMeses = ano * 12;
+
+      rows.push({
+        ano:"Ano "+ano, fat:fat, ebitda:ebitda,
+        nopat:nopat, da:daAno, capex:capexAno,
+        dnwc:dnwc, fcff:fcff, fcffd:fcffD,
+        vt: ano === 5 ? vtAno5 : 0,
+        vplAcum: vplAcumCorreto
+      });
+
+      fatAnt = fat;
     }
 
-    // Recalcula VPL acumulado corretamente
-    var vplAcumCorreto = -inv;
-    var pbDescMeses = null;
-    rows.forEach(function(r, i) {
-      vplAcumCorreto += r.fcld;
-      r.vplAcum = vplAcumCorreto;
-      if (pbDescMeses === null && vplAcumCorreto >= 0) pbDescMeses = (i+1)*12;
-    });
+    // VPL total inclui Valor Terminal
+    var vplTotal = vplAcumCorreto + vtAno5;
 
     // ── TIR ─────────────────────────────────────────────────────────────
     var tir = calcTIR(fluxos) * 100;
-    var vpl = rows[rows.length-1].vplAcum;
+    var vpl = vplTotal;
     var il  = inv > 0 ? (vpl / inv) + 1 : 0;
 
     // ── ROIC, GAO, Eficiência ────────────────────────────────────────────
@@ -1497,7 +1537,7 @@ function atualizarComp() {
     var pbBarras = "";
     var invAcum = -inv;
     rows.forEach(function(r) {
-      invAcum += r.fcl;
+      invAcum += r.fcff;
       var pctRec = Math.min(Math.max((invAcum + inv) / inv * 100, 0), 100);
       var cor = invAcum >= 0 ? "#3fb950" : "#2E75B6";
       pbBarras += '<div class="pb-linha">' +
@@ -1536,24 +1576,32 @@ function atualizarComp() {
     var tbody = "";
     rows.forEach(function(r) {
       var cor = r.vplAcum >= 0 ? "color:#27500A;font-weight:700" : "";
+      var vtTxt = r.vt > 0 ? fmtBR(r.vt) : "—";
       tbody += "<tr>" +
         "<td>"+r.ano+"</td>" +
         "<td>"+fmtBR(r.fat)+"</td>" +
-        "<td style='color:#E24B4A'>"+fmtBR(r.cv)+"</td>" +
-        "<td>"+fmtBR(r.mc)+"</td>" +
-        "<td style='color:#E24B4A'>"+fmtBR(r.cf)+"</td>" +
         "<td style='color:#2E75B6;font-weight:700'>"+fmtBR(r.ebitda)+"</td>" +
-        "<td>"+fmtBR(r.fcl)+"</td>" +
-        "<td>"+fmtBR(r.fcld)+"</td>" +
+        "<td>"+fmtBR(r.nopat)+"</td>" +
+        "<td style='color:#8b949e'>+"+fmtBR(r.da)+"</td>" +
+        "<td style='color:#E24B4A'>−"+fmtBR(r.capex)+"</td>" +
+        "<td style='color:#E24B4A'>−"+fmtBR(Math.abs(r.dnwc))+"</td>" +
+        "<td style='font-weight:700'>"+fmtBR(r.fcff)+"</td>" +
+        "<td>"+fmtBR(r.fcffd)+"</td>" +
+        "<td style='color:#f0883e;font-weight:700'>"+vtTxt+"</td>" +
         "<td style='"+cor+"'>"+fmtBR(r.vplAcum)+"</td>" +
         "</tr>";
     });
     // Totais
-    var totFat=rows.reduce(function(a,r){return a+r.fat;},0);
-    var totFcl=rows.reduce(function(a,r){return a+r.fcl;},0);
-    tbody += "<tr class='total-row'><td>TOTAL</td><td>"+fmtBR(totFat)+"</td>"+
-      "<td></td><td></td><td></td><td></td><td>"+fmtBR(totFcl)+"</td>"+
-      "<td></td><td>"+fmtBR(rows[rows.length-1].vplAcum)+"</td></tr>";
+    var totFat  = rows.reduce(function(a,r){return a+r.fat;},0);
+    var totFcff = rows.reduce(function(a,r){return a+r.fcff;},0);
+    var totCapex= rows.reduce(function(a,r){return a+r.capex;},0);
+    var totDNWC = rows.reduce(function(a,r){return a+r.dnwc;},0);
+    tbody += "<tr class='total-row'><td>5 ANOS</td><td>"+fmtBR(totFat)+"</td>"+
+      "<td></td><td></td><td></td><td>−"+fmtBR(totCapex)+"</td>"+
+      "<td>−"+fmtBR(Math.abs(totDNWC))+"</td>"+
+      "<td>"+fmtBR(totFcff)+"</td><td></td>"+
+      "<td style='color:#f0883e'>"+fmtBR(vtAno5)+"</td>"+
+      "<td style='color:#27500A;font-weight:700'>"+fmtBR(vplTotal)+"</td></tr>";
     document.getElementById("proj-tbody").innerHTML = tbody;
 
     // ── Gráfico de projeção ──────────────────────────────────────────────
@@ -1566,9 +1614,9 @@ function atualizarComp() {
         datasets: [
           { label:"Receita",  data:rows.map(function(r){return r.fat/1000;}),
             backgroundColor:"rgba(46,117,182,.25)", borderColor:"#2E75B6", borderWidth:1, borderRadius:4, order:2 },
-          { label:"EBITDA",   data:rows.map(function(r){return r.ebitda/1000;}),
+          { label:"FCFF",     data:rows.map(function(r){return r.fcff/1000;}),
             backgroundColor:"rgba(99,153,34,.7)", borderRadius:4, order:2 },
-          { label:"FCL Desc.",data:rows.map(function(r){return r.fcld/1000;}),
+          { label:"FCFF Desc.",data:rows.map(function(r){return r.fcffd/1000;}),
             type:"line", borderColor:"#f0883e", backgroundColor:"transparent",
             borderWidth:2, pointRadius:4, order:1 }
         ]
@@ -1675,13 +1723,26 @@ function atualizarComp() {
     var vByPL      = lucro * 10;
 
     // DCF simplificado 5 anos
-    var fcAnual = ebitda * 0.7; // FCFF = EBITDA * 0.7 (estimativa capex + impostos)
+    // FCFF Ano 1 com parâmetros padrão (versão simplificada do DCF rápido)
+    var irDcf    = 0.10;   // alíquota efetiva estimada para o DCF rápido
+    var capexDcf = valBase.fat_anual * 0.018; // ~1,8% da receita (intensidade de capital indústria tintas)
+    var daDcf    = capexDcf * 0.5;            // D&A ≈ 50% do Capex
+    var dnwcDcf  = valBase.fat_anual * (cresc/100) * (valBase.dso_dias / 360); // ΔNWC dinâmico
+    var gDcf     = 3.5;   // taxa de crescimento na perpetuidade — Gordon Growth Model padrão
+
     var vDCF = 0;
+    var fatDcf = valBase.fat_anual;
     for (var t=1; t<=5; t++) {
-      vDCF += fcAnual * Math.pow(1+(cresc/100), t) / Math.pow(1+(wacc/100), t);
+      fatDcf = fatDcf * (1 + cresc/100);
+      var ebitdaT = fatDcf * (mcMedia/100) - valBase.cf_mensal * 12;
+      var nopatT  = ebitdaT * (1 - irDcf);
+      var fcffT   = nopatT + daDcf - capexDcf - dnwcDcf;
+      vDCF += fcffT / Math.pow(1+(wacc/100), t);
     }
-    // Valor terminal
-    var vTerminal = (fcAnual * Math.pow(1+(cresc/100),5) * (1+(cresc/100))) / ((wacc/100) - (cresc/100 * 0.5));
+    // Valor Terminal — Gordon Growth Model com g separado (padrão de mercado)
+    var fcffN1 = (valBase.ebitda_anual * (1-irDcf) + daDcf - capexDcf - dnwcDcf) * Math.pow(1+(cresc/100),5) * (1 + gDcf/100);
+    var waccR  = wacc/100;
+    var vTerminal = (waccR > gDcf/100) ? fcffN1 / (waccR - gDcf/100) : 0;
     vDCF += vTerminal > 0 ? vTerminal / Math.pow(1+(wacc/100),5) : 0;
 
     document.getElementById("vl-by-ebitda").textContent  = fmtBR(vByEbitda);
@@ -1757,14 +1818,23 @@ function atualizarComp() {
     renderAno0();
     calcCenario();
     calcIndicadoresCompletos();
+    var nd=document.getElementById('nota-dso'); if(nd) nd.textContent=valBase.dso_dias.toFixed(1);
 
     // ── GRÁFICO Sensibilidade Valuation ─────────────────────────────────────
     var crescArr = [2,4,6,8,10,12,15,20];
     var vArr = crescArr.map(function(c) {
-      var fc2 = ebitda * 0.7;
+      // Sensibilidade DCF com FCFF corrigido e Gordon Growth Model
+      var ir2   = 0.10;
+      var g2    = 3.5; // taxa perpétua fixa
+      var fcff2Base = ebitda * (1 - ir2); // NOPAT simplificado (sem Capex/DA para sensibilidade)
       var vd = 0;
-      for (var t=1;t<=5;t++) vd += fc2*Math.pow(1+(c/100),t)/Math.pow(1+(wacc/100),t);
-      var vt = (fc2*Math.pow(1+(c/100),5)*(1+(c/100)))/((wacc/100)-(c/100*0.5));
+      for (var t=1;t<=5;t++) {
+        var fcffT2 = fcff2Base * Math.pow(1+(c/100),t);
+        vd += fcffT2 / Math.pow(1+(wacc/100),t);
+      }
+      // Valor Terminal — Gordon Growth Model com g separado
+      var fcffN1_2 = fcff2Base * Math.pow(1+(c/100),5) * (1+g2/100);
+      var vt = (wacc/100 > g2/100) ? fcffN1_2 / ((wacc/100) - (g2/100)) : 0;
       vd += vt > 0 ? vt/Math.pow(1+(wacc/100),5) : 0;
       return Math.max(0,(vd/1000000));
     });
@@ -2344,17 +2414,27 @@ if (sessionStorage.getItem(SESSAO_KEY) === "ok") {
           <tr>
             <th>Ano</th>
             <th>Receita</th>
-            <th>Custos Variáveis</th>
-            <th>MC Total</th>
-            <th>Custos Fixos</th>
             <th>EBITDA</th>
-            <th>FCL</th>
-            <th>FCL Descontado</th>
+            <th>NOPAT</th>
+            <th>D&amp;A</th>
+            <th>Capex</th>
+            <th>ΔNWC</th>
+            <th>FCFF</th>
+            <th>FCFF Desc.</th>
+            <th>VT (Ano 5)</th>
             <th>VPL Acumulado</th>
           </tr>
         </thead>
         <tbody id="proj-tbody"></tbody>
       </table>
+    </div>
+    <div style="background:#f7f7f7;border-radius:8px;padding:10px 14px;
+      font-size:12px;color:#555;margin-top:12px;line-height:1.7">
+      <b style="color:#1F3864">Metodologia FCFF:</b>
+      FCFF = NOPAT + D&amp;A − Capex − ΔNWC &nbsp;|&nbsp;
+      NOPAT = EBITDA × (1 − T) &nbsp;|&nbsp;
+      ΔNWC calculado com DSO real (atual: <span id="nota-dso">—</span> dias → meta: <span id="nota-dso-meta">—</span> dias) &nbsp;|&nbsp;
+      Valor Terminal pelo Gordon Growth Model: FCFF<sub>n+1</sub> / (WACC − g) com g = taxa de crescimento perpétuo separada do crescimento explícito.
     </div>
     <div style="position:relative;height:220px;margin-top:14px">
       <canvas id="proj-grafico" role="img" aria-label="Projeção de fluxo de caixa 5 anos"></canvas>
