@@ -320,6 +320,56 @@
   .dso-box.warn{background:#FFF2CC;color:#7F6000}
   .dso-box b{font-weight:700}
 
+
+  /* ── TIR · Payback · Indicadores Completos ── */
+  .ind-full-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+  .ind-full-card{background:#fff;border-radius:10px;border:1px solid #e0e0e0;padding:18px 20px}
+  .ifc-titulo{font-size:12px;font-weight:700;color:#1F3864;text-transform:uppercase;
+    letter-spacing:.06em;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #BDD7EE;
+    display:flex;align-items:center;gap:8px}
+  .ifc-row{display:flex;justify-content:space-between;align-items:flex-start;
+    padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:13px}
+  .ifc-row:last-child{border-bottom:none;padding-top:10px;margin-top:4px;
+    border-top:2px solid #f0f0f0;font-weight:700}
+  .ifc-label{color:#555;flex:1;padding-right:8px}
+  .ifc-formula{font-size:10px;color:#aaa;font-style:italic;margin-top:2px}
+  .ifc-val{font-size:15px;font-weight:700;color:#1F3864;text-align:right;min-width:90px}
+  .ifc-val.ok  {color:#27500A}
+  .ifc-val.warn{color:#7F6000}
+  .ifc-val.bad {color:#791F1F}
+  .ifc-val.big {font-size:20px;color:#2E75B6}
+  .pb-visual{margin-top:14px}
+  .pb-linha{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:11px}
+  .pb-label{width:90px;flex-shrink:0;color:#555}
+  .pb-track{flex:1;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden}
+  .pb-fill {height:100%;border-radius:4px;transition:width .4s}
+  .pb-val  {width:60px;text-align:right;font-weight:700;font-size:11px}
+  .inp-group{margin-bottom:10px}
+  .inp-group label{font-size:11px;font-weight:700;color:#1F3864;
+    text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px}
+  .inp-group input{width:100%;padding:7px 10px;border-radius:6px;
+    border:1.5px solid #2E75B6;font-size:13px;font-weight:600;
+    color:#1F3864;background:#fff;text-align:right}
+  .inp-group input:focus{outline:none;border-color:#1F3864;background:#EEF4FF}
+  .inp-group .hint{font-size:10px;color:#aaa;margin-top:2px;font-style:italic}
+  .tir-gauge{position:relative;height:16px;background:#f0f0f0;
+    border-radius:8px;overflow:hidden;margin:10px 0 4px}
+  .tir-fill{height:100%;border-radius:8px;transition:width .5s}
+  .tir-wacc-line{position:absolute;top:0;bottom:0;width:2px;background:#E24B4A}
+  .break-ano{background:#1F3864;color:#fff;border-radius:8px;padding:14px;
+    text-align:center;margin-bottom:10px}
+  .break-ano .ba-num{font-size:32px;font-weight:700;color:#89dceb}
+  .break-ano .ba-label{font-size:11px;color:#BDD7EE;text-transform:uppercase;letter-spacing:.05em}
+  .break-ano .ba-sub{font-size:12px;color:#aaa;margin-top:4px}
+  .proj-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+  .proj-table th{background:#1F3864;color:#fff;padding:7px 10px;
+    text-align:right;font-size:11px;font-weight:700}
+  .proj-table th:first-child{text-align:left}
+  .proj-table td{padding:6px 10px;border-bottom:1px solid #f0f0f0;text-align:right}
+  .proj-table td:first-child{text-align:left;font-weight:700;color:#1F3864}
+  .proj-table tr:hover td{background:#f7f7f7}
+  .proj-table .total-row td{background:#EAF3DE;font-weight:700;color:#27500A}
+
   </style>
 </head>
 <body>
@@ -1316,6 +1366,221 @@ function atualizarComp() {
     document.getElementById("cen-argumento").textContent = arg;
   }
 
+
+  // ── Indicadores Completos: TIR, Payback, ROIC, GAO, Eficiência ──────────
+  var graficoProj = null;
+
+  function calcTIR(fluxos, maxIter, tol) {
+    // Newton-Raphson para calcular a TIR
+    maxIter = maxIter || 1000; tol = tol || 0.0001;
+    var tir = 0.1;
+    for (var i = 0; i < maxIter; i++) {
+      var vpl = 0, dvpl = 0;
+      for (var t = 0; t < fluxos.length; t++) {
+        vpl  += fluxos[t] / Math.pow(1 + tir, t);
+        dvpl -= t * fluxos[t] / Math.pow(1 + tir, t + 1);
+      }
+      var novo = tir - vpl / dvpl;
+      if (Math.abs(novo - tir) < tol) return novo;
+      tir = novo;
+    }
+    return tir;
+  }
+
+  function fmtMes(m) {
+    return m < 12 ? m.toFixed(1)+" m" : (m/12).toFixed(1)+" anos";
+  }
+
+  function calcIndicadoresCompletos() {
+    if (!valBase) return;
+
+    var inv    = parseFloat(document.getElementById("ti-inv").value)    || 800000;
+    var cresc  = parseFloat(document.getElementById("ti-cresc").value)  || 8;
+    var wacc   = parseFloat(document.getElementById("ti-wacc").value)   || 15;
+    var capOp  = parseFloat(document.getElementById("ti-cap-op").value) || 620000;
+
+    var fatBase    = valBase.fat_anual;
+    var mcPct      = valBase.mc_media / 100;
+    var cfAnual    = valBase.cf_mensal * 12;
+    var ebitdaBase = valBase.ebitda_anual;
+
+    // ── Projeção 5 anos ──────────────────────────────────────────────────
+    var fluxos = [-inv]; // Ano 0 = investimento negativo
+    var rows   = [];
+    var vplAcum = -inv;
+    var pbDescontado = null;
+    var meses  = 0;
+
+    // Payback simples (mensal)
+    var fclMedMensal = (ebitdaBase * 0.7) / 12;
+    var pbSimples = fclMedMensal > 0 ? inv / fclMedMensal : 9999;
+
+    for (var ano = 1; ano <= 5; ano++) {
+      var fat    = fatBase * Math.pow(1 + cresc/100, ano);
+      var cv     = fat * (1 - mcPct);
+      var mcTot  = fat * mcPct;
+      var ebitda = mcTot - cfAnual;
+      var fcl    = ebitda * 0.7; // FCFF estimado (70% do EBITDA)
+      var fclD   = fcl / Math.pow(1 + wacc/100, ano);
+      vplAcum   += fclD;
+      fluxos.push(fcl);
+
+      // Payback descontado — mês a mês simplificado
+      if (pbDescontado === null) {
+        var fclMensal = fcl / 12;
+        var fclDMens  = fclD / 12;
+        for (var m = 1; m <= 12; m++) {
+          meses++;
+          vplAcum += fclDMens - fclMensal; // recalcula incrementalmente
+          // verificação simplificada
+        }
+        if (vplAcum >= 0) pbDescontado = meses;
+      }
+
+      // Tabela
+      rows.push({ano:"Ano "+ano, fat:fat, cv:cv, mc:mcTot,
+        cf:cfAnual, ebitda:ebitda, fcl:fcl, fcld:fclD,
+        vplAcum: vplAcum > 0 ? vplAcum : vplAcum});
+    }
+
+    // Recalcula VPL acumulado corretamente
+    var vplAcumCorreto = -inv;
+    var pbDescMeses = null;
+    rows.forEach(function(r, i) {
+      vplAcumCorreto += r.fcld;
+      r.vplAcum = vplAcumCorreto;
+      if (pbDescMeses === null && vplAcumCorreto >= 0) pbDescMeses = (i+1)*12;
+    });
+
+    // ── TIR ─────────────────────────────────────────────────────────────
+    var tir = calcTIR(fluxos) * 100;
+    var vpl = rows[rows.length-1].vplAcum;
+    var il  = inv > 0 ? (vpl / inv) + 1 : 0;
+
+    // ── ROIC, GAO, Eficiência ────────────────────────────────────────────
+    var roic = capOp > 0 ? (ebitdaBase / capOp) * 100 : 0;
+    var mcTotalAnual = fatBase * mcPct;
+    var gao  = ebitdaBase > 0 ? mcTotalAnual / ebitdaBase : 0;
+    var peValor = valBase.cf_mensal / (mcPct); // PE mensal em valor
+    var peAnual = peValor * 12;
+    var ms   = fatBase > 0 ? ((fatBase - peAnual) / fatBase) * 100 : 0;
+    var ie   = fatBase > 0 ? (cfAnual / fatBase) * 100 : 0;
+    var peDias = fatBase > 0 ? (peAnual / fatBase) * 365 : 0;
+    var spread = tir - wacc;
+
+    // ── Atualiza DOM ─────────────────────────────────────────────────────
+    // TIR
+    var tirEl = document.getElementById("tir-val");
+    tirEl.textContent = tir.toFixed(1) + "%";
+    tirEl.className = "ifc-val big " + (tir > wacc ? "ok" : "bad");
+    var tirPct = Math.min(tir/50*100, 100);
+    document.getElementById("tir-fill").style.width = tirPct + "%";
+    document.getElementById("tir-fill").style.background = tir > wacc ? "#3fb950" : "#E24B4A";
+    var waccPct = Math.min(wacc/50*100, 100);
+    document.getElementById("tir-wacc-ln").style.left = waccPct + "%";
+    document.getElementById("tir-status-txt").innerHTML =
+      tir > wacc
+        ? '<span style="color:#27500A">✅ TIR ('+tir.toFixed(1)+'%) &gt; WACC ('+wacc+'%) — o negócio CRIA VALOR</span>'
+        : '<span style="color:#791F1F">⚠️ TIR ('+tir.toFixed(1)+'%) &lt; WACC ('+wacc+'%) — o negócio DESTRÓI VALOR neste cenário</span>';
+
+    // VPL, Payback, IL
+    var vplEl = document.getElementById("vpl-val");
+    vplEl.textContent = fmtBR(vpl);
+    vplEl.className = "ifc-val " + (vpl > 0 ? "ok" : "bad");
+    document.getElementById("pb-simples").textContent = fmtMes(pbSimples);
+    document.getElementById("pb-descontado").textContent = pbDescMeses ? fmtMes(pbDescMeses) : "> 5 anos";
+    var ilEl = document.getElementById("il-val");
+    ilEl.textContent = il.toFixed(2) + "x";
+    ilEl.className = "ifc-val " + (il > 1 ? "ok" : "bad");
+
+    // Payback barras (ano a ano)
+    var pbBarras = "";
+    var invAcum = -inv;
+    rows.forEach(function(r) {
+      invAcum += r.fcl;
+      var pctRec = Math.min(Math.max((invAcum + inv) / inv * 100, 0), 100);
+      var cor = invAcum >= 0 ? "#3fb950" : "#2E75B6";
+      pbBarras += '<div class="pb-linha">' +
+        '<div class="pb-label">'+r.ano+'</div>' +
+        '<div class="pb-track"><div class="pb-fill" style="width:'+pctRec.toFixed(0)+'%;background:'+cor+'"></div></div>' +
+        '<div class="pb-val" style="color:'+cor+'">'+pctRec.toFixed(0)+'%</div></div>';
+    });
+    document.getElementById("pb-barras").innerHTML = pbBarras;
+
+    // ROIC, GAO, MS, IE, Spread
+    var roicEl = document.getElementById("roic-val");
+    roicEl.textContent = roic.toFixed(1)+"%";
+    roicEl.className = "ifc-val "+(roic>15?"ok":roic>8?"warn":"bad");
+    document.getElementById("gao-val").textContent = gao.toFixed(2)+"x";
+    var msEl = document.getElementById("ms-val");
+    msEl.textContent = ms.toFixed(1)+"%";
+    msEl.className = "ifc-val "+(ms>30?"ok":ms>15?"warn":"bad");
+    var ieEl = document.getElementById("ie-val");
+    ieEl.textContent = ie.toFixed(1)+"%";
+    ieEl.className = "ifc-val "+(ie<30?"ok":ie<50?"warn":"bad");
+    var breakDia = Math.round(peDias);
+    document.getElementById("pe-dia").textContent = breakDia+"º dia";
+    var spreadEl = document.getElementById("spread-val");
+    spreadEl.textContent = (spread>=0?"+":"")+spread.toFixed(1)+" pp";
+    spreadEl.className = "ifc-val "+(spread>0?"ok":"bad");
+
+    // Break-even no ano
+    document.getElementById("break-dia-ano").textContent = breakDia+"º dia";
+    var meses_nomes=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+    var mesBreak = Math.ceil(peDias/30);
+    var nomeBreak = mesBreak <= 12 ? meses_nomes[mesBreak-1] : "Dez";
+    document.getElementById("break-data-txt").textContent =
+      "Aproximadamente em "+nomeBreak+" — a partir daí cada real vendido gera lucro real";
+
+    // ── Tabela de projeção ───────────────────────────────────────────────
+    var tbody = "";
+    rows.forEach(function(r) {
+      var cor = r.vplAcum >= 0 ? "color:#27500A;font-weight:700" : "";
+      tbody += "<tr>" +
+        "<td>"+r.ano+"</td>" +
+        "<td>"+fmtBR(r.fat)+"</td>" +
+        "<td style='color:#E24B4A'>"+fmtBR(r.cv)+"</td>" +
+        "<td>"+fmtBR(r.mc)+"</td>" +
+        "<td style='color:#E24B4A'>"+fmtBR(r.cf)+"</td>" +
+        "<td style='color:#2E75B6;font-weight:700'>"+fmtBR(r.ebitda)+"</td>" +
+        "<td>"+fmtBR(r.fcl)+"</td>" +
+        "<td>"+fmtBR(r.fcld)+"</td>" +
+        "<td style='"+cor+"'>"+fmtBR(r.vplAcum)+"</td>" +
+        "</tr>";
+    });
+    // Totais
+    var totFat=rows.reduce(function(a,r){return a+r.fat;},0);
+    var totFcl=rows.reduce(function(a,r){return a+r.fcl;},0);
+    tbody += "<tr class='total-row'><td>TOTAL</td><td>"+fmtBR(totFat)+"</td>"+
+      "<td></td><td></td><td></td><td></td><td>"+fmtBR(totFcl)+"</td>"+
+      "<td></td><td>"+fmtBR(rows[rows.length-1].vplAcum)+"</td></tr>";
+    document.getElementById("proj-tbody").innerHTML = tbody;
+
+    // ── Gráfico de projeção ──────────────────────────────────────────────
+    var anos = rows.map(function(r){return r.ano;});
+    if (graficoProj) graficoProj.destroy();
+    graficoProj = new Chart(document.getElementById("proj-grafico"), {
+      type: "bar",
+      data: {
+        labels: anos,
+        datasets: [
+          { label:"Receita",  data:rows.map(function(r){return r.fat/1000;}),
+            backgroundColor:"rgba(46,117,182,.25)", borderColor:"#2E75B6", borderWidth:1, borderRadius:4, order:2 },
+          { label:"EBITDA",   data:rows.map(function(r){return r.ebitda/1000;}),
+            backgroundColor:"rgba(99,153,34,.7)", borderRadius:4, order:2 },
+          { label:"FCL Desc.",data:rows.map(function(r){return r.fcld/1000;}),
+            type:"line", borderColor:"#f0883e", backgroundColor:"transparent",
+            borderWidth:2, pointRadius:4, order:1 }
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:"bottom",labels:{font:{size:10}}},
+          tooltip:{callbacks:{label:function(c){return " "+c.dataset.label+": "+fmtBR(c.raw*1000);}}}},
+        scales:{x:{ticks:{font:{size:10}}},
+          y:{ticks:{callback:function(v){return "R$"+v.toFixed(0)+"k";}}}}}
+    });
+  }
+
   // ── Valuation & Ponto de Equilíbrio ─────────────────────────────────────────
   var graficoValPE = null, graficoValSens = null;
   var valBase = __VALUATION_BASE_JSON__;
@@ -1488,9 +1753,10 @@ function atualizarComp() {
           y:{beginAtZero:true,ticks:{callback:function(v){return "R$ "+v.toFixed(0);}}}}}
     });
 
-    // ── Renderiza Ano 0 e Cenário base
+    // ── Renderiza Ano 0 e Cenários
     renderAno0();
     calcCenario();
+    calcIndicadoresCompletos();
 
     // ── GRÁFICO Sensibilidade Valuation ─────────────────────────────────────
     var crescArr = [2,4,6,8,10,12,15,20];
@@ -1976,6 +2242,125 @@ if (sessionStorage.getItem(SESSAO_KEY) === "ok") {
   </div>
 
   <!-- Análise de sensibilidade do Valuation -->
+  
+  <!-- INPUTS TIR & PAYBACK -->
+  <div class="ind-full-grid" style="margin-bottom:14px">
+    <div class="ind-full-card">
+      <div class="ifc-titulo">⚙️ Inputs — Investimento & Projeção</div>
+      <div class="inp-group">
+        <label>Investimento Inicial (R$) <span class="val-badge vb-edit">EDITE</span></label>
+        <input type="number" id="ti-inv" value="800000" oninput="calcIndicadoresCompletos()">
+        <div class="hint">Capital total investido na empresa (máquinas + capital de giro inicial)</div>
+      </div>
+      <div class="inp-group">
+        <label>Projeção de Crescimento Anual (%) <span class="val-badge vb-edit">EDITE</span></label>
+        <input type="number" id="ti-cresc" value="8" step="1" oninput="calcIndicadoresCompletos()">
+        <div class="hint">Crescimento esperado do faturamento nos próximos 5 anos</div>
+      </div>
+      <div class="inp-group">
+        <label>WACC / Taxa de Desconto (%) <span class="val-badge vb-edit">EDITE</span></label>
+        <input type="number" id="ti-wacc" value="15" step="1" oninput="calcIndicadoresCompletos()">
+        <div class="hint">Custo de capital — referência: SELIC + prêmio de risco (15% para PME AM)</div>
+      </div>
+      <div class="inp-group">
+        <label>Capital Investido em Operações (R$) <span class="val-badge vb-edit">EDITE</span></label>
+        <input type="number" id="ti-cap-op" value="620000" oninput="calcIndicadoresCompletos()">
+        <div class="hint">Ativo total − passivos não onerosos (base para ROIC)</div>
+      </div>
+    </div>
+
+    <!-- TIR & PAYBACK -->
+    <div class="ind-full-card">
+      <div class="ifc-titulo">📈 TIR · VPL · Payback</div>
+      <div class="ifc-row">
+        <div class="ifc-label">TIR — Taxa Interna de Retorno<div class="ifc-formula">Taxa que zera o VPL do projeto (5 anos)</div></div>
+        <span class="ifc-val big" id="tir-val">—</span>
+      </div>
+      <div class="tir-gauge"><div class="tir-fill" id="tir-fill"></div><div class="tir-wacc-line" id="tir-wacc-ln"></div></div>
+      <div style="font-size:11px;color:#555;margin-bottom:10px" id="tir-status-txt"></div>
+      <div class="ifc-row">
+        <div class="ifc-label">VPL — Valor Presente Líquido<div class="ifc-formula">Σ FCL descontados − Investimento inicial</div></div>
+        <span class="ifc-val" id="vpl-val">—</span>
+      </div>
+      <div class="ifc-row">
+        <div class="ifc-label">Payback Simples<div class="ifc-formula">Investimento ÷ FCL médio anual</div></div>
+        <span class="ifc-val" id="pb-simples">—</span>
+      </div>
+      <div class="ifc-row">
+        <div class="ifc-label">Payback Descontado<div class="ifc-formula">Meses até VPL acumulado = 0</div></div>
+        <span class="ifc-val" id="pb-descontado">—</span>
+      </div>
+      <div class="ifc-row">
+        <div class="ifc-label"><b>Índice de Lucratividade (IL)</b><div class="ifc-formula">VPL ÷ Investimento + 1 (IL &gt; 1 = projeto viável)</div></div>
+        <span class="ifc-val" id="il-val">—</span>
+      </div>
+      <div class="pb-visual">
+        <div style="font-size:11px;font-weight:700;color:#1F3864;margin-bottom:6px">Payback acumulado (meses)</div>
+        <div id="pb-barras"></div>
+      </div>
+    </div>
+
+    <!-- ROIC & EFICIÊNCIA -->
+    <div class="ind-full-card">
+      <div class="ifc-titulo">⚡ ROIC · Eficiência · Alavancagem</div>
+      <div class="ifc-row">
+        <div class="ifc-label">ROIC — Retorno s/ Capital Investido<div class="ifc-formula">EBITDA ÷ Capital Investido em Operações</div></div>
+        <span class="ifc-val" id="roic-val">—</span>
+      </div>
+      <div class="ifc-row">
+        <div class="ifc-label">Alavancagem Operacional (GAO)<div class="ifc-formula">MC Total ÷ EBITDA</div></div>
+        <span class="ifc-val" id="gao-val">—</span>
+      </div>
+      <div class="ifc-row">
+        <div class="ifc-label">Margem de Segurança (%)<div class="ifc-formula">(Fat. − PE em valor) ÷ Fat.</div></div>
+        <span class="ifc-val" id="ms-val">—</span>
+      </div>
+      <div class="ifc-row">
+        <div class="ifc-label">Índice de Eficiência<div class="ifc-formula">Custos Fixos ÷ Faturamento</div></div>
+        <span class="ifc-val" id="ie-val">—</span>
+      </div>
+      <div class="ifc-row">
+        <div class="ifc-label">Ponto de Equil. em dias do ano<div class="ifc-formula">Dia do ano em que a empresa começa a lucrar</div></div>
+        <span class="ifc-val" id="pe-dia">—</span>
+      </div>
+      <div class="ifc-row">
+        <div class="ifc-label"><b>Spread de Valor (TIR − WACC)</b><div class="ifc-formula">Criação de valor: positivo = negócio cria valor</div></div>
+        <span class="ifc-val" id="spread-val">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJEÇÃO 5 ANOS -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-titulo">📅 Projeção de Fluxo de Caixa — 5 Anos <span style="font-size:11px;color:#888;font-weight:400">com crescimento e WACC definidos acima</span></div>
+    <div class="break-ano">
+      <div class="ba-num" id="break-dia-ano">—</div>
+      <div class="ba-label">Break-even day of year</div>
+      <div class="ba-sub" id="break-data-txt">Em que data do ano a empresa começa a gerar lucro</div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="proj-table">
+        <thead>
+          <tr>
+            <th>Ano</th>
+            <th>Receita</th>
+            <th>Custos Variáveis</th>
+            <th>MC Total</th>
+            <th>Custos Fixos</th>
+            <th>EBITDA</th>
+            <th>FCL</th>
+            <th>FCL Descontado</th>
+            <th>VPL Acumulado</th>
+          </tr>
+        </thead>
+        <tbody id="proj-tbody"></tbody>
+      </table>
+    </div>
+    <div style="position:relative;height:220px;margin-top:14px">
+      <canvas id="proj-grafico" role="img" aria-label="Projeção de fluxo de caixa 5 anos"></canvas>
+    </div>
+  </div>
+
   <div class="card" style="margin-top:14px">
     <div class="card-titulo">Análise de sensibilidade — impacto do crescimento no Valuation</div>
     <div style="position:relative;height:200px">
