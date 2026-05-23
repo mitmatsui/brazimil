@@ -238,6 +238,63 @@ fluxo_data  = ler_json("fluxo_caixa.json", fluxo_fallback)
 vendas_json_str = json.dumps(vendas_data, ensure_ascii=False)
 fluxo_json_str  = json.dumps(fluxo_data,  ensure_ascii=False)
 
+
+# ── Bloco Valuation Base — Ano 0 (análise sugerida pela consultoria) ──────
+def calcular_valuation_base(produtos, vendas_data, fluxo_data):
+    """Consolida os dados reais do sistema como ponto de partida do DCF."""
+    # Faturamento anualizado (43 semanas de dados → projeta 52)
+    fat_periodo = vendas_data.get("total_periodo", 0)
+    fat_anual   = fat_periodo * (52 / 43) if fat_periodo > 0 else 0
+
+    # Inadimplência e carteira do Bradesco
+    resumo       = fluxo_data.get("resumo", {})
+    total_aberto = resumo.get("total_aberto", 0)
+    taxa_inad    = resumo.get("taxa_inadimplencia", 0) / 100
+
+    # DSO — prazo médio de recebimento em dias
+    receita_diaria = fat_anual / 360 if fat_anual > 0 else 1
+    dso = total_aberto / receita_diaria
+
+    # PDD — Provisão para Devedores Duvidosos
+    pdd = fat_anual * taxa_inad
+
+    # MC média ponderada com ZFM CE 55%
+    CE, COM, FR = 0.55, 0.05, 100
+    mc_total, mc_count = 0, 0
+    for p in produtos:
+        frete    = (p["peso"] / 1000) * FR
+        cv       = p["custo"] + frete
+        icms_liq = max(0.12 * (1 - CE) - 0.07, 0)
+        carga    = icms_liq + 0.06*0.12*CE + 0.015 + 0.01 + 0.0065 + 0.03 + COM
+        plv      = p["preco"] * (1 - carga)
+        if plv > 0:
+            mc_total += (plv - cv) / plv * 100
+            mc_count += 1
+    mc_media = mc_total / mc_count if mc_count else 0
+
+    # EBITDA estimado (cf fixo padrão da planilha do time)
+    cf_mensal = 47577
+    ebitda_anual = fat_anual * (mc_media / 100) - (cf_mensal * 12)
+    margem_ebitda = (ebitda_anual / fat_anual * 100) if fat_anual > 0 else 0
+
+    return {
+        "fat_anual":       round(fat_anual, 2),
+        "fat_periodo":     round(fat_periodo, 2),
+        "semanas_dados":   43,
+        "total_aberto":    round(total_aberto, 2),
+        "taxa_inad":       round(taxa_inad, 4),
+        "pdd_anual":       round(pdd, 2),
+        "dso_dias":        round(dso, 1),
+        "mc_media":        round(mc_media, 2),
+        "cf_mensal":       cf_mensal,
+        "ebitda_anual":    round(ebitda_anual, 2),
+        "margem_ebitda":   round(margem_ebitda, 2),
+        "receita_liquida": round(fat_anual - pdd, 2),
+    }
+
+valuation_base = calcular_valuation_base(produtos, vendas_data, fluxo_data)
+valuation_base_json = json.dumps(valuation_base, ensure_ascii=False)
+
 with open("template.html", "r", encoding="utf-8") as f:
     template = f.read()
 
@@ -246,12 +303,13 @@ html = html.replace("__DATA_HOJE__", data_hoje)
 html = html.replace("__TOTAL__", str(total))
 html = html.replace("__VENDAS_JSON__", vendas_json_str)
 html = html.replace("__FLUXO_JSON__", fluxo_json_str)
+html = html.replace("__VALUATION_BASE_JSON__", valuation_base_json)
 
-with open("dashboard_brazimil.html", "w", encoding="utf-8") as f:
+with open("brazimil_analise_economica.html", "w", encoding="utf-8") as f:
     f.write(html)
 
 print("=" * 55)
-print("Dashboard gerado: dashboard_brazimil.html"
+print("Dashboard gerado: brazimil_analise_economica.html")
 print(f"  Vendas: {'exemplo' if vendas_data.get('exemplo') else 'dados reais'} | Fluxo: {'exemplo' if fluxo_data.get('exemplo') else 'dados reais'}"))
 print(f"  Preços da planilha do time: {sum(1 for p in produtos if p['fonte']=='time')} produtos")
 print(f"  Preços fallback manual:     {sum(1 for p in produtos if p['fonte']=='manual')} produtos")
