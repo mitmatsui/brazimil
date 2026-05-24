@@ -370,6 +370,63 @@
   .proj-table tr:hover td{background:#f7f7f7}
   .proj-table .total-row td{background:#EAF3DE;font-weight:700;color:#27500A}
 
+
+  /* ── Estrutura de Custos ── */
+  .cus-section{background:#fff;border-radius:12px;border:1px solid #e0e0e0;
+    margin-bottom:16px;overflow:hidden}
+  .cus-section-hdr{padding:14px 20px;border-bottom:1px solid #f0f0f0;
+    display:flex;align-items:center;gap:10px;cursor:pointer;
+    background:#fafafa;user-select:none}
+  .cus-section-hdr:hover{background:#f0f5ff}
+  .cus-hdr-ico{font-size:18px}
+  .cus-hdr-titulo{font-size:14px;font-weight:700;color:#1F3864;flex:1}
+  .cus-hdr-total{font-size:15px;font-weight:700;color:#2E75B6}
+  .cus-hdr-arrow{font-size:12px;color:#aaa;transition:transform .2s}
+  .cus-body{padding:16px 20px}
+  .cus-linha{display:flex;align-items:center;gap:12px;padding:7px 0;
+    border-bottom:1px solid #f5f5f5}
+  .cus-linha:last-child{border-bottom:none}
+  .cus-nome{flex:1;font-size:13px;color:#333}
+  .cus-hint{font-size:11px;color:#aaa;margin-top:1px}
+  .cus-freq{font-size:11px;color:#888;width:70px;flex-shrink:0;text-align:center}
+  .cus-inp{width:140px;padding:6px 10px;border-radius:6px;
+    border:1.5px solid #BDD7EE;font-size:13px;font-weight:600;
+    color:#1F3864;text-align:right;flex-shrink:0}
+  .cus-inp:focus{outline:none;border-color:#2E75B6;background:#EEF4FF}
+  .cus-inp.var-inp{border-color:#f0c27e;color:#7F6000}
+  .cus-inp.var-inp:focus{border-color:#EF9F27;background:#FFFBF0}
+  .cus-mensal{font-size:12px;color:#555;width:110px;text-align:right;flex-shrink:0}
+  .dre-table{width:100%;border-collapse:collapse;font-size:13px}
+  .dre-table th{background:#1F3864;color:#fff;padding:9px 14px;
+    font-size:12px;text-align:left}
+  .dre-table th.td-r{text-align:right}
+  .dre-table td{padding:8px 14px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+  .dre-table td.td-r{text-align:right;font-weight:600}
+  .dre-table .dre-grupo{background:#f7f9fc;font-weight:700;color:#1F3864}
+  .dre-table .dre-total{background:#1F3864;color:#fff;font-weight:700}
+  .dre-table .dre-total td{color:#fff;border-color:#2E75B6}
+  .dre-table .dre-subtotal{background:#EAF3DE}
+  .dre-table .dre-subtotal td{color:#27500A;font-weight:700}
+  .dre-table .dre-neg td.td-r{color:#E24B4A}
+  .dre-table .dre-pos td.td-r{color:#27500A}
+  .cus-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+  .cus-kpi{border-radius:8px;padding:14px;text-align:center}
+  .ck-val{font-size:22px;font-weight:700;margin-bottom:2px}
+  .ck-label{font-size:10px;text-transform:uppercase;letter-spacing:.04em;opacity:.8}
+  .cus-toggle-all{font-size:11px;color:#2E75B6;cursor:pointer;
+    text-decoration:underline;margin-bottom:12px;display:inline-block}
+  .collapsed .cus-body{display:none}
+  .collapsed .cus-hdr-arrow{transform:rotate(-90deg)}
+
+  #cus-sinc-banner{transition:opacity .5s ease}
+
+  /* ── Badges de conexão entre abas ── */
+  .aba-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;
+    font-weight:700;padding:3px 9px;border-radius:12px;cursor:pointer;
+    background:#E6F1FB;color:#1F3864;border:1px solid #BDD7EE;
+    text-decoration:none;vertical-align:middle}
+  .aba-link:hover{background:#BDD7EE}
+
   </style>
 </head>
 <body>
@@ -391,7 +448,7 @@
 <div class="topbar">
   <div>
     <h1>Brazimil &mdash; Análise Econômica</h1>
-    <div class="sub">Gerado em 23/05/2026 22:54 &middot; 65 produtos &middot; Análise Econômica Integrada</div>
+    <div class="sub">Gerado em 24/05/2026 04:23 &middot; 65 produtos &middot; Análise Econômica Integrada</div>
   </div>
 </div>
 
@@ -400,10 +457,12 @@
   <button class="aba" onclick="irPara(this,'pg-simulador')">Simulador de Preço</button>
   <button class="aba" onclick="irPara(this,'pg-comparador')">Comparador de Cenários</button>
   <button class="aba" onclick="irPara(this,'pg-zfm')">Tributação ZFM</button>
+  <button class="aba" onclick="irPara(this,'pg-custos')">Estrutura de Custos</button>
   <button class="aba" onclick="irPara(this,'pg-vendas')">Evolução de Vendas</button>
   <button class="aba" onclick="irPara(this,'pg-fluxo')">Fluxo de Caixa</button>
   <button class="aba" onclick="irPara(this,'pg-indicadores')">Análise de Retorno</button>
 </div>
+<div style="background:#1F3864;padding:3px 20px;font-size:11px;color:#BDD7EE;letter-spacing:.04em;font-weight:600">Fluxo de análise: &nbsp;<span style="color:#fff">Portfólio</span> → <span style="color:#BDD7EE">Precificação</span> → <span style="color:#BDD7EE">Custos</span> → <span style="color:#BDD7EE">Operacional</span> → <span style="color:#89dceb;font-weight:700">★ Análise de Retorno</span></div>
 
 <!-- PAINEL GERAL -->
 <div class="pagina ativa" id="pg-painel">
@@ -557,6 +616,7 @@
           <div class="res-row"><span class="res-label">MC (%)</span><span class="res-val" id="s-r-mcpct">—</span></div>
           <div class="res-row"><span class="res-label">Preço mínimo (MC alvo)</span><span class="res-val" id="s-r-pmin">—</span></div>
         </div>
+        <div id="s-pe-aviso" style="display:none;border-radius:8px;padding:9px 14px;margin-bottom:8px;font-size:12px;border:1px solid #e0e0e0"></div>
         <div class="alerta-sim" id="s-alerta"></div>
       </div>
     </div>
@@ -567,6 +627,7 @@
 <div class="pagina" id="pg-comparador">
   <div class="comp-grid">
     <div class="comp-card a">
+      <div id="comp-impacto-val" style="font-size:13px;padding:9px 14px;background:#f0f5ff;border-radius:8px;border-left:3px solid #2E75B6;margin-bottom:10px;color:#555">💡 Configure os cenários para ver o impacto no Valuation da empresa.</div>
       <div class="comp-titulo a">Cenário A</div>
       <div class="comp-filtros">
         <div class="comp-linha-filtro">
@@ -695,6 +756,49 @@ function aplicarOrdem(arr) {
 }
 
 // ── Painel Geral ────────────────────────────────────────────────
+
+  // ── Pontes entre abas ──────────────────────────────────────────────────
+
+  // Retorna o PE mensal em valor calculado pela aba Custos (se preenchida)
+  function getPEFromCustos() {
+    var el = document.getElementById("cus-kpi-cf");
+    if (!el) return null;
+    var cf = parseInt(el.textContent.replace(/[^0-9]/g,"")) || 0;
+    if (cf === 0) return null;
+    var mc = valBase ? valBase.mc_media / 100 : 0;
+    return mc > 0 ? cf / mc : null;
+  }
+
+  // Retorna MC média calculada pelo Painel com filtros ativos
+  function getMCFromPainel() {
+    var rows = document.querySelectorAll("#tabela-corpo tr");
+    if (!rows || rows.length === 0) return null;
+    var soma = 0, n = 0;
+    rows.forEach(function(tr) {
+      var cells = tr.querySelectorAll("td");
+      if (cells.length >= 5) {
+        var mc = parseFloat(cells[4].textContent.replace(",",".")) || 0;
+        if (mc !== 0) { soma += mc; n++; }
+      }
+    });
+    return n > 0 ? soma / n : null;
+  }
+
+  // Calcula impacto no Valuation de diferença de MC entre cenários A e B
+  function calcImpactoValuation(mcA, mcB) {
+    if (!valBase || !valBase.fat_anual) return null;
+    var diff    = (mcB - mcA) / 100;
+    var impEBIT = valBase.fat_anual * diff;
+    var mult    = parseFloat((document.getElementById("v-mult")||{value:"6"}).value) || 6;
+    return {
+      diffMC:      mcB - mcA,
+      impEBITDA:   impEBIT,
+      impValuation:impEBIT * mult,
+      mult:        mult
+    };
+  }
+
+
 function atualizarPainel() {
   var imp = parseFloat(document.getElementById("p-regiao").value);
   var com = parseFloat(document.getElementById("p-comissao").value);
@@ -963,6 +1067,32 @@ function atualizarComp() {
       '</div></div>';
   });
   document.getElementById("comp-diff").innerHTML = diffHTML;
+
+
+  // ── Ponte com Análise de Retorno — impacto no Valuation ─────────────
+  var mcA_med = resA.length ? resA.reduce(function(s,r){return s+r.mcPct;},0)/resA.length : 0;
+  var mcB_med = resB.length ? resB.reduce(function(s,r){return s+r.mcPct;},0)/resB.length : 0;
+  var impEl   = document.getElementById("comp-impacto-val");
+  if (impEl && valBase && valBase.fat_anual) {
+    var imp = calcImpactoValuation(mcA_med, mcB_med);
+    if (imp) {
+      var sinal = imp.diffMC >= 0 ? "+" : "";
+      var cor   = imp.diffMC >= 0 ? "#27500A" : "#791F1F";
+      impEl.style.borderLeftColor = imp.diffMC >= 0 ? "#639922" : "#E24B4A";
+      impEl.style.background     = imp.diffMC >= 0 ? "#EAF3DE" : "#FCEBEB";
+      impEl.innerHTML =
+        "<b>Impacto no Valuation — Cenário B vs A:</b> " +
+        "MC média " + sinal + imp.diffMC.toFixed(1) + " pp → " +
+        "EBITDA " + sinal + "R$ " + Math.round(Math.abs(imp.impEBITDA)).toLocaleString("pt-BR") + "/ano → " +
+        "<b style='color:" + cor + "'>Valuation " + sinal +
+        "R$ " + Math.round(Math.abs(imp.impValuation)).toLocaleString("pt-BR") +
+        "</b> (múltiplo " + imp.mult + "x). " +
+        (imp.diffMC > 0
+          ? "Migrar para o Cenário B é economicamente vantajoso."
+          : "Cenário B destrói valor — revisar antes de adotar.");
+    }
+  }
+
 }
 
 
@@ -1106,7 +1236,8 @@ function atualizarComp() {
     if (pg === "pg-zfm") atualizarZFM();
     if (pg === "pg-vendas") renderVendas();
     if (pg === "pg-fluxo") renderFluxo();
-    if (pg === "pg-indicadores") calcValuation();
+    if (pg === "pg-indicadores") { calcValuation(); setTimeout(function(){ calcIndicadoresCompletos(); }, 50); }
+    if (pg === "pg-custos") setTimeout(function(){ renderEquipamentos(); calcCustos(); }, 50);
   };
 
   
@@ -1394,15 +1525,19 @@ function atualizarComp() {
   function calcIndicadoresCompletos() {
     if (!valBase) return;
 
-    var inv      = parseFloat(document.getElementById("ti-inv").value)      || 800000;
-    var cresc    = parseFloat(document.getElementById("ti-cresc").value)    || 8;
-    var wacc     = parseFloat(document.getElementById("ti-wacc").value)     || 15;
-    var capOp    = parseFloat(document.getElementById("ti-cap-op").value)   || 620000;
-    var g        = parseFloat(document.getElementById("ti-g").value)        || 3.5;
-    var irAliq   = parseFloat(document.getElementById("ti-ir").value)       || 15;
-    var capex    = parseFloat(document.getElementById("ti-capex").value)    || 80000;
-    var da       = parseFloat(document.getElementById("ti-da").value)       || 40000;
-    var dsoMeta  = parseFloat(document.getElementById("ti-dso-meta").value) || 30;
+    function safeVal(id, def) {
+      var el = document.getElementById(id);
+      return el ? (parseFloat(el.value) || def) : def;
+    }
+    var inv      = safeVal("ti-inv",      800000);
+    var cresc    = safeVal("ti-cresc",    8);
+    var wacc     = safeVal("ti-wacc",     15);
+    var capOp    = safeVal("ti-cap-op",   620000);
+    var g        = safeVal("ti-g",        3.5);
+    var irAliq   = safeVal("ti-ir",       15);
+    var capex    = safeVal("ti-capex",    80000);
+    var da       = safeVal("ti-da",       40000);
+    var dsoMeta  = safeVal("ti-dso-meta", 30);
     var dsoAtual = valBase.dso_dias || 9.4;
 
     // Exibe DSO atual no hint
@@ -1514,8 +1649,8 @@ function atualizarComp() {
     tirEl.textContent = tir.toFixed(1) + "%";
     tirEl.className = "ifc-val big " + (tir > wacc ? "ok" : "bad");
     var tirPct = Math.min(tir/50*100, 100);
-    document.getElementById("tir-fill").style.width = tirPct + "%";
-    document.getElementById("tir-fill").style.background = tir > wacc ? "#3fb950" : "#E24B4A";
+    (function(){var _e=document.getElementById("tir-fill");if(_e)_e.style.width=tirPct + "%";})();
+    (function(){var _e=document.getElementById("tir-fill");if(_e)_e.style.background=tir > wacc ? "#3fb950" : "#E24B4A";})();
     var waccPct = Math.min(wacc/50*100, 100);
     document.getElementById("tir-wacc-ln").style.left = waccPct + "%";
     document.getElementById("tir-status-txt").innerHTML =
@@ -1527,8 +1662,8 @@ function atualizarComp() {
     var vplEl = document.getElementById("vpl-val");
     vplEl.textContent = fmtBR(vpl);
     vplEl.className = "ifc-val " + (vpl > 0 ? "ok" : "bad");
-    document.getElementById("pb-simples").textContent = fmtMes(pbSimples);
-    document.getElementById("pb-descontado").textContent = pbDescMeses ? fmtMes(pbDescMeses) : "> 5 anos";
+    (function(){var _e=document.getElementById("pb-simples");if(_e)_e.textContent=fmtMes(pbSimples);})();
+    (function(){var _e=document.getElementById("pb-descontado");if(_e)_e.textContent=pbDescMeses ? fmtMes(pbDescMeses) : "> 5 anos";})();
     var ilEl = document.getElementById("il-val");
     ilEl.textContent = il.toFixed(2) + "x";
     ilEl.className = "ifc-val " + (il > 1 ? "ok" : "bad");
@@ -1551,7 +1686,7 @@ function atualizarComp() {
     var roicEl = document.getElementById("roic-val");
     roicEl.textContent = roic.toFixed(1)+"%";
     roicEl.className = "ifc-val "+(roic>15?"ok":roic>8?"warn":"bad");
-    document.getElementById("gao-val").textContent = gao.toFixed(2)+"x";
+    (function(){var _e=document.getElementById("gao-val");if(_e)_e.textContent=gao.toFixed(2)+"x";})();
     var msEl = document.getElementById("ms-val");
     msEl.textContent = ms.toFixed(1)+"%";
     msEl.className = "ifc-val "+(ms>30?"ok":ms>15?"warn":"bad");
@@ -1559,18 +1694,17 @@ function atualizarComp() {
     ieEl.textContent = ie.toFixed(1)+"%";
     ieEl.className = "ifc-val "+(ie<30?"ok":ie<50?"warn":"bad");
     var breakDia = Math.round(peDias);
-    document.getElementById("pe-dia").textContent = breakDia+"º dia";
+    (function(){var _e=document.getElementById("pe-dia");if(_e)_e.textContent=breakDia+"º dia";})();
     var spreadEl = document.getElementById("spread-val");
     spreadEl.textContent = (spread>=0?"+":"")+spread.toFixed(1)+" pp";
     spreadEl.className = "ifc-val "+(spread>0?"ok":"bad");
 
     // Break-even no ano
-    document.getElementById("break-dia-ano").textContent = breakDia+"º dia";
+    (function(){var _e=document.getElementById("break-dia-ano");if(_e)_e.textContent=breakDia+"º dia";})();
     var meses_nomes=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
     var mesBreak = Math.ceil(peDias/30);
     var nomeBreak = mesBreak <= 12 ? meses_nomes[mesBreak-1] : "Dez";
-    document.getElementById("break-data-txt").textContent =
-      "Aproximadamente em "+nomeBreak+" — a partir daí cada real vendido gera lucro real";
+    (function(){var _e=document.getElementById("break-data-txt");if(_e)_e.textContent="Aproximadamente em "+nomeBreak+" — a partir daí cada real vendido gera lucro real";})();
 
     // ── Tabela de projeção ───────────────────────────────────────────────
     var tbody = "";
@@ -1693,9 +1827,9 @@ function atualizarComp() {
 
     // Barra de progresso PE
     var pct_vol = qtd > 0 ? Math.min((qtd / Math.max(pe_unid,1)) * 100, 150) : 0;
-    document.getElementById("pe-bar-vol").style.width = Math.min(pct_vol,100) + "%";
-    document.getElementById("pe-bar-vol-txt").textContent = qtd.toLocaleString("pt-BR") + " un";
-    document.getElementById("pe-bar-pe-txt").textContent  = Math.ceil(pe_unid).toLocaleString("pt-BR") + " un";
+    (function(){var _e=document.getElementById("pe-bar-vol");if(_e)_e.style.width=Math.min(pct_vol,100) + "%";})();
+    (function(){var _e=document.getElementById("pe-bar-vol-txt");if(_e)_e.textContent=qtd.toLocaleString("pt-BR") + " un";})();
+    (function(){var _e=document.getElementById("pe-bar-pe-txt");if(_e)_e.textContent=Math.ceil(pe_unid).toLocaleString("pt-BR") + " un";})();
     var folga = qtd - pe_unid;
     var folgaEl = document.getElementById("pe-folga-txt");
     if (folga >= 0) {
@@ -1705,7 +1839,7 @@ function atualizarComp() {
       folgaEl.style.color = "#E24B4A";
       folgaEl.textContent = "⚠️ Volume atual está " + Math.abs(Math.round(folga)).toLocaleString("pt-BR") + " un ABAIXO do PE — empresa em prejuízo no volume informado";
     }
-    document.getElementById("pe-bar-vol").style.background = folga >= 0 ? "#2E75B6" : "#E24B4A";
+    (function(){var _e=document.getElementById("pe-bar-vol");if(_e)_e.style.background=folga >= 0 ? "#2E75B6" : "#E24B4A";})();
 
     // ── VALUATION ────────────────────────────────────────────────────────────
     var cfAnual  = cf * 12;
@@ -1817,7 +1951,7 @@ function atualizarComp() {
     // ── Renderiza Ano 0 e Cenários
     renderAno0();
     calcCenario();
-    calcIndicadoresCompletos();
+    // calcIndicadoresCompletos() chamada ao abrir a aba — não aqui
     var nd=document.getElementById('nota-dso'); if(nd) nd.textContent=valBase.dso_dias.toFixed(1);
 
     // ── GRÁFICO Sensibilidade Valuation ─────────────────────────────────────
@@ -1863,6 +1997,270 @@ function atualizarComp() {
     });
   }
 
+
+  // ── Estrutura de Custos ───────────────────────────────────────────────────
+  var equipamentos = [
+    {nome:"Misturador / Homogeneizador", valor:0, vida:10},
+    {nome:"Máquina de envase", valor:0, vida:8},
+    {nome:"Empilhadeira / paleteira", valor:0, vida:7},
+    {nome:"Balanças industriais", valor:0, vida:5},
+    {nome:"Compressor de ar", valor:0, vida:8},
+    {nome:"Veículo de entrega", valor:0, vida:5},
+  ];
+  var equipRendered = false;
+
+  function renderEquipamentos() {
+    var lista = document.getElementById("capex-lista");
+    if (!lista) return;
+    lista.innerHTML = equipamentos.map(function(eq, i) {
+      return '<div class="cus-linha" style="display:grid;grid-template-columns:1fr 130px 100px 120px;gap:8px;align-items:center">' +
+        '<div style="font-size:13px;color:#333">' + eq.nome + '</div>' +
+        '<input class="cus-inp" type="number" placeholder="0,00" value="' + (eq.valor||"") + '"' +
+          ' style="width:100%" oninput="equipamentos['+i+'].valor=parseFloat(this.value)||0;calcCustos()">' +
+        '<input class="cus-inp" type="number" placeholder="10" value="' + eq.vida + '"' +
+          ' style="width:100%" oninput="equipamentos['+i+'].vida=parseFloat(this.value)||10;calcCustos()">' +
+        '<div style="text-align:right;font-size:13px;font-weight:700;color:#2E75B6" id="dep-'+i+'">' +
+          fmtBR2(eq.valor/(eq.vida*12)) + '/mês</div>' +
+        '</div>';
+    }).join("");
+    equipRendered = true;
+  }
+
+  function addEquipamento() {
+    var nome = prompt("Nome do equipamento:");
+    if (!nome) return;
+    equipamentos.push({nome:nome, valor:0, vida:10});
+    renderEquipamentos();
+    calcCustos();
+  }
+
+  function fmtBR2(n) {
+    if (!n || !isFinite(n) || n < 1) return "R$ 0";
+    return "R$ " + Math.round(n).toLocaleString("pt-BR");
+  }
+  function fmtPct2(n) { return isFinite(n) ? n.toFixed(1)+"%" : "0%"; }
+
+  function safeNum(id) {
+    var el = document.getElementById(id);
+    return el ? (parseFloat(el.value) || 0) : 0;
+  }
+
+  function toggleSection(id) {
+    var sec = document.getElementById(id);
+    if (sec) sec.classList.toggle("collapsed");
+  }
+  function toggleAllSections() {
+    var secs = document.querySelectorAll(".cus-section");
+    var anyOpen = Array.from(secs).some(function(s){ return !s.classList.contains("collapsed"); });
+    secs.forEach(function(s) {
+      if (anyOpen) s.classList.add("collapsed");
+      else s.classList.remove("collapsed");
+    });
+  }
+
+
+  function renderConexaoRetorno(cfTotal, ebitda, depTotal) {
+    var cx_cf    = document.getElementById("cx-cf");
+    var cx_ebitda= document.getElementById("cx-ebitda");
+    var cx_dep   = document.getElementById("cx-dep");
+    var cx_status= document.getElementById("cx-status");
+    if (!cx_cf) return;
+
+    cx_cf.textContent     = fmtBR2(cfTotal);
+    cx_ebitda.textContent = fmtBR2(ebitda);
+    cx_dep.textContent    = fmtBR2(depTotal);
+    cx_ebitda.style.color = ebitda >= 0 ? "#27500A" : "#E24B4A";
+
+    if (cx_status) {
+      var fatMes = valBase ? valBase.fat_anual/12 : 0;
+      var mcPct  = valBase ? valBase.mc_media/100 : 0;
+      var pe = mcPct > 0 ? cfTotal/mcPct : 0;
+      var ms = fatMes > 0 && pe > 0 ? ((fatMes-pe)/fatMes*100) : 0;
+
+      cx_status.innerHTML =
+        "✅ <b>Dados enviados para Análise de Retorno:</b> " +
+        "CF mensal de <b>R$ " + Math.round(cfTotal).toLocaleString("pt-BR") + "</b> " +
+        "→ EBITDA de <b>R$ " + Math.round(ebitda).toLocaleString("pt-BR") + "/mês</b> " +
+        "→ D&A de <b>R$ " + Math.round(depTotal).toLocaleString("pt-BR") + "/mês</b>. " +
+        "PE revisado: <b>R$ " + Math.round(pe).toLocaleString("pt-BR") + "/mês</b>. " +
+        "Margem de segurança: <b>" + (ms>0 ? ms.toFixed(1)+"%" : "abaixo do PE") + "</b>. " +
+        "O Valuation, TIR e Payback foram recalculados automaticamente.";
+    }
+  }
+
+  function calcCustos() {
+    if (!equipRendered) renderEquipamentos();
+
+    // Faturamento mensal real dos dados do Omie
+    var fatMes = (valBase && valBase.fat_anual) ? valBase.fat_anual / 12 : 0;
+    var mcPct  = (valBase && valBase.mc_media)  ? valBase.mc_media / 100 : 0.417;
+
+    // ── CUSTOS FIXOS ───────────────────────────────────────────────────────
+    // Estruturais
+    var cfEstrutura = safeNum("cf-aluguel") + safeNum("cf-condominio") + safeNum("cf-energia") +
+      safeNum("cf-agua") + safeNum("cf-internet") + safeNum("cf-seguranca") + safeNum("cf-limpeza");
+
+    // RH
+    var cfRH = safeNum("cf-prolabore") + safeNum("cf-gerente") + safeNum("cf-producao") +
+      safeNum("cf-admin") + safeNum("cf-vendedores") + safeNum("cf-motorista") + safeNum("cf-beneficios");
+
+    // Capex / Depreciação
+    var depTotal = 0;
+    equipamentos.forEach(function(eq, i) {
+      var dep = eq.vida > 0 ? eq.valor / (eq.vida * 12) : 0;
+      depTotal += dep;
+      var el = document.getElementById("dep-"+i);
+      if (el) el.textContent = fmtBR2(dep) + "/mês";
+    });
+    var cfCapex = depTotal + safeNum("cf-manutencao");
+
+    // Admin / outros fixos
+    var cfAdmin = safeNum("cf-contabil") + safeNum("cf-software") + safeNum("cf-licencas") +
+      safeNum("cf-seguros") + safeNum("cf-marketing") + safeNum("cf-consultoria") + safeNum("cf-outros");
+
+    var cfTotal = cfEstrutura + cfRH + cfCapex + cfAdmin;
+
+    // Atualiza totais de seção
+    var totDepEl = document.getElementById("tot-depreciacao");
+    if (totDepEl) totDepEl.textContent = fmtBR2(depTotal) + "/mês";
+    var secTotals = [
+      ["tot-estrutural", cfEstrutura],
+      ["tot-rh", cfRH],
+      ["tot-capex", cfCapex],
+      ["tot-admin", cfAdmin],
+    ];
+    secTotals.forEach(function(p) {
+      var el = document.getElementById(p[0]);
+      if (el) el.textContent = fmtBR2(p[1]) + "/mês";
+    });
+
+    // ── CUSTOS VARIÁVEIS (% sobre receita) ──────────────────────────────
+    var cvIds = ["cv-mp","cv-embal","cv-mod","cv-energia","cv-comissao","cv-frete","cv-epi","cv-outros"];
+    var cvTotal = 0;
+    cvIds.forEach(function(id) {
+      var pct = safeNum(id+"-pct") / 100;
+      var val = fatMes * pct;
+      cvTotal += val;
+      var vEl = document.getElementById(id+"-val");
+      if (vEl) vEl.textContent = fmtBR2(val);
+    });
+
+    var totVar = document.getElementById("tot-variaveis");
+    if (totVar) totVar.textContent = fmtBR2(cvTotal) + "/mês";
+
+    // ── TOTAIS GERAIS ─────────────────────────────────────────────────────
+    var custoTotal = cfTotal + cvTotal;
+    var receitaBruta = fatMes;
+    var mcTotal = receitaBruta * mcPct;
+    var ebitda = mcTotal - cfTotal;
+    var peMensal = mcPct > 0 ? cfTotal / mcPct : 0;
+
+    // KPIs
+    var kpis = [
+      ["cus-kpi-cf", cfTotal],
+      ["cus-kpi-cv", cvTotal],
+      ["cus-kpi-ct", custoTotal],
+      ["cus-kpi-pe", peMensal],
+      ["cus-kpi-ebitda", ebitda],
+    ];
+    kpis.forEach(function(p) {
+      var el = document.getElementById(p[0]);
+      if (el) el.textContent = fmtBR2(p[1]);
+    });
+
+    // Alerta
+    var alertEl = document.getElementById("cus-alerta");
+    if (alertEl && cfTotal > 0) {
+      alertEl.style.display = "block";
+      if (ebitda > 0) {
+        alertEl.style.background = "#EAF3DE";
+        alertEl.style.color = "#27500A";
+        alertEl.innerHTML = "✅ <b>EBITDA positivo:</b> com esses custos, a empresa gera R$ " +
+          fmtBR2(ebitda) + "/mês antes de impostos e financiamentos. Margem EBITDA: " +
+          fmtPct2(ebitda/receitaBruta*100) + ".";
+      } else {
+        alertEl.style.background = "#FCEBEB";
+        alertEl.style.color = "#791F1F";
+        alertEl.innerHTML = "🚨 <b>EBITDA negativo:</b> os custos fixos superam a geração de caixa operacional em R$ " +
+          fmtBR2(Math.abs(ebitda)) + "/mês. O faturamento mínimo para cobrir os custos fixos é R$ " +
+          fmtBR2(peMensal) + "/mês.";
+      }
+    } else if (alertEl) {
+      alertEl.style.display = "none";
+    }
+
+    // ── DRE GERENCIAL ─────────────────────────────────────────────────────
+    var tbodyEl = document.getElementById("dre-tbody");
+    if (!tbodyEl || cfTotal === 0) return;
+
+    function dreRow(label, mes, pct, style) {
+      var cls = style || "";
+      return "<tr class='" + cls + "'>" +
+        "<td>" + label + "</td>" +
+        "<td class='td-r'>" + fmtBR2(mes) + "</td>" +
+        "<td class='td-r'>" + fmtBR2(mes*12) + "</td>" +
+        "<td class='td-r'>" + fmtPct2(pct) + "</td></tr>";
+    }
+
+    var cvPctTotal = receitaBruta > 0 ? cvTotal/receitaBruta*100 : 0;
+    var cfPctTotal = receitaBruta > 0 ? cfTotal/receitaBruta*100 : 0;
+    var lucroLiq = ebitda * 0.88; // estimativa pós-IR (~12%)
+
+    tbodyEl.innerHTML =
+      dreRow("(+) Receita Bruta de Vendas", receitaBruta, 100, "dre-grupo") +
+      dreRow("(−) Deduções ZFM (carga tributária 11,55%)", receitaBruta*0.1155, 11.55, "dre-neg") +
+      dreRow("(=) Receita Líquida", receitaBruta*0.8845, 88.45, "dre-subtotal") +
+      dreRow("(−) Custo das Mercadorias Vendidas (CMV)", receitaBruta*(1-mcPct)*0.8845, (1-mcPct)*88.45, "dre-neg") +
+      dreRow("(=) Margem de Contribuição Total", mcTotal, receitaBruta>0?mcTotal/receitaBruta*100:0, "dre-subtotal") +
+      "<tr class='dre-grupo'><td colspan='4' style='padding-top:8px'>Custos e Despesas Fixas</td></tr>" +
+      dreRow("  Estruturais (aluguel, energia, etc.)", cfEstrutura, receitaBruta>0?cfEstrutura/receitaBruta*100:0, "dre-neg") +
+      dreRow("  Folha de Pagamento e Encargos", cfRH, receitaBruta>0?cfRH/receitaBruta*100:0, "dre-neg") +
+      dreRow("  Depreciação e Manutenção", cfCapex, receitaBruta>0?cfCapex/receitaBruta*100:0, "dre-neg") +
+      dreRow("  Administrativos e Outros", cfAdmin, receitaBruta>0?cfAdmin/receitaBruta*100:0, "dre-neg") +
+      dreRow("(=) EBITDA", ebitda, receitaBruta>0?ebitda/receitaBruta*100:0,
+        ebitda>=0?"dre-subtotal dre-pos":"dre-subtotal dre-neg") +
+      dreRow("(−) IR e CSLL estimados (~12% sobre EBITDA)", ebitda*0.12, ebitda>0?12:0, "dre-neg") +
+      "<tr class='dre-total'>" +
+        "<td><b>LUCRO LÍQUIDO ESTIMADO</b></td>" +
+        "<td class='td-r'><b>" + fmtBR2(lucroLiq) + "</b></td>" +
+        "<td class='td-r'><b>" + fmtBR2(lucroLiq*12) + "</b></td>" +
+        "<td class='td-r'><b>" + fmtPct2(receitaBruta>0?lucroLiq/receitaBruta*100:0) + "</b></td></tr>";
+
+    // ── Sincroniza com aba Análise de Retorno ───────────────────────────
+    if (valBase && cfTotal > 0) {
+      valBase.cf_mensal    = Math.round(cfTotal);
+      valBase.ebitda_anual = Math.round(ebitda * 12);
+      valBase.margem_ebitda = receitaBruta > 0
+        ? parseFloat((ebitda/receitaBruta*100).toFixed(2)) : 0;
+
+      // Atualiza campo v-cf na aba de Retorno (se visível)
+      var vcfEl = document.getElementById("v-cf");
+      if (vcfEl) vcfEl.value = Math.round(cfTotal);
+
+      // Atualiza campo ti-capex na aba de Retorno com depreciação real
+      var tiCpEl = document.getElementById("ti-capex");
+      if (tiCpEl) tiCpEl.value = Math.round(depTotal);
+
+      var tiDaEl = document.getElementById("ti-da");
+      if (tiDaEl) tiDaEl.value = Math.round(depTotal);
+
+      // Recalcula Retorno silenciosamente (não muda a aba ativa)
+      if (typeof calcValuation === "function") calcValuation();
+
+      // Banner de sincronização
+      var sinc = document.getElementById("cus-sinc-banner");
+      if (sinc) {
+        sinc.style.display = "flex";
+        clearTimeout(window._sincTimer);
+        window._sincTimer = setTimeout(function(){ sinc.style.opacity="0"; }, 3000);
+        sinc.style.opacity = "1";
+      }
+
+      // Atualiza painel de resumo de conexão
+      renderConexaoRetorno(cfTotal, ebitda, depTotal);
+    }
+  }
+
   // ── Login e Init ─────────────────────────────────────────────────
 var SENHA_CORRETA = "brazimil2026";
 var SESSAO_KEY    = "bz_auth";
@@ -1879,6 +2277,7 @@ function fazerLogin() {
     renderVendas();
     renderFluxo();
     calcValuation();
+    setTimeout(function(){ calcIndicadoresCompletos(); }, 100);
   } else {
     document.getElementById("login-erro").textContent = "Senha incorreta. Tente novamente.";
     document.getElementById("login-senha").value = "";
@@ -2450,6 +2849,317 @@ if (sessionStorage.getItem(SESSAO_KEY) === "ok") {
 
 </div>
 
+
+
+<!-- ABA 8: ESTRUTURA DE CUSTOS -->
+<div class="pagina" id="pg-custos">
+
+  <!-- KPIs dinâmicos -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-titulo">Resumo da Estrutura de Custos — atualiza conforme você preenche</div>
+    <div class="cus-kpi-grid">
+      <div class="cus-kpi" style="background:#FCEBEB">
+        <div class="ck-val" style="color:#9C0006" id="cus-kpi-cf">R$ 0</div>
+        <div class="ck-label" style="color:#9C0006">Custos Fixos / mês</div>
+      </div>
+      <div class="cus-kpi" style="background:#FFF2CC">
+        <div class="ck-val" style="color:#7F6000" id="cus-kpi-cv">R$ 0</div>
+        <div class="ck-label" style="color:#7F6000">Custos Variáveis / mês</div>
+      </div>
+      <div class="cus-kpi" style="background:#E6F1FB">
+        <div class="ck-val" style="color:#0C447C" id="cus-kpi-ct">R$ 0</div>
+        <div class="ck-label" style="color:#0C447C">Custo Total / mês</div>
+      </div>
+      <div class="cus-kpi" style="background:#EAF3DE">
+        <div class="ck-val" style="color:#27500A" id="cus-kpi-pe">R$ 0</div>
+        <div class="ck-label" style="color:#27500A">PE em Valor / mês</div>
+      </div>
+      <div class="cus-kpi" style="background:#EDE7F6">
+        <div class="ck-val" style="color:#3C3489" id="cus-kpi-ebitda">R$ 0</div>
+        <div class="ck-label" style="color:#3C3489">EBITDA Estimado / mês</div>
+      </div>
+    </div>
+    <div id="cus-alerta" style="font-size:13px;padding:10px 14px;border-radius:8px;display:none"></div>
+  </div>
+
+
+  <!-- Banner sincronização -->
+  <div id="cus-sinc-banner" style="display:none;align-items:center;gap:10px;
+    background:#EAF3DE;border:1px solid #639922;border-radius:8px;
+    padding:10px 16px;margin-bottom:12px;font-size:13px;color:#27500A;
+    transition:opacity .5s">
+    <span style="font-size:18px">🔄</span>
+    <b>Sincronizado com Análise de Retorno</b> — Custos fixos, EBITDA, Depreciação e Valuation foram recalculados automaticamente.
+  </div>
+
+  <!-- Painel de conexão com Retorno -->
+  <div class="card" style="margin-bottom:14px;border:2px solid #BDD7EE">
+    <div class="card-titulo" style="color:#1F3864">
+      🔗 Conexão com a Aba "Análise de Retorno" — valores que são enviados automaticamente
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px" id="cus-conexao-grid">
+      <div style="background:#f7f7f7;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:700;color:#2E75B6" id="cx-cf">R$ —</div>
+        <div style="font-size:11px;color:#555;margin-top:2px">Custos Fixos / mês<br><span style="color:#aaa">→ alimenta o PE e o EBITDA</span></div>
+      </div>
+      <div style="background:#f7f7f7;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:700;color:#27500A" id="cx-ebitda">R$ —</div>
+        <div style="font-size:11px;color:#555;margin-top:2px">EBITDA Mensal<br><span style="color:#aaa">→ alimenta o Valuation e o DCF</span></div>
+      </div>
+      <div style="background:#f7f7f7;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:700;color:#8B5CF6" id="cx-dep">R$ —</div>
+        <div style="font-size:11px;color:#555;margin-top:2px">Depreciação / mês<br><span style="color:#aaa">→ alimenta o D&A no FCFF</span></div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#555;margin-top:10px;padding-top:10px;
+      border-top:1px solid #f0f0f0;line-height:1.7" id="cx-status">
+      ⏳ Preencha os custos abaixo para sincronizar com a aba Análise de Retorno.
+    </div>
+  </div>
+
+  <span class="cus-toggle-all" onclick="toggleAllSections()">▼ Expandir / recolher todas as seções</span>
+
+  <!-- SEÇÃO 1: CUSTOS FIXOS ESTRUTURAIS -->
+  <div class="cus-section" id="sec-estrutural">
+    <div class="cus-section-hdr" onclick="toggleSection('sec-estrutural')">
+      <span class="cus-hdr-ico">🏭</span>
+      <span class="cus-hdr-titulo">Custos Fixos Estruturais — instalações e infraestrutura</span>
+      <span class="cus-hdr-total" id="tot-estrutural">R$ 0</span>
+      <span class="cus-hdr-arrow">▼</span>
+    </div>
+    <div class="cus-body">
+      <div style="font-size:11px;color:#aaa;margin-bottom:10px;display:flex;gap:20px">
+        <span>DESCRIÇÃO</span><span style="margin-left:auto">VALOR MENSAL</span>
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Aluguel da fábrica<div class="cus-hint">Valor mensal do aluguel do imóvel industrial</div></div>
+        <input class="cus-inp" id="cf-aluguel" type="number" placeholder="0,00" value="" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Condomínio / IPTU<div class="cus-hint">Taxa de condomínio industrial ou IPTU rateado</div></div>
+        <input class="cus-inp" id="cf-condominio" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Energia elétrica (fixo)<div class="cus-hint">Demanda contratada + iluminação e AC administrativo</div></div>
+        <input class="cus-inp" id="cf-energia" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Água e saneamento<div class="cus-hint">Conta mensal média de água</div></div>
+        <input class="cus-inp" id="cf-agua" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Internet e telefone<div class="cus-hint">Planos fixos de conectividade</div></div>
+        <input class="cus-inp" id="cf-internet" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Segurança / monitoramento<div class="cus-hint">Contrato mensal de segurança patrimonial</div></div>
+        <input class="cus-inp" id="cf-seguranca" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Limpeza e manutenção predial<div class="cus-hint">Serviços de limpeza e conservação do imóvel</div></div>
+        <input class="cus-inp" id="cf-limpeza" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 2: FOLHA DE PAGAMENTO -->
+  <div class="cus-section" id="sec-rh">
+    <div class="cus-section-hdr" onclick="toggleSection('sec-rh')">
+      <span class="cus-hdr-ico">👥</span>
+      <span class="cus-hdr-titulo">Folha de Pagamento — custos totais com pessoal (salário + encargos)</span>
+      <span class="cus-hdr-total" id="tot-rh">R$ 0</span>
+      <span class="cus-hdr-arrow">▼</span>
+    </div>
+    <div class="cus-body">
+      <div style="font-size:11px;color:#aaa;margin-bottom:10px">
+        Informe o custo TOTAL por função (salário + FGTS 8% + INSS patronal 20% + provisões 13º/férias ≈ multiplicar salário bruto por 1,7)
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Diretoria / sócios (pró-labore)<div class="cus-hint">Remuneração mensal dos sócios gestores</div></div>
+        <input class="cus-inp" id="cf-prolabore" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Gerente / supervisor de produção<div class="cus-hint">Custo total com encargos</div></div>
+        <input class="cus-inp" id="cf-gerente" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Auxiliares de produção<div class="cus-hint">Custo total da equipe de chão de fábrica</div></div>
+        <input class="cus-inp" id="cf-producao" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Administrativo / financeiro<div class="cus-hint">Assistentes administrativos e financeiros</div></div>
+        <input class="cus-inp" id="cf-admin" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Vendedores internos (fixo)<div class="cus-hint">Salário fixo dos vendedores — comissão entra nos variáveis</div></div>
+        <input class="cus-inp" id="cf-vendedores" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Motorista / entregador<div class="cus-hint">Custo total com entregadores internos</div></div>
+        <input class="cus-inp" id="cf-motorista" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Vale-transporte e VR/VA<div class="cus-hint">Benefícios mensais da equipe</div></div>
+        <input class="cus-inp" id="cf-beneficios" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 3: MÁQUINAS E EQUIPAMENTOS -->
+  <div class="cus-section" id="sec-capex">
+    <div class="cus-section-hdr" onclick="toggleSection('sec-capex')">
+      <span class="cus-hdr-ico">⚙️</span>
+      <span class="cus-hdr-titulo">Máquinas, Equipamentos e Depreciação</span>
+      <span class="cus-hdr-total" id="tot-capex">R$ 0</span>
+      <span class="cus-hdr-arrow">▼</span>
+    </div>
+    <div class="cus-body">
+      <div style="font-size:11px;color:#aaa;margin-bottom:10px">
+        Informe o valor de aquisição e a vida útil estimada. A depreciação mensal é calculada automaticamente (método linear).
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 130px 100px 120px;gap:8px;
+        font-size:11px;font-weight:700;color:#555;padding:0 0 8px;border-bottom:1px solid #f0f0f0;margin-bottom:8px">
+        <span>Equipamento</span><span style="text-align:right">Valor de Compra</span>
+        <span style="text-align:right">Vida Útil (anos)</span><span style="text-align:right">Deprec./mês (auto)</span>
+      </div>
+      <div id="capex-lista">
+        <!-- linhas geradas dinamicamente -->
+      </div>
+      <div style="margin-top:10px">
+        <button onclick="addEquipamento()" style="font-size:12px;color:#2E75B6;background:none;
+          border:1px solid #BDD7EE;border-radius:6px;padding:5px 12px;cursor:pointer">
+          + Adicionar equipamento
+        </button>
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #f0f0f0;
+        display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#1F3864">
+        <span>Depreciação total mensal</span>
+        <span id="tot-depreciacao">R$ 0</span>
+      </div>
+      <div style="font-size:12px;color:#555;margin-top:6px">
+        Manutenção e reparos mensais:
+        <input class="cus-inp" id="cf-manutencao" type="number" placeholder="0,00"
+          style="width:120px;margin-left:8px" oninput="calcCustos()"> R$/mês
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 4: CUSTOS ADMINISTRATIVOS FIXOS -->
+  <div class="cus-section" id="sec-admin">
+    <div class="cus-section-hdr" onclick="toggleSection('sec-admin')">
+      <span class="cus-hdr-ico">📋</span>
+      <span class="cus-hdr-titulo">Custos Administrativos e Tributários Fixos</span>
+      <span class="cus-hdr-total" id="tot-admin">R$ 0</span>
+      <span class="cus-hdr-arrow">▼</span>
+    </div>
+    <div class="cus-body">
+      <div class="cus-linha">
+        <div class="cus-nome">Honorários contábeis<div class="cus-hint">Mensalidade do escritório de contabilidade</div></div>
+        <input class="cus-inp" id="cf-contabil" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Software / sistemas (ERP, Omie, etc.)<div class="cus-hint">Assinaturas mensais de sistemas de gestão</div></div>
+        <input class="cus-inp" id="cf-software" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Licenças, alvarás e taxas municipais<div class="cus-hint">Custos fixos de licenciamento e operação legal</div></div>
+        <input class="cus-inp" id="cf-licencas" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Seguros (fábrica, veículos, estoque)<div class="cus-hint">Apólices mensais ou rateio do prêmio anual</div></div>
+        <input class="cus-inp" id="cf-seguros" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Marketing e publicidade (fixo)<div class="cus-hint">Contrato de agência, mídias fixas, patrocínios</div></div>
+        <input class="cus-inp" id="cf-marketing" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Consultoria econômica (este serviço)<div class="cus-hint">Honorário mensal de retainer</div></div>
+        <input class="cus-inp" id="cf-consultoria" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Outros custos fixos<div class="cus-hint">Despesas fixas não categorizadas</div></div>
+        <input class="cus-inp" id="cf-outros" type="number" placeholder="0,00" oninput="calcCustos()">
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 5: CUSTOS VARIÁVEIS -->
+  <div class="cus-section" id="sec-variaveis">
+    <div class="cus-section-hdr" onclick="toggleSection('sec-variaveis')">
+      <span class="cus-hdr-ico">📦</span>
+      <span class="cus-hdr-titulo">Custos Variáveis — variam conforme volume de produção e vendas</span>
+      <span class="cus-hdr-total" id="tot-variaveis">R$ 0</span>
+      <span class="cus-hdr-arrow">▼</span>
+    </div>
+    <div class="cus-body">
+      <div style="font-size:11px;color:#aaa;margin-bottom:10px;display:grid;
+        grid-template-columns:1fr 130px 120px;gap:8px">
+        <span>DESCRIÇÃO</span><span style="text-align:right">% sobre Receita</span>
+        <span style="text-align:right">R$/mês (auto)</span>
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Matéria-prima e insumos<div class="cus-hint">Custo variável já calculado nos produtos do portfólio</div></div>
+        <input class="cus-inp var-inp" id="cv-mp-pct" type="number" placeholder="%" step="0.1" oninput="calcCustos()">
+        <div class="cus-mensal" id="cv-mp-val">R$ —</div>
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Embalagens e materiais de consumo<div class="cus-hint">Embalagens secundárias, fitas, rótulos, etiquetas</div></div>
+        <input class="cus-inp var-inp" id="cv-embal-pct" type="number" placeholder="%" step="0.1" oninput="calcCustos()">
+        <div class="cus-mensal" id="cv-embal-val">R$ —</div>
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Mão de obra direta variável<div class="cus-hint">Horas extras, temporários e produção por demanda</div></div>
+        <input class="cus-inp var-inp" id="cv-mod-pct" type="number" placeholder="%" step="0.1" oninput="calcCustos()">
+        <div class="cus-mensal" id="cv-mod-val">R$ —</div>
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Energia elétrica (produção)<div class="cus-hint">Consumo elétrico proporcional ao volume produzido</div></div>
+        <input class="cus-inp var-inp" id="cv-energia-pct" type="number" placeholder="%" step="0.1" oninput="calcCustos()">
+        <div class="cus-mensal" id="cv-energia-val">R$ —</div>
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Comissões de vendas<div class="cus-hint">% pago aos representantes sobre o faturamento</div></div>
+        <input class="cus-inp var-inp" id="cv-comissao-pct" type="number" placeholder="%" step="0.1" value="5" oninput="calcCustos()">
+        <div class="cus-mensal" id="cv-comissao-val">R$ —</div>
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Fretes e logística de entrega<div class="cus-hint">Custo de frete nas vendas (não incluso no produto)</div></div>
+        <input class="cus-inp var-inp" id="cv-frete-pct" type="number" placeholder="%" step="0.1" oninput="calcCustos()">
+        <div class="cus-mensal" id="cv-frete-val">R$ —</div>
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">EPIs e materiais de segurança<div class="cus-hint">Luvas, máscaras, aventais e demais EPIs por produção</div></div>
+        <input class="cus-inp var-inp" id="cv-epi-pct" type="number" placeholder="%" step="0.1" oninput="calcCustos()">
+        <div class="cus-mensal" id="cv-epi-val">R$ —</div>
+      </div>
+      <div class="cus-linha">
+        <div class="cus-nome">Outros custos variáveis<div class="cus-hint">Outros custos que crescem com o volume</div></div>
+        <input class="cus-inp var-inp" id="cv-outros-pct" type="number" placeholder="%" step="0.1" oninput="calcCustos()">
+        <div class="cus-mensal" id="cv-outros-val">R$ —</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRE GERENCIAL -->
+  <div class="card" style="margin-top:4px">
+    <div class="card-titulo">📊 DRE Gerencial — gerada automaticamente com os custos acima</div>
+    <table class="dre-table">
+      <thead><tr>
+        <th>Demonstrativo de Resultado</th>
+        <th class="td-r">R$/mês</th>
+        <th class="td-r">R$/ano</th>
+        <th class="td-r">% Receita</th>
+      </tr></thead>
+      <tbody id="dre-tbody">
+        <tr><td colspan="4" style="text-align:center;color:#aaa;padding:20px">
+          Preencha os custos acima para gerar a DRE
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
 
 </body>
 </html>
