@@ -625,9 +625,9 @@
 
 <!-- COMPARADOR -->
 <div class="pagina" id="pg-comparador">
+  <div id="comp-impacto-val" style="font-size:13px;padding:11px 16px;background:#f0f5ff;border-radius:8px;border-left:3px solid #2E75B6;margin-bottom:14px;color:#555">💡 Configure os cenários para ver o impacto no Valuation da empresa.</div>
   <div class="comp-grid">
     <div class="comp-card a">
-      <div id="comp-impacto-val" style="font-size:13px;padding:9px 14px;background:#f0f5ff;border-radius:8px;border-left:3px solid #2E75B6;margin-bottom:10px;color:#555">💡 Configure os cenários para ver o impacto no Valuation da empresa.</div>
       <div class="comp-titulo a">Cenário A</div>
       <div class="comp-filtros">
         <div class="comp-linha-filtro">
@@ -705,7 +705,7 @@ function irPara(btn, pg) {
   btn.classList.add("ativa");
   document.getElementById(pg).classList.add("ativa");
   if (pg === "pg-simulador")  { renderListaSim(produtos); }
-  if (pg === "pg-comparador") { atualizarComp(); }
+  if (pg === "pg-comparador") { setTimeout(function(){ atualizarComp(); }, 50); }
 }
 
 // ── Cálculo de MC ────────────────────────────────────────────────
@@ -1033,11 +1033,15 @@ function atualizarComp() {
   var resB = produtos.map(function(p) { return Object.assign({}, p, calcMC(p, impB, comB, frB)); });
 
   function kpiHtml(res) {
-    var med = res.reduce(function(s, r) { return s + r.mcPct; }, 0) / res.length;
-    var ok  = res.filter(function(r) { return r.mcPct >= 35; }).length;
-    var at  = res.filter(function(r) { return r.mcPct >= 20 && r.mcPct < 35; }).length;
-    var pr  = res.filter(function(r) { return r.mc < 0; }).length;
-    return '<div class="comp-linha"><span>MC Média</span><span style="color:' + cor(med) + ';font-weight:700">' + fmtP(med) + '</span></div>' +
+    var med  = res.reduce(function(s, r) { return s + r.mcPct; }, 0) / res.length;
+    var ok   = res.filter(function(r) { return r.mcPct >= 35; }).length;
+    var at   = res.filter(function(r) { return r.mcPct >= 20 && r.mcPct < 35; }).length;
+    var pr   = res.filter(function(r) { return r.mc < 0; }).length;
+    var cMed = med >= 35 ? "#27500A" : med >= 20 ? "#7F4F00" : "#791F1F";
+    var bMed = med >= 35 ? "#EAF3DE" : med >= 20 ? "#FFF2CC" : "#FCEBEB";
+    return '<div style="background:' + bMed + ';border-radius:8px;padding:10px 14px;margin-bottom:10px;text-align:center">' +
+        '<div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.05em">MC Média</div>' +
+        '<div style="font-size:26px;font-weight:700;color:' + cMed + '">' + fmtP(med) + '</div></div>' +
       '<div class="comp-linha"><span>Saudáveis ≥35%</span><span style="color:#639922;font-weight:700">' + ok + ' SKUs</span></div>' +
       '<div class="comp-linha"><span>Atenção 20–35%</span><span style="color:#EF9F27;font-weight:700">' + at + ' SKUs</span></div>' +
       '<div class="comp-linha"><span>Com prejuízo</span><span style="color:#E24B4A;font-weight:700">' + pr + ' SKUs</span></div>';
@@ -1550,7 +1554,7 @@ function atualizarComp() {
 
     var fatBase    = valBase.fat_anual;
     var mcPct      = valBase.mc_media / 100;
-    var cfAnual    = valBase.cf_mensal * 12;
+    var cfAnual    = valBase.cf_mensal * 12;  // CF real: R$ 95.154/mês
     var ebitdaBase = valBase.ebitda_anual;
     var ir         = irAliq / 100;
 
@@ -1801,7 +1805,7 @@ function atualizarComp() {
     var mcuMed   = precoMed - cvMed; // MC unitária média em R$
 
     // ── Inputs manuais ───────────────────────────────────────────────────────
-    var cf    = parseFloat(document.getElementById("v-cf").value)    || 47577;
+    var cf    = parseFloat(document.getElementById("v-cf").value)    || 95154;
     var lucro = parseFloat(document.getElementById("v-lucro").value)  || 52000;
     var mult  = parseFloat(document.getElementById("v-mult").value)   || 6;
     var cresc = parseFloat(document.getElementById("v-cresc").value)  || 8;
@@ -2573,7 +2577,7 @@ if (sessionStorage.getItem(SESSAO_KEY) === "ok") {
         </div>
         <div class="val-inp-wrap">
           <div class="val-inp-label"><b>Custos Fixos Totais Mensais (R$)</b> <span class="val-badge vb-edit">EDITE</span><div class="val-inp-hint">Aluguel + salários + energia + admin + depreciação</div></div>
-          <input class="val-inp" id="v-cf" type="number" value="47577" oninput="calcValuation()">
+          <input class="val-inp" id="v-cf" type="number" value="95154" oninput="calcValuation()">
         </div>
         <div class="val-inp-wrap">
           <div class="val-inp-label"><b>Lucro Líquido Anual (R$)</b> <span class="val-badge vb-edit">EDITE</span><div class="val-inp-hint">Após impostos e todas as despesas — da DRE</div></div>
@@ -2933,23 +2937,23 @@ if (sessionStorage.getItem(SESSAO_KEY) === "ok") {
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Aluguel da fábrica<div class="cus-hint">Valor mensal do aluguel do imóvel industrial</div></div>
-        <input class="cus-inp" id="cf-aluguel" type="number" placeholder="0,00" value="" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-aluguel" type="number" placeholder="0,00" value="16980" value="" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Condomínio / IPTU<div class="cus-hint">Taxa de condomínio industrial ou IPTU rateado</div></div>
-        <input class="cus-inp" id="cf-condominio" type="number" placeholder="0,00" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-condominio" type="number" placeholder="0,00" value="1274" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Energia elétrica (fixo)<div class="cus-hint">Demanda contratada + iluminação e AC administrativo</div></div>
-        <input class="cus-inp" id="cf-energia" type="number" placeholder="0,00" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-energia" type="number" placeholder="0,00" value="3612" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Água e saneamento<div class="cus-hint">Conta mensal média de água</div></div>
-        <input class="cus-inp" id="cf-agua" type="number" placeholder="0,00" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-agua" type="number" placeholder="0,00" value="4000" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Internet e telefone<div class="cus-hint">Planos fixos de conectividade</div></div>
-        <input class="cus-inp" id="cf-internet" type="number" placeholder="0,00" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-internet" type="number" placeholder="0,00" value="399" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Segurança / monitoramento<div class="cus-hint">Contrato mensal de segurança patrimonial</div></div>
@@ -2976,19 +2980,19 @@ if (sessionStorage.getItem(SESSAO_KEY) === "ok") {
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Diretoria / sócios (pró-labore)<div class="cus-hint">Remuneração mensal dos sócios gestores</div></div>
-        <input class="cus-inp" id="cf-prolabore" type="number" placeholder="0,00" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-prolabore" type="number" placeholder="0,00" value="13500" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Gerente / supervisor de produção<div class="cus-hint">Custo total com encargos</div></div>
-        <input class="cus-inp" id="cf-gerente" type="number" placeholder="0,00" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-gerente" type="number" placeholder="0,00" value="5580.08" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Auxiliares de produção<div class="cus-hint">Custo total da equipe de chão de fábrica</div></div>
-        <input class="cus-inp" id="cf-producao" type="number" placeholder="0,00" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-producao" type="number" placeholder="0,00" value="13533" value="13533.12" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Administrativo / financeiro<div class="cus-hint">Assistentes administrativos e financeiros</div></div>
-        <input class="cus-inp" id="cf-admin" type="number" placeholder="0,00" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-admin" type="number" placeholder="0,00" value="27556" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Vendedores internos (fixo)<div class="cus-hint">Salário fixo dos vendedores — comissão entra nos variáveis</div></div>
@@ -3055,15 +3059,15 @@ if (sessionStorage.getItem(SESSAO_KEY) === "ok") {
     <div class="cus-body">
       <div class="cus-linha">
         <div class="cus-nome">Honorários contábeis<div class="cus-hint">Mensalidade do escritório de contabilidade</div></div>
-        <input class="cus-inp" id="cf-contabil" type="number" placeholder="0,00" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-contabil" type="number" placeholder="0,00" value="4500" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Software / sistemas (ERP, Omie, etc.)<div class="cus-hint">Assinaturas mensais de sistemas de gestão</div></div>
-        <input class="cus-inp" id="cf-software" type="number" placeholder="0,00" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-software" type="number" placeholder="0,00" value="1148" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Licenças, alvarás e taxas municipais<div class="cus-hint">Custos fixos de licenciamento e operação legal</div></div>
-        <input class="cus-inp" id="cf-licencas" type="number" placeholder="0,00" oninput="calcCustos()">
+        <input class="cus-inp" id="cf-licencas" type="number" placeholder="0,00" value="163" oninput="calcCustos()">
       </div>
       <div class="cus-linha">
         <div class="cus-nome">Seguros (fábrica, veículos, estoque)<div class="cus-hint">Apólices mensais ou rateio do prêmio anual</div></div>

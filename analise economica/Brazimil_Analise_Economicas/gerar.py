@@ -273,7 +273,7 @@ def calcular_valuation_base(produtos, vendas_data, fluxo_data):
     mc_media = mc_total / mc_count if mc_count else 0
 
     # EBITDA estimado (cf fixo padrão da planilha do time)
-    cf_mensal = 47577
+    cf_mensal = 95154  # CF real extraído da planilha do time (Despesas Fixas + Salários)
     ebitda_anual = fat_anual * (mc_media / 100) - (cf_mensal * 12)
     margem_ebitda = (ebitda_anual / fat_anual * 100) if fat_anual > 0 else 0
 
@@ -310,7 +310,7 @@ with open("brazimil_analise_economica.html", "w", encoding="utf-8") as f:
 
 print("=" * 55)
 print("Dashboard gerado: brazimil_analise_economica.html")
-print(f"  Vendas: {'exemplo' if vendas_data.get('exemplo') else 'dados reais'} | Fluxo: {'exemplo' if fluxo_data.get('exemplo') else 'dados reais'}"))
+print(f"  Vendas: {'exemplo' if vendas_data.get('exemplo') else 'dados reais'} | Fluxo: {'exemplo' if fluxo_data.get('exemplo') else 'dados reais'}")
 print(f"  Preços da planilha do time: {sum(1 for p in produtos if p['fonte']=='time')} produtos")
 print(f"  Preços fallback manual:     {sum(1 for p in produtos if p['fonte']=='manual')} produtos")
 print("=" * 55)
