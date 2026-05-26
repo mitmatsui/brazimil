@@ -1,199 +1,327 @@
 {
-  "gerado_em": "2026-05-20T21:48:41.986493",
+  "exemplo": false,
   "resumo": {
-    "total_carteira": 465780.6,
-    "total_aberto": 392548.79,
-    "total_recebido": 73231.81,
-    "total_vencido": 117090.3,
-    "taxa_inadimplencia": 29.8,
-    "qtd_boletos_abertos": 49,
-    "qtd_boletos_vencidos": 14
+    "total_carteira": 113988.74,
+    "total_aberto": 113988.74,
+    "total_recebido": 0.0,
+    "total_vencido": 2464.28,
+    "taxa_inadimplencia": 2.16,
+    "qtd_boletos_abertos": 27,
+    "qtd_boletos_vencidos": 2,
+    "dso_dias": 9.9
+  },
+  "aging": {
+    "1_30": 2464.28,
+    "31_60": 0.0,
+    "61_90": 0.0,
+    "mais_90": 0.0
   },
   "proximas_4_semanas": [
     {
-      "semana": "2026-S21",
-      "label": "Sem 21 (18/May–24/May)",
-      "inicio": "2026-05-18",
-      "fim": "2026-05-24",
-      "previsto": 4127.43,
-      "vencido_nper": 0.0,
-      "boletos_n": 1
+      "label": "25/05",
+      "semana": "25/05/2026",
+      "previsto": 52689.06,
+      "vencido_nper": 0,
+      "total": 52689.06
     },
     {
-      "semana": "2026-S22",
-      "label": "Sem 22 (25/May–31/May)",
-      "inicio": "2026-05-25",
-      "fim": "2026-05-31",
-      "previsto": 23991.3,
-      "vencido_nper": 0.0,
-      "boletos_n": 3
+      "label": "01/06",
+      "semana": "01/06/2026",
+      "previsto": 1249.8,
+      "vencido_nper": 0,
+      "total": 1249.8
     },
     {
-      "semana": "2026-S23",
-      "label": "Sem 23 (01/Jun–07/Jun)",
-      "inicio": "2026-06-01",
-      "fim": "2026-06-07",
-      "previsto": 36249.17,
-      "vencido_nper": 0.0,
-      "boletos_n": 4
+      "label": "08/06",
+      "semana": "08/06/2026",
+      "previsto": 10491.66,
+      "vencido_nper": 0,
+      "total": 10491.66
     },
     {
-      "semana": "2026-S24",
-      "label": "Sem 24 (08/Jun–14/Jun)",
-      "inicio": "2026-06-08",
-      "fim": "2026-06-14",
-      "previsto": 25426.67,
-      "vencido_nper": 0.0,
-      "boletos_n": 2
+      "label": "15/06",
+      "semana": "15/06/2026",
+      "previsto": 6827.91,
+      "vencido_nper": 0,
+      "total": 6827.91
     }
   ],
-  "aging": {
-    "1_30": 15591.25,
-    "31_60": 82324.5,
-    "61_90": 19174.55,
-    "mais_90": 0.0
-  },
   "top_inadimplentes": [
     {
-      "cliente": "Reforma Total",
-      "valor": 27185.61
-    },
-    {
-      "cliente": "ConstruBem",
-      "valor": 24725.36
-    },
-    {
-      "cliente": "Depósito Central",
-      "valor": 15449.13
-    },
-    {
-      "cliente": "Material AM",
-      "valor": 15321.15
-    },
-    {
-      "cliente": "Ferro & Cor",
-      "valor": 13549.57
-    },
-    {
-      "cliente": "Constrular AM",
-      "valor": 12650.36
-    },
-    {
-      "cliente": "MisTintas",
-      "valor": 8209.12
+      "cliente": "MONTE ALEGRE ELETRICA E CONSTRUCAO",
+      "valor": 2464.28
     }
   ],
   "boletos_detalhes": [
     {
-      "nosso_num": "00000052",
-      "cliente": "Material AM",
-      "emissao": "2026-02-27",
+      "status": "vencido",
+      "cliente": "MONTE ALEGRE ELETRICA E CONSTRUCAO",
+      "documento": " (002/003)",
+      "vencimento": "2026-05-21",
+      "valor": 1214.48,
+      "val_conta": 1214.48,
+      "val_recebido": 0.0,
+      "dias_atraso": 4
+    },
+    {
+      "status": "vencido",
+      "cliente": "MONTE ALEGRE ELETRICA E CONSTRUCAO",
+      "documento": " (001/004)",
       "vencimento": "2026-05-22",
-      "semana": "2026-S21",
-      "label": "Sem 21 (18/May–24/May)",
-      "valor": 4127.43,
-      "status": "aberto",
-      "dias_venc": 2
+      "valor": 1249.8,
+      "val_conta": 1249.8,
+      "val_recebido": 0.0,
+      "dias_atraso": 3
     },
     {
-      "nosso_num": "00000005",
-      "cliente": "Ferro & Cor",
-      "emissao": "2026-04-11",
+      "status": "aberto",
+      "cliente": "CONSTRUFORTE",
+      "documento": " (002/003)",
       "vencimento": "2026-05-25",
-      "semana": "2026-S22",
-      "label": "Sem 22 (25/May–31/May)",
-      "valor": 12423.72,
-      "status": "aberto",
-      "dias_venc": 5
+      "valor": 4078.19,
+      "val_conta": 4078.19,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
     },
     {
-      "nosso_num": "00000026",
-      "cliente": "ConstruBem",
-      "emissao": "2026-03-13",
+      "status": "aberto",
+      "cliente": "CONSTRUFORTE",
+      "documento": " (002/003)",
+      "vencimento": "2026-05-25",
+      "valor": 6449.67,
+      "val_conta": 6449.67,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "CONSTRUFORTE",
+      "documento": " (002/003)",
       "vencimento": "2026-05-26",
-      "semana": "2026-S22",
-      "label": "Sem 22 (25/May–31/May)",
-      "valor": 6286.96,
-      "status": "aberto",
-      "dias_venc": 6
+      "valor": 6861.79,
+      "val_conta": 6861.79,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
     },
     {
-      "nosso_num": "00000016",
-      "cliente": "MisTintas",
-      "emissao": "2026-03-12",
+      "status": "aberto",
+      "cliente": "65.104.517 TATIANE DE FARIA SERRAO",
+      "documento": " (002/002)",
       "vencimento": "2026-05-27",
-      "semana": "2026-S22",
-      "label": "Sem 22 (25/May–31/May)",
-      "valor": 5280.62,
-      "status": "aberto",
-      "dias_venc": 7
+      "valor": 2648.64,
+      "val_conta": 2648.64,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
     },
     {
-      "nosso_num": "00000001",
-      "cliente": "Tudo & Cor",
-      "emissao": "2026-04-16",
-      "vencimento": "2026-06-02",
-      "semana": "2026-S23",
-      "label": "Sem 23 (01/Jun–07/Jun)",
-      "valor": 6020.91,
       "status": "aberto",
-      "dias_venc": 13
+      "cliente": "MONTE ALEGRE ELETRICA E CONSTRUCAO",
+      "documento": " (003/003)",
+      "vencimento": "2026-05-28",
+      "valor": 1214.47,
+      "val_conta": 1214.47,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
     },
     {
-      "nosso_num": "00000027",
-      "cliente": "MisTintas",
-      "emissao": "2026-04-30",
+      "status": "aberto",
+      "cliente": "CONSTRUFORTE",
+      "documento": " (002/003)",
+      "vencimento": "2026-05-29",
+      "valor": 5228.0,
+      "val_conta": 5228.0,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "MONTE ALEGRE ELETRICA E CONSTRUCAO",
+      "documento": " (002/004)",
+      "vencimento": "2026-05-29",
+      "valor": 1249.8,
+      "val_conta": 1249.8,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "DELTA CONSTRUCOES",
+      "documento": " (002/004)",
+      "vencimento": "2026-05-30",
+      "valor": 3992.58,
+      "val_conta": 3992.58,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "O TELHADAO",
+      "documento": " (003/003)",
+      "vencimento": "2026-05-31",
+      "valor": 10482.96,
+      "val_conta": 10482.96,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "O TELHADAO",
+      "documento": " (003/003)",
+      "vencimento": "2026-05-31",
+      "valor": 10482.96,
+      "val_conta": 10482.96,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "MONTE ALEGRE ELETRICA E CONSTRUCAO",
+      "documento": " (003/004)",
       "vencimento": "2026-06-05",
-      "semana": "2026-S23",
-      "label": "Sem 23 (01/Jun–07/Jun)",
-      "valor": 12298.48,
-      "status": "aberto",
-      "dias_venc": 16
+      "valor": 1249.8,
+      "val_conta": 1249.8,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
     },
     {
-      "nosso_num": "00000033",
-      "cliente": "Material AM",
-      "emissao": "2026-05-04",
-      "vencimento": "2026-06-06",
-      "semana": "2026-S23",
-      "label": "Sem 23 (01/Jun–07/Jun)",
-      "valor": 14475.2,
       "status": "aberto",
-      "dias_venc": 17
+      "cliente": "JKM DIAS COMERCIO",
+      "documento": " (004/004)",
+      "vencimento": "2026-06-09",
+      "valor": 5249.3,
+      "val_conta": 5249.3,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
     },
     {
-      "nosso_num": "00000009",
-      "cliente": "MisTintas",
-      "emissao": "2026-05-03",
-      "vencimento": "2026-06-07",
-      "semana": "2026-S23",
-      "label": "Sem 23 (01/Jun–07/Jun)",
-      "valor": 3454.58,
       "status": "aberto",
-      "dias_venc": 18
-    },
-    {
-      "nosso_num": "00000032",
-      "cliente": "Constrular AM",
-      "emissao": "2026-03-22",
-      "vencimento": "2026-06-11",
-      "semana": "2026-S24",
-      "label": "Sem 24 (08/Jun–14/Jun)",
-      "valor": 11396.84,
-      "status": "aberto",
-      "dias_venc": 22
-    },
-    {
-      "nosso_num": "00000044",
-      "cliente": "Material AM",
-      "emissao": "2026-03-26",
+      "cliente": "MONTE ALEGRE ELETRICA E CONSTRUCAO",
+      "documento": " (004/004)",
       "vencimento": "2026-06-12",
-      "semana": "2026-S24",
-      "label": "Sem 24 (08/Jun–14/Jun)",
-      "valor": 14029.83,
+      "valor": 1249.78,
+      "val_conta": 1249.78,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
       "status": "aberto",
-      "dias_venc": 23
+      "cliente": "DELTA CONSTRUCOES",
+      "documento": " (003/004)",
+      "vencimento": "2026-06-14",
+      "valor": 3992.58,
+      "val_conta": 3992.58,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "P. EDUARDO DA SILVA LTDA",
+      "documento": " (001/003)",
+      "vencimento": "2026-06-17",
+      "valor": 3562.15,
+      "val_conta": 3562.15,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "P. EDUARDO DA SILVA LTDA",
+      "documento": " (001/003)",
+      "vencimento": "2026-06-19",
+      "valor": 3265.76,
+      "val_conta": 3265.76,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "CONSTRUFORTE",
+      "documento": " (003/003)",
+      "vencimento": "2026-06-24",
+      "valor": 4078.19,
+      "val_conta": 4078.19,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "CONSTRUFORTE",
+      "documento": " (003/003)",
+      "vencimento": "2026-06-24",
+      "valor": 6449.66,
+      "val_conta": 6449.66,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "CONSTRUFORTE",
+      "documento": " (003/003)",
+      "vencimento": "2026-06-25",
+      "valor": 6861.8,
+      "val_conta": 6861.8,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "CONSTRUFORTE",
+      "documento": " (003/003)",
+      "vencimento": "2026-06-28",
+      "valor": 5228.0,
+      "val_conta": 5228.0,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "DELTA CONSTRUCOES",
+      "documento": " (004/004)",
+      "vencimento": "2026-06-29",
+      "valor": 3992.57,
+      "val_conta": 3992.57,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "P. EDUARDO DA SILVA LTDA",
+      "documento": " (002/003)",
+      "vencimento": "2026-07-02",
+      "valor": 3562.15,
+      "val_conta": 3562.15,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "P. EDUARDO DA SILVA LTDA",
+      "documento": " (002/003)",
+      "vencimento": "2026-07-04",
+      "valor": 3265.76,
+      "val_conta": 3265.76,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "P. EDUARDO DA SILVA LTDA",
+      "documento": " (003/003)",
+      "vencimento": "2026-07-17",
+      "valor": 3562.14,
+      "val_conta": 3562.14,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
+    },
+    {
+      "status": "aberto",
+      "cliente": "P. EDUARDO DA SILVA LTDA",
+      "documento": " (003/003)",
+      "vencimento": "2026-07-19",
+      "valor": 3265.76,
+      "val_conta": 3265.76,
+      "val_recebido": 0.0,
+      "dias_atraso": 0
     }
-  ],
-  "exemplo": true
+  ]
 }
