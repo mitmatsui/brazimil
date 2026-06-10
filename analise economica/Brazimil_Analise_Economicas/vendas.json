@@ -1,276 +1,332 @@
 {
   "exemplo": false,
-  "total_periodo": 3594687.02,
-  "total_semana_atual": 55869.45,
-  "variacao_semanal_pct": 313.6,
+  "total_periodo": 3590614.74,
+  "total_semana_atual": 55156.8,
+  "variacao_semanal_pct": 317.0,
   "semanas": [
     {
       "semana": "01/09/2025",
       "label": "01/09/2025",
-      "total": 10034.73
+      "total": 9925.61
     },
     {
       "semana": "01/12/2025",
       "label": "01/12/2025",
-      "total": 259921.53
+      "total": 257524.9
     },
     {
       "semana": "02/02/2026",
       "label": "02/02/2026",
-      "total": 156070.16
+      "total": 155968.19
     },
     {
       "semana": "02/03/2026",
       "label": "02/03/2026",
-      "total": 200139.09
+      "total": 198042.45
     },
     {
       "semana": "03/11/2025",
       "label": "03/11/2025",
-      "total": 54337.3
+      "total": 53276.61
     },
     {
       "semana": "04/05/2026",
       "label": "04/05/2026",
-      "total": 112996.01
+      "total": 112985.29
     },
     {
       "semana": "04/08/2025",
       "label": "04/08/2025",
-      "total": 5521.52
+      "total": 5472.98
     },
     {
       "semana": "05/01/2026",
       "label": "05/01/2026",
-      "total": 187389.38
+      "total": 187049.85
     },
     {
       "semana": "06/04/2026",
       "label": "06/04/2026",
-      "total": 211640.05
+      "total": 208285.2
     },
     {
       "semana": "06/10/2025",
       "label": "06/10/2025",
-      "total": 78982.53
+      "total": 78360.33
     },
     {
       "semana": "08/09/2025",
       "label": "08/09/2025",
-      "total": 188900.65
+      "total": 194367.73
     },
     {
       "semana": "08/12/2025",
       "label": "08/12/2025",
-      "total": 25656.7
+      "total": 25192.0
     },
     {
       "semana": "09/02/2026",
       "label": "09/02/2026",
-      "total": 86364.51
+      "total": 84472.4
     },
     {
       "semana": "09/03/2026",
       "label": "09/03/2026",
-      "total": 101287.97
+      "total": 100454.31
     },
     {
       "semana": "10/11/2025",
       "label": "10/11/2025",
-      "total": 126894.43
+      "total": 125143.9
     },
     {
       "semana": "11/05/2026",
       "label": "11/05/2026",
-      "total": 156968.51
+      "total": 157774.0
     },
     {
       "semana": "11/08/2025",
       "label": "11/08/2025",
-      "total": 24036.64
+      "total": 23600.5
     },
     {
       "semana": "12/01/2026",
       "label": "12/01/2026",
-      "total": 24232.95
+      "total": 23537.21
     },
     {
       "semana": "13/04/2026",
       "label": "13/04/2026",
-      "total": 5315.41
+      "total": 5226.79
     },
     {
       "semana": "13/10/2025",
       "label": "13/10/2025",
-      "total": 113155.47
+      "total": 112874.91
     },
     {
       "semana": "14/07/2025",
       "label": "14/07/2025",
-      "total": 5449.34
+      "total": 5391.37
     },
     {
       "semana": "15/09/2025",
       "label": "15/09/2025",
-      "total": 80548.39
+      "total": 80115.72
     },
     {
       "semana": "15/12/2025",
       "label": "15/12/2025",
-      "total": 345850.58
+      "total": 344318.18
     },
     {
       "semana": "16/02/2026",
       "label": "16/02/2026",
-      "total": 6901.27
+      "total": 6767.92
     },
     {
       "semana": "16/03/2026",
       "label": "16/03/2026",
-      "total": 12548.39
+      "total": 17583.28
     },
     {
       "semana": "17/11/2025",
       "label": "17/11/2025",
-      "total": 217501.12
+      "total": 216577.23
     },
     {
       "semana": "18/05/2026",
       "label": "18/05/2026",
-      "total": 23721.05
+      "total": 27718.6
     },
     {
       "semana": "18/08/2025",
       "label": "18/08/2025",
-      "total": 8639.69
+      "total": 8470.56
     },
     {
       "semana": "19/01/2026",
       "label": "19/01/2026",
-      "total": 13701.14
+      "total": 13364.61
     },
     {
       "semana": "20/04/2026",
       "label": "20/04/2026",
-      "total": 47804.36
+      "total": 47423.4
     },
     {
       "semana": "20/10/2025",
       "label": "20/10/2025",
-      "total": 97949.09
+      "total": 96222.43
     },
     {
       "semana": "21/07/2025",
       "label": "21/07/2025",
-      "total": 8689.29
+      "total": 8608.43
     },
     {
       "semana": "22/09/2025",
       "label": "22/09/2025",
-      "total": 22835.71
+      "total": 22376.52
     },
     {
       "semana": "22/12/2025",
       "label": "22/12/2025",
-      "total": 82008.38
+      "total": 81376.34
     },
     {
       "semana": "23/02/2026",
       "label": "23/02/2026",
-      "total": 55842.78
+      "total": 58447.5
     },
     {
       "semana": "23/03/2026",
       "label": "23/03/2026",
-      "total": 33037.24
+      "total": 32299.86
     },
     {
       "semana": "24/11/2025",
       "label": "24/11/2025",
-      "total": 83225.97
+      "total": 82142.95
+    },
+    {
+      "semana": "25/05/2026",
+      "label": "25/05/2026",
+      "total": 1297.1
     },
     {
       "semana": "25/08/2025",
       "label": "25/08/2025",
-      "total": 78386.35
+      "total": 81747.18
     },
     {
       "semana": "26/01/2026",
       "label": "26/01/2026",
-      "total": 27695.6
+      "total": 27384.02
     },
     {
       "semana": "27/04/2026",
       "label": "27/04/2026",
-      "total": 24207.6
+      "total": 23652.39
     },
     {
       "semana": "27/10/2025",
       "label": "27/10/2025",
-      "total": 32681.66
+      "total": 32338.54
     },
     {
       "semana": "28/07/2025",
       "label": "28/07/2025",
-      "total": 23652.01
+      "total": 23245.87
     },
     {
       "semana": "29/09/2025",
       "label": "29/09/2025",
-      "total": 62586.55
+      "total": 63826.22
     },
     {
       "semana": "29/12/2025",
       "label": "29/12/2025",
-      "total": 13508.47
+      "total": 13226.56
     },
     {
       "semana": "30/03/2026",
       "label": "30/03/2026",
-      "total": 55869.45
+      "total": 55156.8
     }
   ],
   "top_clientes": [
     {
       "cliente": "LOAH SERVICOS",
-      "total": 632958.6
+      "total": 633343.8
     },
     {
       "cliente": "A F COMERCIAL",
-      "total": 354282.33
+      "total": 354263.56
     },
     {
       "cliente": "DARA PRODUCOES",
-      "total": 284350.14
+      "total": 284461.34
     },
     {
       "cliente": "TECWAY LOCACAO DE EQUIPAMENTOS",
-      "total": 252750.04
+      "total": 252852.88
     },
     {
       "cliente": "CONSTRUFORTE",
-      "total": 166837.92
+      "total": 162847.92
     },
     {
       "cliente": "AVELINO SERVICOS",
-      "total": 151186.0
-    },
-    {
-      "cliente": "GRUPO EPA",
-      "total": 150000.0
+      "total": 152188.9
     },
     {
       "cliente": "CREDIE MEDICAMENTOS",
-      "total": 150000.0
+      "total": 150057.4
     },
     {
-      "cliente": "P2 FACILITIES E COMERCIO",
-      "total": 97334.54
+      "cliente": "GRUPO EPA",
+      "total": 150024.5
+    },
+    {
+      "cliente": "FERRAGEM CAREQUINHA JR",
+      "total": 98607.6
     },
     {
       "cliente": "RS CONSULTORIA E GESTAO DE RECURSOS HUMANOS",
-      "total": 96300.0
+      "total": 96300.04
     }
   ],
-  "top_produtos": []
+  "top_produtos": [
+    {
+      "produto": "BRAZIMIL LÁTEX ECONÔMICO INT FOSCO 15L BRANCO NEVE",
+      "total": 386136.6,
+      "qtd": 4875.0
+    },
+    {
+      "produto": "BRAZIMIL LÁTEX STANDARD INT/EXT SEMIBRILHO 15L BRANCO NEVE",
+      "total": 265706.1,
+      "qtd": 1236.0
+    },
+    {
+      "produto": "BRAZIMIL BORRACHA LIQUIDA MULTIFUNÇÃO 14KG BRANCO NEVE",
+      "total": 190179.04,
+      "qtd": 418.0
+    },
+    {
+      "produto": "BRAZIMIL SELADOR ACRILICO 15L",
+      "total": 152205.53,
+      "qtd": 1856.0
+    },
+    {
+      "produto": "BRAZIMIL MASSA CORRIDA 20,0 KG",
+      "total": 148193.2,
+      "qtd": 3534.0
+    },
+    {
+      "produto": "BRAZIMIL MASSA ACRÍLICA 20KG",
+      "total": 137117.3,
+      "qtd": 1567.0
+    },
+    {
+      "produto": "BRAZIMIL LÁTEX STANDARD INT/EXT FOSCO 15L BRANCO GELO",
+      "total": 125823.9,
+      "qtd": 561.0
+    },
+    {
+      "produto": "BRAZIMIL LÁTEX ECONÔMICO INT FOSCO 15L BRANCO GELO",
+      "total": 124651.4,
+      "qtd": 1431.0
+    },
+    {
+      "produto": "BRAZIMIL BORRACHA LIQUIDA MULTIFUNÇÃO 14KG CINZA MEDIO",
+      "total": 104317.6,
+      "qtd": 226.0
+    },
+    {
+      "produto": "BRAZIMIL LÁTEX STANDARD INT/EXT FOSCO 15L MARFIM",
+      "total": 71284.6,
+      "qtd": 314.0
+    }
+  ]
 }

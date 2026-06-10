@@ -586,30 +586,58 @@ select:focus,input:focus{border-color:#2E75B6}
         <div class="page-title">Evolução de Vendas</div>
         <div class="page-sub" id="vendas-sub">Carregando...</div>
       </div>
-      <div class="kpi-strip cols-4">
+
+      <!-- KPIs linha 1 -->
+      <div class="kpi-strip cols-4" style="margin-bottom:12px">
         <div class="kpi"><div class="kpi-label">Faturamento Total</div><div class="kpi-val azul" id="v-total">—</div><div class="kpi-sub" id="v-total-sub">período</div></div>
-        <div class="kpi"><div class="kpi-label">Semana Atual</div><div class="kpi-val" id="v-semana">—</div><div class="kpi-trend" id="v-var">—</div></div>
+        <div class="kpi"><div class="kpi-label">Média Semanal</div><div class="kpi-val" id="v-media">—</div><div class="kpi-sub" id="v-media-sub">—</div></div>
         <div class="kpi"><div class="kpi-label">Melhor Semana</div><div class="kpi-val verde" id="v-melhor">—</div><div class="kpi-sub" id="v-melhor-data">—</div></div>
-        <div class="kpi"><div class="kpi-label">Média Semanal</div><div class="kpi-val" id="v-media">—</div><div class="kpi-sub">últimas semanas</div></div>
+        <div class="kpi"><div class="kpi-label">Ticket Médio / NF</div><div class="kpi-val cobalt" id="v-ticket">—</div><div class="kpi-sub" id="v-nfs-total">—</div></div>
       </div>
-      <div class="grid-6040">
-        <div>
-          <div class="card">
-            <div class="card-hdr"><div class="card-titulo">Faturamento Semanal — R$</div></div>
-            <div class="card-body"><div class="chart-wrap" style="height:230px"><canvas id="chart-vendas"></canvas></div></div>
+
+      <!-- KPIs linha 2 -->
+      <div class="kpi-strip cols-4" style="margin-bottom:24px">
+        <div class="kpi"><div class="kpi-label">Semana Atual</div><div class="kpi-val" id="v-semana">—</div><div class="kpi-trend" id="v-var">—</div></div>
+        <div class="kpi"><div class="kpi-label">Últ. 4 sem vs Ant. 4</div><div class="kpi-val" id="v-var4">—</div><div class="kpi-sub">variação de tendência</div></div>
+        <div class="kpi"><div class="kpi-label">Semanas acima da média</div><div class="kpi-val" id="v-acima">—</div><div class="kpi-sub" id="v-acima-pct">—</div></div>
+        <div class="kpi"><div class="kpi-label">Top 10 Produtos</div><div class="kpi-val cobalt" id="v-top10-pct">—</div><div class="kpi-sub">do faturamento total</div></div>
+      </div>
+
+      <!-- Gráfico semanal + Top Clientes -->
+      <div class="grid-6040" style="margin-bottom:20px">
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-titulo">Faturamento Semanal — R$</div>
+            <div style="font-size:10px;color:#8a9ab0" id="v-periodo-label">—</div>
           </div>
-          <div class="card">
-            <div class="card-hdr"><div class="card-titulo">Tendência de Crescimento</div></div>
-            <div class="card-body"><div class="chart-wrap" style="height:170px"><canvas id="chart-tendencia"></canvas></div></div>
+          <div class="card-body"><div class="chart-wrap" style="height:240px"><canvas id="chart-vendas"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-titulo">Top 10 Clientes — Acumulado</div></div>
+          <div class="card-body" id="v-top-cli" style="padding-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- Top 10 Produtos + Análise de Concentração -->
+      <div class="grid-2" style="margin-bottom:20px">
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-titulo">Top 10 Produtos — Faturamento Acumulado</div>
           </div>
+          <div class="card-body" id="v-top-prod" style="padding-top:8px"></div>
         </div>
         <div>
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-hdr"><div class="card-titulo">Mix de Receita — Top 10 Produtos</div></div>
+            <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-mix-prod"></canvas></div></div>
+          </div>
           <div class="card">
-            <div class="card-hdr"><div class="card-titulo">Top 10 Clientes — Faturamento Acumulado</div></div>
-            <div class="card-body" id="v-top-cli"></div>
+            <div class="card-hdr"><div class="card-titulo">Tendência de Crescimento Semanal</div></div>
+            <div class="card-body"><div class="chart-wrap" style="height:150px"><canvas id="chart-tendencia"></canvas></div></div>
           </div>
         </div>
       </div>
+
     </div>
 
     <!-- ═══ FLUXO ═══ -->
@@ -1262,54 +1290,174 @@ function renderRetorno() {
 // ═══════════════════════════════════════════════════
 function renderVendas() {
   var v = dadosV;
-  var sems = v.semanas||[];
-  var vals = sems.map(s=>s.total);
-  var total= v.total_periodo||0;
-  var atl  = v.total_semana_atual||0;
-  var varP = v.variacao_semanal_pct||0;
-  var melh = Math.max(...vals); var melhIdx = vals.indexOf(melh);
-  var media= vals.reduce((a,b)=>a+b,0)/(vals.length||1);
+  var sems  = v.semanas || [];
+  var vals  = sems.map(s => s.total);
+  var total = v.total_periodo || 0;
+  var n     = sems.length;
+  if (!n) return;
 
-  document.getElementById('v-total').textContent     = fmtK(total);
-  document.getElementById('v-total-sub').textContent = sems.length+' semanas';
-  document.getElementById('v-semana').textContent    = fmtK(atl);
+  var atl     = vals[vals.length-1] || 0;
+  var varP    = v.variacao_semanal_pct || 0;
+  var melh    = Math.max(...vals);
+  var melhIdx = vals.indexOf(melh);
+  var media   = total / n;
+  var acima   = vals.filter(v => v > media).length;
+  var nfsTotal= 435; // NFs processadas
+  var ticket  = total / nfsTotal;
+
+  // Variação últimas 4 vs anteriores 4
+  var ult4 = vals.slice(-4).reduce((a,b)=>a+b,0);
+  var ant4 = vals.slice(-8,-4).reduce((a,b)=>a+b,0);
+  var var4 = ant4 > 0 ? (ult4/ant4 - 1)*100 : 0;
+
+  // Top 10 produtos — % do total
+  var topProd  = v.top_produtos || [];
+  var topTotal = topProd.reduce((s,p) => s + p.total, 0);
+  var topPct   = total > 0 ? topTotal/total*100 : 0;
+
+  // ── Preencher KPIs ────────────────────────────────────────────────────
+  document.getElementById('v-total').textContent      = fmtK(total);
+  document.getElementById('v-total-sub').textContent  = n + ' semanas · ' + sems[0].semana + ' → ' + sems[n-1].semana;
+  document.getElementById('v-media').textContent      = fmtK(media);
+  document.getElementById('v-media-sub').textContent  = 'por semana';
+  document.getElementById('v-melhor').textContent     = fmtK(melh);
+  document.getElementById('v-melhor-data').textContent= sems[melhIdx].semana;
+  document.getElementById('v-ticket').textContent     = fmtBR(Math.round(ticket));
+  document.getElementById('v-nfs-total').textContent  = nfsTotal + ' notas fiscais';
+  document.getElementById('v-semana').textContent     = fmtK(atl);
   var varEl = document.getElementById('v-var');
-  varEl.textContent = (varP>=0?'▲ +':' ▼ ')+fmtP(Math.abs(varP))+' vs semana anterior';
-  varEl.className   = 'kpi-trend '+(varP>=0?'up':'down');
-  document.getElementById('v-melhor').textContent    = fmtK(melh);
-  document.getElementById('v-melhor-data').textContent = sems[melhIdx]?.semana||'';
-  document.getElementById('v-media').textContent     = fmtK(media);
-  document.getElementById('vendas-sub').textContent  = 'Período: '+sems[0]?.semana+' → '+sems[sems.length-1]?.semana+' · '+sems.length+' semanas · Omie';
+  varEl.textContent = (varP>=0 ? '▲ +' : '▼ ') + fmtP(Math.abs(varP)) + ' vs semana anterior';
+  varEl.className   = 'kpi-trend ' + (varP>=0 ? 'up' : 'down');
+  var var4El = document.getElementById('v-var4');
+  var4El.textContent = (var4>=0?'+':'') + fmtP(var4);
+  var4El.className   = 'kpi-val ' + (var4>=0?'verde':'rubi');
+  document.getElementById('v-acima').textContent     = acima;
+  document.getElementById('v-acima-pct').textContent = Math.round(acima/n*100) + '% das semanas';
+  document.getElementById('v-top10-pct').textContent = fmtP(topPct);
+  document.getElementById('v-periodo-label').textContent = sems[0].semana + ' — ' + sems[n-1].semana;
+  document.getElementById('vendas-sub').textContent  = n + ' semanas · ' + nfsTotal + ' NFs · 3.554 itens · Omie';
 
-  // Gráfico barras semanal
+  // ── Gráfico semanal ───────────────────────────────────────────────────
   if(graficos.vendas) graficos.vendas.destroy();
-  graficos.vendas = new Chart(document.getElementById('chart-vendas'),{
+  var cores = vals.map((_,i) => i===melhIdx ? '#1F3864' : 'rgba(46,117,182,.45)');
+  graficos.vendas = new Chart(document.getElementById('chart-vendas'), {
     type:'bar',
-    data:{labels:sems.map(s=>s.label||s.semana),datasets:[{data:vals,backgroundColor:vals.map((_,i)=>i===melhIdx?'#1a3a6b':'rgba(26,58,107,.45)'),borderRadius:2}]},
-    options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{family:'Courier New',size:9}},grid:{color:'rgba(0,0,0,.04)'}},x:{ticks:{maxTicksLimit:12,font:{family:'Courier New',size:9},color:'#8a9ab0'},grid:{display:false}}}}
+    data:{
+      labels: sems.map(s => s.label||s.semana),
+      datasets:[{data:vals, backgroundColor:cores, borderRadius:2}]
+    },
+    options:{
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>' '+fmtBR(ctx.raw)}}},
+      scales:{
+        y:{ticks:{callback:v=>fmtK(v),font:{family:'Courier New',size:9}},
+           grid:{color:'rgba(0,0,0,.04)'}},
+        x:{ticks:{maxTicksLimit:14,font:{family:'Courier New',size:8},color:'#8a9ab0'},
+           grid:{display:false}}
+      }
+    }
   });
 
-  // Tendência
+  // ── Top 10 Clientes ───────────────────────────────────────────────────
+  var maxC = (v.top_clientes||[])[0]?.total || 1;
+  document.getElementById('v-top-cli').innerHTML = (v.top_clientes||[]).map((c,i) => {
+    var pct = Math.round(c.total/maxC*100);
+    return '<div class="bar-row" style="margin-bottom:10px">' +
+      '<div class="bar-label" style="width:150px">' + (c.cliente||c.nome||'—').split(' ').slice(0,3).join(' ') + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:#0d6e4f"></div></div>' +
+      '<div class="bar-val">' + fmtK(c.total) + '</div>' +
+      '</div>';
+  }).join('');
+
+  // ── Top 10 Produtos ───────────────────────────────────────────────────
+  var maxP = topProd[0]?.total || 1;
+  document.getElementById('v-top-prod').innerHTML = topProd.map((p,i) => {
+    var pct      = Math.round(p.total/maxP*100);
+    var pctTotal = (p.total/total*100).toFixed(1);
+    var nome     = (p.produto||'—').replace('BRAZIMIL ','').replace('brazimil ','');
+    if(nome.length > 38) nome = nome.substring(0,38)+'…';
+    return '<div class="bar-row" style="margin-bottom:9px">' +
+      '<div style="width:22px;text-align:right;font-family:Courier New;font-size:10px;color:#8a9ab0;margin-right:8px">' + (i+1) + '</div>' +
+      '<div class="bar-label" style="width:148px;font-size:11px">' + nome + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:#1F3864"></div></div>' +
+      '<div style="font-family:Courier New;font-size:10px;color:#8a9ab0;width:40px;text-align:right">' + pctTotal + '%</div>' +
+      '<div class="bar-val" style="width:64px">' + fmtK(p.total) + '</div>' +
+      '</div>';
+  }).join('');
+
+  // ── Gráfico Mix de Produtos (donut) ───────────────────────────────────
+  if(graficos.mixProd) graficos.mixProd.destroy();
+  var coresProd = ['#1F3864','#2E75B6','#0d6e4f','#155e3d','#92530a','#4a3200','#8b1c1c','#5a1010','#3a3a8a','#5a4a00'];
+  var nomes10   = topProd.map(p => {
+    var n2 = (p.produto||'').replace('BRAZIMIL ','');
+    return n2.length > 28 ? n2.substring(0,28)+'…' : n2;
+  });
+  var outros    = total - topTotal;
+  graficos.mixProd = new Chart(document.getElementById('chart-mix-prod'), {
+    type:'doughnut',
+    data:{
+      labels: nomes10.concat(['Outros']),
+      datasets:[{
+        data: topProd.map(p=>p.total).concat([outros>0?outros:0]),
+        backgroundColor: coresProd.concat(['#d0d8e8']),
+        borderWidth:1, borderColor:'#fff'
+      }]
+    },
+    options:{
+      cutout:'55%',
+      plugins:{
+        legend:{
+          position:'right',
+          labels:{font:{family:'Courier New',size:9},color:'#6b7280',
+                  boxWidth:10,padding:6,
+                  generateLabels:function(chart){
+                    var ds=chart.data;
+                    return ds.labels.map((label,i)=>({
+                      text: label + ' (' + (ds.datasets[0].data[i]/total*100).toFixed(1) + '%)',
+                      fillStyle: ds.datasets[0].backgroundColor[i],
+                      strokeStyle:'#fff', lineWidth:1, index:i
+                    }));
+                  }
+          }
+        },
+        tooltip:{callbacks:{label:ctx=>' '+fmtK(ctx.raw)+' ('+fmtP(ctx.raw/total*100)+')'}}
+      }
+    }
+  });
+
+  // ── Tendência (linha) ─────────────────────────────────────────────────
   if(graficos.tend) graficos.tend.destroy();
-  graficos.tend = new Chart(document.getElementById('chart-tendencia'),{
+  // Média móvel 4 semanas
+  var mm4 = vals.map((_,i) => {
+    if(i<3) return null;
+    return (vals[i]+vals[i-1]+vals[i-2]+vals[i-3])/4;
+  });
+  graficos.tend = new Chart(document.getElementById('chart-tendencia'), {
     type:'line',
-    data:{labels:sems.map(s=>s.label||s.semana),datasets:[{data:vals,borderColor:'#1a3a6b',borderWidth:2,pointRadius:1,tension:.3,fill:false}]},
-    options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{family:'Courier New',size:9}},grid:{color:'rgba(0,0,0,.04)'}},x:{ticks:{maxTicksLimit:8,font:{family:'Courier New',size:9},color:'#8a9ab0'},grid:{display:false}}}}
+    data:{
+      labels: sems.map(s => s.label||s.semana),
+      datasets:[
+        {label:'Faturamento',data:vals,borderColor:'rgba(46,117,182,.4)',
+         borderWidth:1.5,pointRadius:0,tension:.3,fill:false},
+        {label:'Média Móvel 4sem',data:mm4,borderColor:'#1F3864',
+         borderWidth:2.5,pointRadius:0,tension:.4,fill:false,borderDash:[]}
+      ]
+    },
+    options:{
+      plugins:{legend:{labels:{font:{family:'Courier New',size:9},color:'#8a9ab0',
+                                boxWidth:12,padding:10}}},
+      scales:{
+        y:{ticks:{callback:v=>fmtK(v),font:{family:'Courier New',size:9}},
+           grid:{color:'rgba(0,0,0,.04)'}},
+        x:{ticks:{maxTicksLimit:8,font:{family:'Courier New',size:8},color:'#8a9ab0'},
+           grid:{display:false}}
+      }
+    }
   });
 
-  // Top clientes
-  var maxC = (v.top_clientes||[])[0]?.total||1;
-  document.getElementById('v-top-cli').innerHTML = (v.top_clientes||[]).map(c=>`
-    <div class="bar-row">
-      <div class="bar-label">${(c.cliente||c.nome||'—').split(' ').slice(0,3).join(' ')}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(c.total/maxC*100)}%;background:#0d6e4f"></div></div>
-      <div class="bar-val">${fmtK(c.total)}</div>
-    </div>`).join('');
 }
 
-// ═══════════════════════════════════════════════════
-// ABA: FLUXO
-// ═══════════════════════════════════════════════════
+
 function renderFluxo() {
   var f = dadosF; var r = f.resumo||{};
   document.getElementById('fc-cart').textContent      = fmtK(r.total_carteira||0);
